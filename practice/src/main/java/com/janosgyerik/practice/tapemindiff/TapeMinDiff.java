@@ -6,9 +6,10 @@ public class TapeMinDiff {
         for (int i : arr) {
             sum += i;
         }
-        int mindiff = Math.abs(sum);
-        int acc = 0;
-        for (int i = 0; i < arr.length - 1; ++i) {
+        int acc = arr[0];
+        sum -= acc;
+        int mindiff = Math.abs(acc - sum);
+        for (int i = 1; i < arr.length - 1; ++i) {
             acc += arr[i];
             sum -= arr[i];
             int diff = Math.abs(acc - sum);
