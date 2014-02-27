@@ -1,6 +1,7 @@
-package com.janosgyerik.practice.tapemindiff;
+package com.janosgyerik.practice.easy;
 
 
+import com.janosgyerik.practice.easy.TapeMinDiff;
 import org.junit.Assert;
 import org.junit.Test;
 

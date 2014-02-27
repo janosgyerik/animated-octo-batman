@@ -1,4 +1,4 @@
-package com.janosgyerik.practice.tapemindiff;
+package com.janosgyerik.practice.easy;
 
 public class TapeMinDiff {
     public int minDiff(int[] arr) {
