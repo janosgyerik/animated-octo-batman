@@ -61,6 +61,16 @@ public class TapeMinDiffTest {
         Assert.assertEquals(3, submit(new int[]{1, 1, 1, 1, 7}));
     }
 
+    @Test
+    public void test_diff_0_20() {
+        Assert.assertEquals(20, submit(new int[]{0, 20}));
+    }
+
+    @Test
+    public void test_diff_m1_m2() {
+        Assert.assertEquals(1, submit(new int[]{-1, -2}));
+    }
+
     private int submit(int[] arr) {
         return new TapeMinDiff().submit(arr);
     }
