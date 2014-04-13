@@ -10,6 +10,12 @@ class Rectangle {
     private final int bottom;
 
     private Rectangle(int left, int top, int right, int bottom) {
+        if (left >= right) {
+            throw new IllegalArgumentException("Width must be positive");
+        }
+        if (bottom >= top) {
+            throw new IllegalArgumentException("Height must be positive");
+        }
         this.left = left;
         this.top = top;
         this.right = right;
@@ -152,6 +158,26 @@ public class RectangleTest {
     public void testNoOverlapByTouchingCorners() {
         Rectangle.createWithHeightAndWidth(10, 10, 10, 10).getIntersectingRectangle(
                 Rectangle.createWithHeightAndWidth(20, 20, 20, 20));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidWidth() {
+        Rectangle.createWithHeightAndWidth(10, 10, 10, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidHeight() {
+        Rectangle.createWithHeightAndWidth(10, 10, 0, 10);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidBottom() {
+        Rectangle.createWithPoints(20, 20, 30, 20);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidRight() {
+        Rectangle.createWithPoints(20, 20, 20, 10);
     }
 }
 
