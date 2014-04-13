@@ -4,56 +4,56 @@ import org.junit.Assert;
 import org.junit.Test;
 
 class Rectangle {
-    private final int topLeftX;
-    private final int topLeftY;
-    private final int bottomRightX;
-    private final int bottomRightY;
+    private final int left;
+    private final int top;
+    private final int right;
+    private final int bottom;
 
-    private Rectangle(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
-        this.topLeftX = topLeftX;
-        this.topLeftY = topLeftY;
-        this.bottomRightX = bottomRightX;
-        this.bottomRightY = bottomRightY;
+    private Rectangle(int left, int top, int right, int bottom) {
+        this.left = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
     }
 
-    public static Rectangle createWithPoints(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
-        return new Rectangle(topLeftX, topLeftY, bottomRightX, bottomRightY);
+    public static Rectangle createWithPoints(int left, int top, int right, int bottom) {
+        return new Rectangle(left, top, right, bottom);
     }
 
-    public static Rectangle createWithHeightAndWidth(int bottomLeftX, int bottomLeftY, int height, int width) {
-        return new Rectangle(bottomLeftX, bottomLeftY + height, bottomLeftX + width, bottomLeftY);
+    public static Rectangle createWithHeightAndWidth(int left, int bottom, int height, int width) {
+        return new Rectangle(left, bottom + height, left + width, bottom);
     }
 
-    public int getTopLeftX() {
-        return topLeftX;
+    public int getLeft() {
+        return left;
     }
 
-    public int getTopLeftY() {
-        return topLeftY;
+    public int getTop() {
+        return top;
     }
 
-    public int getBottomRightX() {
-        return bottomRightX;
+    public int getRight() {
+        return right;
     }
 
-    public int getBottomRightY() {
-        return bottomRightY;
+    public int getBottom() {
+        return bottom;
     }
 
     @Override
     public String toString() {
         return String.format("TopLeftPoint: (%s,%s)  BottomRightPoint: (%s,%s)",
-                topLeftX, topLeftY, bottomRightX, bottomRightY);
+                left, top, right, bottom);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + topLeftX;
-        result = prime * result + topLeftY;
-        result = prime * result + bottomRightX;
-        result = prime * result + bottomRightY;
+        result = prime * result + left;
+        result = prime * result + top;
+        result = prime * result + right;
+        result = prime * result + bottom;
         return result;
     }
 
@@ -61,10 +61,10 @@ class Rectangle {
     public boolean equals(Object obj) {
         if (obj instanceof Rectangle) {
             Rectangle other = (Rectangle) obj;
-            return topLeftX == other.topLeftX
-                    && topLeftY == other.topLeftY
-                    && bottomRightX == other.bottomRightX
-                    && bottomRightY == other.bottomRightY;
+            return left == other.left
+                    && top == other.top
+                    && right == other.right
+                    && bottom == other.bottom;
         }
         return false;
     }
@@ -75,20 +75,20 @@ class Rectangle {
         }
 
         return Rectangle.createWithPoints(
-                Math.max(topLeftX, other.getTopLeftX()),
-                Math.min(topLeftY, other.getTopLeftY()),
-                Math.min(bottomRightX, other.getBottomRightX()),
-                Math.max(bottomRightY, other.getBottomRightY()));
+                Math.max(left, other.getLeft()),
+                Math.min(top, other.getTop()),
+                Math.min(right, other.getRight()),
+                Math.max(bottom, other.getBottom()));
     }
 
     private boolean intersects(Rectangle other) {
-        int maxLeftX = Math.max(topLeftX, other.getTopLeftX());
-        int minTopY = Math.min(topLeftY, other.getTopLeftY());
-        int minRightX = Math.min(bottomRightX, other.getBottomRightX());
-        int maxBottomY = Math.max(bottomRightY, other.getBottomRightY());
+        int maxLeftX = Math.max(left, other.getLeft());
+        int minTopY = Math.min(top, other.getTop());
+        int minRightX = Math.min(right, other.getRight());
+        int maxBottomY = Math.max(bottom, other.getBottom());
         int centerX = (maxLeftX + minRightX) / 2;
         int centerY = (maxBottomY + minTopY) / 2;
-        return centerX > topLeftX && centerX < bottomRightX && centerY > bottomRightY && centerY < topLeftY;
+        return centerX > left && centerX < right && centerY > bottom && centerY < top;
     }
 }
 
