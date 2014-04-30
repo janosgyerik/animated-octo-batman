@@ -230,17 +230,9 @@ class Crazy extends BasePlayer {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        printHistory();
         Set<Move> possibleMovesSet = getPossibleMoves();
         Move[] possibleMoves = possibleMovesSet.toArray(new Move[possibleMovesSet.size()]);
         return move = possibleMoves[(int) (Math.random() * possibleMoves.length)];
-    }
-
-    void printHistory() {
-        for (Position pos : positionsHistory) {
-            System.err.print(pos + ", ");
-        }
-        System.err.println();
     }
 }
 
