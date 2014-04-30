@@ -185,6 +185,11 @@ abstract class BasePlayer implements IPlayer {
         return possibleMoves;
     }
 
+    public Move[] getPossibleMovesArray() {
+        Set<Move> possibleMoves = getPossibleMoves();
+        return possibleMoves.toArray(new Move[possibleMoves.size()]);
+    }
+
     private boolean isAvailable(int x, int y) {
         if (isUsing(x, y)) {
             return false;
@@ -222,16 +227,14 @@ class Crazy extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
-        Set<Move> possibleMovesSet = getPossibleMoves();
-        Move[] possibleMoves = possibleMovesSet.toArray(new Move[possibleMovesSet.size()]);
+        Move[] possibleMoves = getPossibleMovesArray();
         return move = possibleMoves[(int) (Math.random() * possibleMoves.length)];
     }
 
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        Set<Move> possibleMovesSet = getPossibleMoves();
-        Move[] possibleMoves = possibleMovesSet.toArray(new Move[possibleMovesSet.size()]);
+        Move[] possibleMoves = getPossibleMovesArray();
         return move = possibleMoves[(int) (Math.random() * possibleMoves.length)];
     }
 }
