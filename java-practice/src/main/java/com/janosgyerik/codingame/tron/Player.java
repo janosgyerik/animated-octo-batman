@@ -40,7 +40,8 @@ enum Move {
     LEFT,
     RIGHT,
     UP,
-    DOWN
+    DOWN,
+    SELFDESTRUCT
 }
 
 class PlayerInfo {
@@ -181,6 +182,9 @@ abstract class BasePlayer implements IPlayer {
         }
         if (y < MAX_Y && isAvailable(x, y + 1)) {
             possibleMoves.add(Move.DOWN);
+        }
+        if (possibleMoves.isEmpty()) {
+            return Collections.singleton(Move.SELFDESTRUCT);
         }
         return possibleMoves;
     }
