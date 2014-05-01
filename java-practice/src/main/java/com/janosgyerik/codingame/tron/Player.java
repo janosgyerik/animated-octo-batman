@@ -221,10 +221,7 @@ abstract class BasePlayer implements IPlayer {
     }
 
     protected boolean ownsPosition(Position position) {
-        if (!isAlive()) {
-            return false;
-        }
-        return visitedPositions.contains(position);
+        return isAlive() && visitedPositions.contains(position);
     }
 
     public int getX() {
@@ -325,7 +322,9 @@ class CrazyLongStraight extends BasePlayer {
                 break;
         }
         int i = 2;
-        for (; isValidAndAvailablePosition(getX() + xm * i, getY() + ym * i); ++i);
+        while (isValidAndAvailablePosition(getX() + xm * i, getY() + ym * i)) {
+            ++i;
+        }
         return i - 1;
     }
 }
