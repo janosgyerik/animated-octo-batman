@@ -45,10 +45,10 @@ enum Move {
 }
 
 class PlayerInfo {
-    protected final int x0;
-    protected final int y0;
-    protected final int x1;
-    protected final int y1;
+    final int x0;
+    final int y0;
+    final int x1;
+    final int y1;
 
     public PlayerInfo(int x0, int y0, int x1, int y1) {
         this.x0 = x0;
@@ -106,12 +106,12 @@ abstract class BasePlayer implements IPlayer {
     static final int MAX_Y = 19;
 
     private final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
-    protected final Set<Position> visitedPositions = new HashSet<Position>();
-    protected final List<Position> positionsHistory = new ArrayList<Position>();
+    final Set<Position> visitedPositions = new HashSet<Position>();
+    final List<Position> positionsHistory = new ArrayList<Position>();
 
-    protected int x;
-    protected int y;
-    protected Move move;
+    private int x;
+    private int y;
+    protected Move lastMove;
 
     private void initOtherPlayers(int p, PlayerInfo[] playerInfos) {
         for (int i = 0; i < playerInfos.length; ++i) {
@@ -214,6 +214,14 @@ abstract class BasePlayer implements IPlayer {
     protected boolean isUsing(int x, int y) {
         return visitedPositions.contains(new Position(x, y));
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }
 
 class OtherPlayer extends BasePlayer {
@@ -232,7 +240,7 @@ abstract class CrazyStarter extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
-        return move = getRandomMove();
+        return getRandomMove();
     }
 }
 
@@ -240,7 +248,7 @@ class Crazy extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        return move = getRandomMove();
+        return getRandomMove();
     }
 }
 
@@ -248,10 +256,10 @@ class CrazyStraight extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        if (canMove(move)) {
-            return move;
+        if (canMove(lastMove)) {
+            return lastMove;
         }
-        return move = getRandomMove();
+        return lastMove = getRandomMove();
     }
 }
 
