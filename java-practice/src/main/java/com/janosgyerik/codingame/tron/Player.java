@@ -241,13 +241,15 @@ class OtherPlayer extends BasePlayer {
     }
 }
 
-class Crazy extends BasePlayer {
+abstract class CrazyStarter extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
         return move = getRandomMove();
     }
+}
 
+class Crazy extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
@@ -255,13 +257,7 @@ class Crazy extends BasePlayer {
     }
 }
 
-class CrazyStraight extends BasePlayer {
-    @Override
-    public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
-        initPositionHistory(p, playerInfos);
-        return move = getRandomMove();
-    }
-
+class CrazyStraight extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
