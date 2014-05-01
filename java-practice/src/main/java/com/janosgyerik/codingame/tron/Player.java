@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyStraight();
+        return new CrazyLongStraight();
     }
 
     public static void main(String args[]) {
@@ -199,7 +199,15 @@ abstract class BasePlayer implements IPlayer {
         return possibleMoves[(int) (Math.random() * possibleMoves.length)];
     }
 
-    private boolean isAvailablePosition(int x, int y) {
+    protected boolean isValidAndAvailablePosition(int x, int y) {
+        return isValidPosition(x, y) && isAvailablePosition(x, y);
+    }
+
+    protected boolean isValidPosition(int x, int y) {
+        return x >= MIN_X && x <= MAX_X && y >= MIN_Y && y <= MAX_Y;
+    }
+
+    protected boolean isAvailablePosition(int x, int y) {
         Position position = new Position(x, y);
         if (ownsPosition(position)) {
             return false;
@@ -268,6 +276,57 @@ class CrazyStraight extends CrazyStarter {
             return lastMove;
         }
         return lastMove = getRandomMove();
+    }
+}
+
+class CrazyLongStraight extends BasePlayer {
+    @Override
+    public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
+        initPositionHistory(p, playerInfos);
+        return lastMove = getLongestStraightMove();
+    }
+
+    @Override
+    public Move getNextMove(int p, PlayerInfo[] playerInfos) {
+        updatePositionHistory(p, playerInfos);
+        if (canMove(lastMove)) {
+            return lastMove;
+        }
+        return lastMove = getLongestStraightMove();
+    }
+
+    private Move getLongestStraightMove() {
+        TreeMap<Integer, Move> movesByStraightLength = new TreeMap<Integer, Move>();
+        Set<Move> moves = getPossibleMoves();
+        if (moves.size() > 1) {
+            for (Move move : Move.MOVES) {
+                movesByStraightLength.put(countStraightLength(move), move);
+            }
+        } else {
+            movesByStraightLength.put(1, moves.iterator().next());
+        }
+        return movesByStraightLength.lastEntry().getValue();
+    }
+
+    private int countStraightLength(Move move) {
+        int xm = 0, ym = 0;
+        switch (move) {
+            case LEFT:
+                xm = -1;
+                break;
+            case RIGHT:
+                xm = 1;
+                break;
+            case DOWN:
+                ym = 1;
+                break;
+            case UP:
+                ym = -1;
+                break;
+        }
+        int i = 2;
+        for (; isValidAndAvailablePosition(getX() + xm * i, getY() + ym * i); ++i);
+        return i - 1;
     }
 }
 
