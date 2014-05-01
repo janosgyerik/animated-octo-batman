@@ -240,7 +240,7 @@ abstract class CrazyStarter extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
-        return getRandomMove();
+        return lastMove = getRandomMove();
     }
 }
 
