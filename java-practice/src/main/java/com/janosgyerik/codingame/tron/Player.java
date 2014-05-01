@@ -177,13 +177,13 @@ abstract class BasePlayer implements IPlayer {
     public boolean canMove(Move targetMove) {
         switch (targetMove) {
             case LEFT:
-                return x > MIN_X && isAvailable(x - 1, y);
+                return x > MIN_X && isAvailablePosition(x - 1, y);
             case RIGHT:
-                return x < MAX_X && isAvailable(x + 1, y);
+                return x < MAX_X && isAvailablePosition(x + 1, y);
             case UP:
-                return y > MIN_Y && isAvailable(x, y - 1);
+                return y > MIN_Y && isAvailablePosition(x, y - 1);
             case DOWN:
-                return y < MAX_Y && isAvailable(x, y + 1);
+                return y < MAX_Y && isAvailablePosition(x, y + 1);
             default:
                 return false;
         }
@@ -199,20 +199,21 @@ abstract class BasePlayer implements IPlayer {
         return possibleMoves[(int) (Math.random() * possibleMoves.length)];
     }
 
-    private boolean isAvailable(int x, int y) {
-        if (isUsing(x, y)) {
+    private boolean isAvailablePosition(int x, int y) {
+        Position position = new Position(x, y);
+        if (ownsPosition(position)) {
             return false;
         }
         for (OtherPlayer player : otherPlayers.values()) {
-            if (player.isUsing(x, y)) {
+            if (player.ownsPosition(position)) {
                 return false;
             }
         }
         return true;
     }
 
-    protected boolean isUsing(int x, int y) {
-        return visitedPositions.contains(new Position(x, y));
+    protected boolean ownsPosition(Position position) {
+        return visitedPositions.contains(position);
     }
 
     public int getX() {
