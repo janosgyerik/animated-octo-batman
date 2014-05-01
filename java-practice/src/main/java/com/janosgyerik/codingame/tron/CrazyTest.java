@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.Set;
 
-public class CrazyStraightTest {
+public class CrazyTest {
     private Position middle = new Position(BasePlayer.MAX_X / 2, BasePlayer.MAX_Y / 2);
     private Position middleEdge = new Position(BasePlayer.MAX_X / 2, 0);
     private Position corner = new Position(0, 0);
