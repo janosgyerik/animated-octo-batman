@@ -213,6 +213,9 @@ abstract class BasePlayer implements IPlayer {
     }
 
     protected boolean ownsPosition(Position position) {
+        if (!isAlive()) {
+            return false;
+        }
         return visitedPositions.contains(position);
     }
 
@@ -222,6 +225,10 @@ abstract class BasePlayer implements IPlayer {
 
     public int getY() {
         return y;
+    }
+
+    public boolean isAlive() {
+        return x != -1;
     }
 }
 

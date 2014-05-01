@@ -145,4 +145,23 @@ public class CrazyStraightTest {
         Assert.assertEquals(1, moves.size());
         Assert.assertNull(moves.iterator().next());
     }
+
+    @Test
+    public void test_ignore_lost_players() {
+        BasePlayer player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        Assert.assertEquals(4, player.getPossibleMoves().size());
+
+        player.initPositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle),
+                new PlayerInfo(0, 0, middle.x + 1, middle.y)
+        });
+        Assert.assertEquals(3, player.getPossibleMoves().size());
+
+        player.initPositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle),
+                new PlayerInfo(-1, -1, middle.x + 1, middle.y)
+        });
+        Assert.assertEquals(4, player.getPossibleMoves().size());
+    }
 }
