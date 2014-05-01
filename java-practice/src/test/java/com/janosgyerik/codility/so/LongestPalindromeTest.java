@@ -1,8 +1,10 @@
 package com.janosgyerik.codility.so;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class LongestPalindromeTest {
     public String longestPalindromeFromCenter(String s, int center, int minLength) {
         if (center == 0) {

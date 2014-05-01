@@ -1,6 +1,7 @@
 package com.janosgyerik.codility.so;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 class Date {
@@ -213,6 +214,7 @@ class Date {
     }
 }
 
+@Ignore
 public class DateTest {
     @Test
     public void testShortAndLongDisplay() {
