@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new Crazy();
+        return new CrazyStraight();
     }
 
     public static void main(String args[]) {
@@ -41,7 +41,8 @@ enum Move {
     RIGHT,
     UP,
     DOWN,
-    SELFDESTRUCT
+    SELFDESTRUCT;
+    public static final Move[] MOVES = {LEFT, RIGHT, UP, DOWN};
 }
 
 class PlayerInfo {
@@ -171,22 +172,30 @@ abstract class BasePlayer implements IPlayer {
 
     public Set<Move> getPossibleMoves() {
         Set<Move> possibleMoves = new HashSet<Move>();
-        if (x > MIN_X && isAvailable(x - 1, y)) {
-            possibleMoves.add(Move.LEFT);
-        }
-        if (x < MAX_X && isAvailable(x + 1, y)) {
-            possibleMoves.add(Move.RIGHT);
-        }
-        if (y > MIN_Y && isAvailable(x, y - 1)) {
-            possibleMoves.add(Move.UP);
-        }
-        if (y < MAX_Y && isAvailable(x, y + 1)) {
-            possibleMoves.add(Move.DOWN);
+        for (Move move : Move.MOVES) {
+            if (canMove(move)) {
+                possibleMoves.add(move);
+            }
         }
         if (possibleMoves.isEmpty()) {
             return Collections.singleton(Move.SELFDESTRUCT);
         }
         return possibleMoves;
+    }
+
+    public boolean canMove(Move targetMove) {
+        switch (targetMove) {
+            case LEFT:
+                return x > MIN_X && isAvailable(x - 1, y);
+            case RIGHT:
+                return x < MAX_X && isAvailable(x + 1, y);
+            case UP:
+                return y > MIN_Y && isAvailable(x, y - 1);
+            case DOWN:
+                return y < MAX_Y && isAvailable(x, y + 1);
+            default:
+                return false;
+        }
     }
 
     public Move[] getPossibleMovesArray() {
@@ -242,6 +251,23 @@ class Crazy extends BasePlayer {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
+        return move = getRandomMove();
+    }
+}
+
+class CrazyStraight extends BasePlayer {
+    @Override
+    public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
+        initPositionHistory(p, playerInfos);
+        return move = getRandomMove();
+    }
+
+    @Override
+    public Move getNextMove(int p, PlayerInfo[] playerInfos) {
+        updatePositionHistory(p, playerInfos);
+        if (canMove(move)) {
+            return move;
+        }
         return move = getRandomMove();
     }
 }
