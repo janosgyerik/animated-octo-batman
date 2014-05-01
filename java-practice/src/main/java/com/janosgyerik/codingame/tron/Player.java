@@ -109,69 +109,56 @@ abstract class BasePlayer implements IPlayer {
     protected final Set<Position> visitedPositions = new HashSet<Position>();
     protected final List<Position> positionsHistory = new ArrayList<Position>();
 
-    private int x;
-    private int y;
+    protected int x;
+    protected int y;
     protected Move move;
 
-    void initPositionHistory(int p, PlayerInfo[] playerInfos) {
-        this.x = playerInfos[p].x0;
-        this.y = playerInfos[p].y0;
+    private void initOtherPlayers(int p, PlayerInfo[] playerInfos) {
         for (int i = 0; i < playerInfos.length; ++i) {
             if (i != p) {
-                otherPlayers.put(i, new OtherPlayer(playerInfos[i]));
+                OtherPlayer other = new OtherPlayer();
+                other.initPositionHistory(0, new PlayerInfo[]{playerInfos[i]});
+                otherPlayers.put(i, other);
             }
-        }
-        Position pos0 = new Position(playerInfos[p].x0, playerInfos[p].y0);
-        Position pos = new Position(playerInfos[p].x1, playerInfos[p].y1);
-        visitedPositions.add(pos0);
-        visitedPositions.add(pos);
-        positionsHistory.add(pos0);
-        if (!pos.equals(pos0)) {
-            positionsHistory.add(pos);
         }
     }
 
-    void initPositionHistory(PlayerInfo playerInfo) {
-        this.x = playerInfo.x0;
-        this.y = playerInfo.y0;
+    void initPositionHistory(int p, PlayerInfo[] playerInfos) {
+        PlayerInfo playerInfo = playerInfos[p];
+        x = playerInfo.x0;
+        y = playerInfo.y0;
+
+        Position pos0 = new Position(playerInfo.x0, playerInfo.y0);
+        visitedPositions.add(pos0);
+        positionsHistory.add(pos0);
+
         Position pos = new Position(playerInfo.x1, playerInfo.y1);
-        visitedPositions.add(pos);
-        positionsHistory.add(pos);
+        if (!pos.equals(pos0)) {
+            visitedPositions.add(pos);
+            positionsHistory.add(pos);
+        }
+
+        initOtherPlayers(p, playerInfos);
+    }
+
+    private void updateOtherPlayers(int p, PlayerInfo[] playerInfos) {
+        for (int i = 0; i < playerInfos.length; ++i) {
+            if (i != p) {
+                otherPlayers.get(i).updatePositionHistory(0, new PlayerInfo[]{playerInfos[i]});
+            }
+        }
     }
 
     void updatePositionHistory(int p, PlayerInfo[] playerInfos) {
-        x = playerInfos[p].x1;
-        y = playerInfos[p].y1;
-        for (int i = 0; i < playerInfos.length; ++i) {
-            if (i != p) {
-                otherPlayers.get(i).updatePositionHistory(playerInfos[i]);
-            }
-        }
+        PlayerInfo playerInfo = playerInfos[p];
+        x = playerInfo.x1;
+        y = playerInfo.y1;
+
         Position pos = new Position(x, y);
         visitedPositions.add(pos);
         positionsHistory.add(pos);
-    }
 
-    public void updatePositionHistory(PlayerInfo playerInfo) {
-        if (playerInfo.x1 == -1) {
-            return;
-        }
-        Position pos = new Position(playerInfo.x1, playerInfo.y1);
-        if (pos.x != x) {
-            if (pos.x < x) {
-                move = Move.LEFT;
-            } else {
-                move = Move.RIGHT;
-            }
-        } else if (pos.y != y) {
-            if (pos.y < y) {
-                move = Move.DOWN;
-            } else {
-                move = Move.UP;
-            }
-        }
-        visitedPositions.add(pos);
-        positionsHistory.add(pos);
+        updateOtherPlayers(p, playerInfos);
     }
 
     public Set<Move> getPossibleMoves() {
@@ -230,10 +217,6 @@ abstract class BasePlayer implements IPlayer {
 }
 
 class OtherPlayer extends BasePlayer {
-    public OtherPlayer(PlayerInfo playerInfo) {
-        initPositionHistory(playerInfo);
-    }
-
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         throw new UnsupportedOperationException();
