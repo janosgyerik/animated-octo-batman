@@ -113,6 +113,46 @@ public class CrazyTest {
     }
 
     @Test
+    public void test_cannot_move_back_where_came_from() {
+        BasePlayer player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        Assert.assertEquals(4, player.getPossibleMoves().size());
+
+        player.updatePositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle.x, middle.y, middle.x + 1, middle.y)
+        });
+        Assert.assertEquals(3, player.getPossibleMoves().size());
+
+        player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.updatePositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle.x, middle.y, middle.x - 1, middle.y)
+        });
+        Assert.assertEquals(3, player.getPossibleMoves().size());
+
+        player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.updatePositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle.x, middle.y, middle.x, middle.y + 1)
+        });
+        Assert.assertEquals(3, player.getPossibleMoves().size());
+
+        player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.updatePositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle.x, middle.y, middle.x, middle.y - 1)
+        });
+        Assert.assertEquals(3, player.getPossibleMoves().size());
+
+        player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.updatePositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle.x, middle.y, middle.x + 1, middle.y + 1)
+        });
+        Assert.assertEquals(4, player.getPossibleMoves().size());
+    }
+
+    @Test
     public void test_blocked_by_another_player() {
         BasePlayer player = createPlayer();
         player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
