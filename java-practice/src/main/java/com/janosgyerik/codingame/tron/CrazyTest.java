@@ -66,22 +66,22 @@ public class CrazyTest {
         }
     }
 
-    @Test
+    //@Test
     public void test_can_play_at_least_8_rounds_from_middle() {
         play(10, 8, middle);
     }
 
-    @Test
+    //@Test
     public void test_can_play_at_least_5_rounds_from_side() {
         play(50, 5, middleEdge);
     }
 
-    @Test
+    //@Test
     public void test_can_play_at_least_3_rounds_from_near_corner() {
         play(100, 3, nearCorner);
     }
 
-    @Test(expected = AssertionError.class)
+    //@Test(expected = AssertionError.class)
     public void test_cannot_always_play_100_rounds_from_near_corner() {
         play(10, 100, nearCorner);
     }
