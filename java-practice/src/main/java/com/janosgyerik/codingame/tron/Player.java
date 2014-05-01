@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyLongStraight();
+        return new LongStraightEveryStep();
     }
 
     public static void main(String args[]) {
@@ -292,7 +292,7 @@ class CrazyLongStraight extends BasePlayer {
         return lastMove = getLongestStraightMove();
     }
 
-    private Move getLongestStraightMove() {
+    protected Move getLongestStraightMove() {
         TreeMap<Integer, Move> movesByStraightLength = new TreeMap<Integer, Move>();
         Set<Move> moves = getPossibleMoves();
         if (moves.size() > 1) {
@@ -329,10 +329,10 @@ class CrazyLongStraight extends BasePlayer {
     }
 }
 
-//class Divider extends BasePlayer {
-// todo divide the available space
-//}
-//
-//class Chicken extends BasePlayer {
-//    // todo head to the nearest wall
-//}
+class LongStraightEveryStep extends CrazyLongStraight {
+    @Override
+    public Move getNextMove(int p, PlayerInfo[] playerInfos) {
+        updatePositionHistory(p, playerInfos);
+        return lastMove = getLongestStraightMove();
+    }
+}
