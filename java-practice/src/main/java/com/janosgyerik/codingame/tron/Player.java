@@ -57,6 +57,11 @@ class PlayerInfo {
         this.x1 = x1;
         this.y1 = y1;
     }
+
+    public PlayerInfo(Position position) {
+        x0 = x1 = position.x;
+        y0 = y1 = position.y;
+    }
 }
 
 interface IPlayer {
