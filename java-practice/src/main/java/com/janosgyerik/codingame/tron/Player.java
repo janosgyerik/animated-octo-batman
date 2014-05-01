@@ -40,8 +40,7 @@ enum Move {
     LEFT,
     RIGHT,
     UP,
-    DOWN,
-    SELFDESTRUCT;
+    DOWN;
     public static final Move[] MOVES = {LEFT, RIGHT, UP, DOWN};
 }
 
@@ -183,7 +182,7 @@ abstract class BasePlayer implements IPlayer {
             }
         }
         if (possibleMoves.isEmpty()) {
-            return Collections.singleton(Move.SELFDESTRUCT);
+            return Collections.singleton(null);
         }
         return possibleMoves;
     }
