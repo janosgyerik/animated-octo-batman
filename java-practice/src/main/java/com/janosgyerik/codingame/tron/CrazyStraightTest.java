@@ -3,6 +3,8 @@ package com.janosgyerik.codingame.tron;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Set;
+
 public class CrazyStraightTest {
     private Position middle = new Position(BasePlayer.MAX_X / 2, BasePlayer.MAX_Y / 2);
     private Position middleEdge = new Position(BasePlayer.MAX_X / 2, 0);
@@ -103,5 +105,44 @@ public class CrazyStraightTest {
         BasePlayer player = createPlayer();
         player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(corner)});
         Assert.assertEquals(2, player.getPossibleMoves().size());
+    }
+
+    @Test
+    public void test_blocked_by_another_player() {
+        BasePlayer player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        Assert.assertEquals(4, player.getPossibleMoves().size());
+
+        player.initPositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle),
+                new PlayerInfo(new Position(middle.x + 1, middle.y))
+        });
+        Assert.assertEquals(3, player.getPossibleMoves().size());
+
+        player.initPositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle),
+                new PlayerInfo(new Position(middle.x + 1, middle.y)),
+                new PlayerInfo(new Position(middle.x - 1, middle.y))
+        });
+        Assert.assertEquals(2, player.getPossibleMoves().size());
+
+        player.initPositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle),
+                new PlayerInfo(new Position(middle.x + 1, middle.y)),
+                new PlayerInfo(new Position(middle.x - 1, middle.y)),
+                new PlayerInfo(new Position(middle.x, middle.y + 1))
+        });
+        Assert.assertEquals(1, player.getPossibleMoves().size());
+
+        player.initPositionHistory(0, new PlayerInfo[]{
+                new PlayerInfo(middle),
+                new PlayerInfo(new Position(middle.x + 1, middle.y)),
+                new PlayerInfo(new Position(middle.x - 1, middle.y)),
+                new PlayerInfo(new Position(middle.x, middle.y + 1)),
+                new PlayerInfo(new Position(middle.x, middle.y - 1))
+        });
+        Set<Move> moves = player.getPossibleMoves();
+        Assert.assertEquals(1, moves.size());
+        Assert.assertNull(moves.iterator().next());
     }
 }
