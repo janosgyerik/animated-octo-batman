@@ -83,4 +83,25 @@ public class CrazyStraightTest {
     public void test_cannot_always_play_100_rounds_from_near_corner() {
         play(10, 100, nearCorner);
     }
+
+    @Test
+    public void test_can_move_to_4_directions_from_middle() {
+        BasePlayer player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        Assert.assertEquals(4, player.getPossibleMoves().size());
+    }
+
+    @Test
+    public void test_can_move_to_3_directions_from_edge() {
+        BasePlayer player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middleEdge)});
+        Assert.assertEquals(3, player.getPossibleMoves().size());
+    }
+
+    @Test
+    public void test_can_move_to_2_directions_from_corner() {
+        BasePlayer player = createPlayer();
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(corner)});
+        Assert.assertEquals(2, player.getPossibleMoves().size());
+    }
 }
