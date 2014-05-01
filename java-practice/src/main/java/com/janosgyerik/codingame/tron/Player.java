@@ -321,7 +321,7 @@ class CrazyLongStraight extends BasePlayer {
                 ym = -1;
                 break;
         }
-        int i = 2;
+        int i = 1;
         while (isValidAndAvailablePosition(getX() + xm * i, getY() + ym * i)) {
             ++i;
         }
