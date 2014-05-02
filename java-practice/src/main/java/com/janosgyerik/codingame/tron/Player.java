@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new LongStraightEveryStep();
+        return new CrazyStraightTrapAvoider();
     }
 
     public static void main(String args[]) {
@@ -232,6 +232,10 @@ abstract class BasePlayer implements IPlayer {
         return y;
     }
 
+    public Map<Integer, OtherPlayer> getOtherPlayers() {
+        return otherPlayers;
+    }
+
     public boolean isAlive() {
         return x != -1;
     }
@@ -336,3 +340,87 @@ class LongStraightEveryStep extends CrazyLongStraight {
         return lastMove = getLongestStraightMove();
     }
 }
+
+class CrazyStraightTrapAvoider extends CrazyStarter {
+    private static final char USED = '1';
+    private static final char FREE = '0';
+    private static final char REACHABLE = ' ';
+
+    @Override
+    public Move getNextMove(int p, PlayerInfo[] playerInfos) {
+        updatePositionHistory(p, playerInfos);
+        Set<Move> possibleMoves = getPossibleMoves();
+        if (possibleMoves.size() == 1 && possibleMoves.iterator().next() == null) {
+            return null;
+        }
+        Move bestMove = lastMove;
+        char[][] grid = initGrid();
+        int bestHoleSize = countHoleSize(grid, getX(), getY(), lastMove);
+        for (Move move : getPossibleMoves()) {
+            if (move != lastMove) {
+                int otherHoleSize = countHoleSize(grid, getX(), getY(), move);
+                if (otherHoleSize > bestHoleSize) {
+                    bestHoleSize = otherHoleSize;
+                    bestMove = move;
+                }
+            }
+        }
+        return lastMove = bestMove;
+    }
+
+    private int countHoleSize(char[][] grid, int x, int y, Move move) {
+        int newx = getX(), newy = getY();
+        switch (move) {
+            case LEFT:
+                --newx;
+                break;
+            case RIGHT:
+                ++newx;
+                break;
+            case UP:
+                --newy;
+                break;
+            case DOWN:
+                ++newy;
+                break;
+        }
+        return countHoleSize(grid, newx, newy);
+    }
+
+    private int countHoleSize(char[][] grid, int x, int y) {
+        if (x < MIN_X || x > MAX_X || y < MIN_Y || y > MAX_Y) {
+            return 0;
+        }
+        if (grid[x][y] == FREE) {
+            grid[x][y] = REACHABLE;
+            return 1
+                    + countHoleSize(grid, x + 1, y)
+                    + countHoleSize(grid, x - 1, y)
+                    + countHoleSize(grid, x, y + 1)
+                    + countHoleSize(grid, x, y - 1);
+        }
+        return 0;
+    }
+
+    private char[][] initGrid() {
+        char[][] grid = new char[MAX_X + 1][MAX_Y + 1];
+        for (int x = 0; x <= MAX_X; ++x) {
+            for (int y = 0; y <= MAX_Y; ++y) {
+                grid[x][y] = FREE;
+                Position position = new Position(x, y);
+                if (ownsPosition(position)) {
+                    grid[x][y] = USED;
+                    continue;
+                }
+                for (BasePlayer player : getOtherPlayers().values()) {
+                    if (player.ownsPosition(position)) {
+                        grid[x][y] = USED;
+                        break;
+                    }
+                }
+            }
+        }
+        return grid;
+    }
+}
+
