@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyStraightTrapAvoider();
+        return new CrazyTrapAvoider();
     }
 
     public static void main(String args[]) {
@@ -368,7 +368,7 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
         return lastMove = bestMove;
     }
 
-    private int countHoleSize(char[][] grid, int x, int y, Move move) {
+    int countHoleSize(char[][] grid, int x, int y, Move move) {
         int newx = getX(), newy = getY();
         switch (move) {
             case LEFT:
@@ -402,7 +402,7 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
         return 0;
     }
 
-    private char[][] initGrid() {
+    protected char[][] initGrid() {
         char[][] grid = new char[MAX_X + 1][MAX_Y + 1];
         for (int x = 0; x <= MAX_X; ++x) {
             for (int y = 0; y <= MAX_Y; ++y) {
@@ -421,6 +421,30 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
             }
         }
         return grid;
+    }
+}
+
+class CrazyTrapAvoider extends CrazyStraightTrapAvoider {
+    @Override
+    public Move getNextMove(int p, PlayerInfo[] playerInfos) {
+        updatePositionHistory(p, playerInfos);
+        Set<Move> possibleMoves = getPossibleMoves();
+        if (possibleMoves.size() == 1 && possibleMoves.iterator().next() == null) {
+            return null;
+        }
+        Move bestMove = getRandomMove();
+        char[][] grid = initGrid();
+        int bestHoleSize = countHoleSize(grid, getX(), getY(), bestMove);
+        for (Move move : getPossibleMoves()) {
+            if (move != bestMove) {
+                int otherHoleSize = countHoleSize(grid, getX(), getY(), move);
+                if (otherHoleSize > bestHoleSize) {
+                    bestHoleSize = otherHoleSize;
+                    bestMove = move;
+                }
+            }
+        }
+        return lastMove = bestMove;
     }
 }
 
