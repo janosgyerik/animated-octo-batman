@@ -365,7 +365,7 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
     }
 
     int countHoleSize(char[][] grid, int x, int y) {
-        if (x < MIN_X || x > MAX_X || y < MIN_Y || y > MAX_Y) {
+        if (!isValidPosition(x, y)) {
             return 0;
         }
         if (grid[x][y] == FREE) {
