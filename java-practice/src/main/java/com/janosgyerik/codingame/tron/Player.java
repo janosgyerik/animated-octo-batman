@@ -106,6 +106,7 @@ abstract class BasePlayer implements IPlayer {
     static final int MAX_Y = 19;
 
     private final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
+    final Set<BasePlayer> players = new HashSet<BasePlayer>();
     final Set<Position> visitedPositions = new HashSet<Position>();
     final List<Position> positionsHistory = new ArrayList<Position>();
 
@@ -119,6 +120,7 @@ abstract class BasePlayer implements IPlayer {
                 OtherPlayer other = new OtherPlayer();
                 other.initPositionHistory(0, new PlayerInfo[]{playerInfos[i]});
                 otherPlayers.put(i, other);
+                players.add(other);
             }
         }
     }
@@ -138,6 +140,7 @@ abstract class BasePlayer implements IPlayer {
             positionsHistory.add(pos);
         }
 
+        players.add(this);
         initOtherPlayers(p, playerInfos);
     }
 
@@ -217,10 +220,7 @@ abstract class BasePlayer implements IPlayer {
 
     protected boolean isAvailablePosition(int x, int y) {
         Position position = new Position(x, y);
-        if (ownsPosition(position)) {
-            return false;
-        }
-        for (OtherPlayer player : otherPlayers.values()) {
+        for (BasePlayer player : players) {
             if (player.ownsPosition(position)) {
                 return false;
             }
@@ -238,10 +238,6 @@ abstract class BasePlayer implements IPlayer {
 
     public int getY() {
         return y;
-    }
-
-    public Map<Integer, OtherPlayer> getOtherPlayers() {
-        return otherPlayers;
     }
 
     public boolean isAlive() {
@@ -385,11 +381,7 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
             for (int y = 0; y <= MAX_Y; ++y) {
                 grid[x][y] = FREE;
                 Position position = new Position(x, y);
-                if (ownsPosition(position)) {
-                    grid[x][y] = USED;
-                    continue;
-                }
-                for (BasePlayer player : getOtherPlayers().values()) {
+                for (BasePlayer player : players) {
                     if (player.ownsPosition(position)) {
                         grid[x][y] = USED;
                         break;

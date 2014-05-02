@@ -203,6 +203,7 @@ public class CrazyTest {
         });
         Assert.assertEquals(3, player.getPossibleMoves().size());
 
+        player = createPlayer();
         player.initPositionHistory(0, new PlayerInfo[]{
                 new PlayerInfo(middle),
                 new PlayerInfo(-1, -1, middle.x + 1, middle.y)
