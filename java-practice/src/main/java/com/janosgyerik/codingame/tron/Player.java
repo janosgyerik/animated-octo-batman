@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyTrapAvoider();
+        return new CrazyStraightTrapAvoider();
     }
 
     public static void main(String args[]) {
@@ -189,13 +189,21 @@ abstract class BasePlayer implements IPlayer {
         }
     }
 
+    public Move[] getMovesArray(Set<Move> moves) {
+        return moves.toArray(new Move[moves.size()]);
+    }
+
     public Move[] getPossibleMovesArray() {
-        Set<Move> possibleMoves = getPossibleMoves();
-        return possibleMoves.toArray(new Move[possibleMoves.size()]);
+        return getMovesArray(getPossibleMoves());
     }
 
     public Move getRandomMove() {
         Move[] possibleMoves = getPossibleMovesArray();
+        return possibleMoves[(int) (Math.random() * possibleMoves.length)];
+    }
+
+    public Move getRandomMove(Set<Move> moves) {
+        Move[] possibleMoves = getMovesArray(moves);
         return possibleMoves[(int) (Math.random() * possibleMoves.length)];
     }
 
@@ -349,45 +357,14 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        Set<Move> possibleMoves = getPossibleMoves();
-        if (possibleMoves.size() == 1 && possibleMoves.iterator().next() == null) {
-            return null;
+        Set<Move> saferMoves = getSaferMoves();
+        if (saferMoves.contains(lastMove)) {
+            return lastMove;
         }
-        Move bestMove = lastMove;
-        char[][] grid = initGrid();
-        int bestHoleSize = countHoleSize(grid, getX(), getY(), lastMove);
-        for (Move move : getPossibleMoves()) {
-            if (move != lastMove) {
-                int otherHoleSize = countHoleSize(grid, getX(), getY(), move);
-                if (otherHoleSize > bestHoleSize) {
-                    bestHoleSize = otherHoleSize;
-                    bestMove = move;
-                }
-            }
-        }
-        return lastMove = bestMove;
+        return lastMove = saferMoves.iterator().next();
     }
 
-    int countHoleSize(char[][] grid, int x, int y, Move move) {
-        int newx = getX(), newy = getY();
-        switch (move) {
-            case LEFT:
-                --newx;
-                break;
-            case RIGHT:
-                ++newx;
-                break;
-            case UP:
-                --newy;
-                break;
-            case DOWN:
-                ++newy;
-                break;
-        }
-        return countHoleSize(grid, newx, newy);
-    }
-
-    private int countHoleSize(char[][] grid, int x, int y) {
+    int countHoleSize(char[][] grid, int x, int y) {
         if (x < MIN_X || x > MAX_X || y < MIN_Y || y > MAX_Y) {
             return 0;
         }
@@ -422,29 +399,51 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
         }
         return grid;
     }
+
+    Set<Move> getSaferMoves() {
+        Set<Move> possibleMoves = getPossibleMoves();
+        if (possibleMoves.size() < 2) {
+            return possibleMoves;
+        }
+        TreeMap<Integer, Set<Move>> holeSizeToMoves = new TreeMap<Integer, Set<Move>>();
+        for (Move move : possibleMoves) {
+            int holeSize = countHoleSizeFromMove(move);
+            Set<Move> moves = holeSizeToMoves.get(holeSize);
+            if (moves == null) {
+                moves = new HashSet<Move>();
+                holeSizeToMoves.put(holeSize, moves);
+            }
+            moves.add(move);
+        }
+        return holeSizeToMoves.lastEntry().getValue();
+    }
+
+    private int countHoleSizeFromMove(Move move) {
+        int newx = getX(), newy = getY();
+        switch (move) {
+            case LEFT:
+                --newx;
+                break;
+            case RIGHT:
+                ++newx;
+                break;
+            case UP:
+                --newy;
+                break;
+            case DOWN:
+                ++newy;
+                break;
+        }
+        return countHoleSize(initGrid(), newx, newy);
+    }
 }
 
 class CrazyTrapAvoider extends CrazyStraightTrapAvoider {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        Set<Move> possibleMoves = getPossibleMoves();
-        if (possibleMoves.size() == 1 && possibleMoves.iterator().next() == null) {
-            return null;
-        }
-        Move bestMove = getRandomMove();
-        char[][] grid = initGrid();
-        int bestHoleSize = countHoleSize(grid, getX(), getY(), bestMove);
-        for (Move move : getPossibleMoves()) {
-            if (move != bestMove) {
-                int otherHoleSize = countHoleSize(grid, getX(), getY(), move);
-                if (otherHoleSize > bestHoleSize) {
-                    bestHoleSize = otherHoleSize;
-                    bestMove = move;
-                }
-            }
-        }
-        return lastMove = bestMove;
+        Set<Move> saferMoves = getSaferMoves();
+        return lastMove = getRandomMove(saferMoves);
     }
 }
 
