@@ -240,7 +240,7 @@ abstract class BasePlayer implements IPlayer {
     }
 }
 
-class OtherPlayer extends BasePlayer {
+final class OtherPlayer extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         throw new UnsupportedOperationException();
