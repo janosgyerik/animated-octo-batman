@@ -196,18 +196,13 @@ abstract class BasePlayer implements IPlayer {
         return moves.toArray(new Move[moves.size()]);
     }
 
-    public Move[] getPossibleMovesArray() {
-        return getMovesArray(getPossibleMoves());
+    public Move getRandomMove(Set<Move> moves) {
+        Move[] movesArray = getMovesArray(moves);
+        return movesArray[(int) (Math.random() * movesArray.length)];
     }
 
     public Move getRandomMove() {
-        Move[] possibleMoves = getPossibleMovesArray();
-        return possibleMoves[(int) (Math.random() * possibleMoves.length)];
-    }
-
-    public Move getRandomMove(Set<Move> moves) {
-        Move[] possibleMoves = getMovesArray(moves);
-        return possibleMoves[(int) (Math.random() * possibleMoves.length)];
+        return getRandomMove(getPossibleMoves());
     }
 
     protected boolean isValidAndAvailablePosition(int x, int y) {
@@ -250,7 +245,6 @@ class OtherPlayer extends BasePlayer {
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         throw new UnsupportedOperationException();
     }
-
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         throw new UnsupportedOperationException();
