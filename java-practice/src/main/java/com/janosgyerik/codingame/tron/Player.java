@@ -64,9 +64,7 @@ class PlayerInfo {
 }
 
 interface IPlayer {
-
     Move getFirstMove(int p, PlayerInfo[] playerInfos);
-
     Move getNextMove(int p, PlayerInfo[] playerInfos);
 }
 
@@ -107,8 +105,7 @@ abstract class BasePlayer implements IPlayer {
 
     private final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
     final Set<BasePlayer> players = new HashSet<BasePlayer>();
-    final Set<Position> visitedPositions = new HashSet<Position>();
-    final List<Position> positionsHistory = new ArrayList<Position>();
+    private final Set<Position> visitedPositions = new HashSet<Position>();
 
     private int x;
     private int y;
@@ -132,12 +129,10 @@ abstract class BasePlayer implements IPlayer {
 
         Position pos0 = new Position(playerInfo.x0, playerInfo.y0);
         visitedPositions.add(pos0);
-        positionsHistory.add(pos0);
 
         Position pos = new Position(playerInfo.x1, playerInfo.y1);
         if (!pos.equals(pos0)) {
             visitedPositions.add(pos);
-            positionsHistory.add(pos);
         }
 
         players.add(this);
@@ -159,7 +154,6 @@ abstract class BasePlayer implements IPlayer {
 
         Position pos = new Position(x, y);
         visitedPositions.add(pos);
-        positionsHistory.add(pos);
 
         updateOtherPlayers(p, playerInfos);
     }
