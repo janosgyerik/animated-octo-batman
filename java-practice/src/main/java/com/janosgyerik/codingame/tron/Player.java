@@ -207,7 +207,10 @@ abstract class BasePlayer implements IPlayer {
     private void updateOtherPlayers(int p, PlayerInfo[] playerInfos) {
         for (int i = 0; i < playerInfos.length; ++i) {
             if (i != p) {
-                otherPlayers.get(i).updatePositionHistory(0, new PlayerInfo[]{playerInfos[i]});
+                PlayerInfo playerInfo = playerInfos[i];
+                OtherPlayer player = otherPlayers.get(i);
+                player.updateLastMove(Position.getMove(player.getPosition(), new Position(playerInfo.x1, playerInfo.y1)));
+                player.updatePositionHistory(0, new PlayerInfo[]{playerInfo});
             }
         }
     }
@@ -296,6 +299,14 @@ abstract class BasePlayer implements IPlayer {
 
     protected Move setAndReturnLastMove(Move move) {
         return lastMove = move;
+    }
+
+    protected void updateLastMove(Move move) {
+        lastMove = move;
+    }
+
+    public Position getPosition() {
+        return new Position(x, y);
     }
 
     public boolean isAlive() {
@@ -484,3 +495,5 @@ class CrazyAggressiveHoleAvoider extends AggressiveStarter {
 }
 
 // TODO: don't go in a tunnel of another player
+
+// TODO: if next move will cut off the other player, take it, example: y: (10,10)(8,6)
