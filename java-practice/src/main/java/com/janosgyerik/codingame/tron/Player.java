@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyStraightTrapAvoider();
+        return new CrazyTrapAvoider();
     }
 
     public static void main(String args[]) {
@@ -118,6 +118,10 @@ abstract class BasePlayer implements IPlayer {
     static final int MAX_Y = 19;
     static final int MID_X = (MAX_X - MIN_X) / 2;
     static final int MID_Y = (MAX_Y - MIN_Y) / 2;
+
+    private static final char USED = '1';
+    private static final char FREE = '0';
+    private static final char REACHABLE = ' ';
 
     final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
     final Set<BasePlayer> players = new HashSet<BasePlayer>();
@@ -252,6 +256,64 @@ abstract class BasePlayer implements IPlayer {
     public boolean isAlive() {
         return x != -1;
     }
+
+    int countHoleSize(char[][] grid, int x, int y) {
+        if (!isValidPosition(x, y)) {
+            return 0;
+        }
+        if (grid[x][y] == FREE) {
+            grid[x][y] = REACHABLE;
+            return 1
+                    + countHoleSize(grid, x + 1, y)
+                    + countHoleSize(grid, x - 1, y)
+                    + countHoleSize(grid, x, y + 1)
+                    + countHoleSize(grid, x, y - 1);
+        }
+        return 0;
+    }
+
+    protected char[][] initGrid() {
+        char[][] grid = new char[MAX_X + 1][MAX_Y + 1];
+        for (int x = 0; x <= MAX_X; ++x) {
+            for (int y = 0; y <= MAX_Y; ++y) {
+                grid[x][y] = FREE;
+                Position position = new Position(x, y);
+                for (BasePlayer player : players) {
+                    if (player.ownsPosition(position)) {
+                        grid[x][y] = USED;
+                        break;
+                    }
+                }
+            }
+        }
+        return grid;
+    }
+
+    Set<Move> getSaferMoves() {
+        Set<Move> possibleMoves = getPossibleMoves();
+        if (possibleMoves.size() < 2) {
+            return possibleMoves;
+        }
+        TreeMap<Integer, Set<Move>> holeSizeToMoves = new TreeMap<Integer, Set<Move>>();
+        for (Move move : possibleMoves) {
+            int holeSize = countHoleSizeFromMove(move);
+            Set<Move> moves = holeSizeToMoves.get(holeSize);
+            if (moves == null) {
+                moves = new HashSet<Move>();
+                holeSizeToMoves.put(holeSize, moves);
+            }
+            moves.add(move);
+        }
+        return holeSizeToMoves.lastEntry().getValue();
+    }
+
+    private int countHoleSizeFromMove(Move move) {
+        return countHoleSize(initGrid(), getPositionAfterMove(move));
+    }
+
+    private int countHoleSize(char[][] grid, Position position) {
+        return countHoleSize(grid, position.x, position.y);
+    }
 }
 
 final class OtherPlayer extends BasePlayer {
@@ -321,10 +383,6 @@ class CrazyStraight extends CrazyStarter {
 }
 
 class CrazyStraightTrapAvoider extends CrazyStarter {
-    private static final char USED = '1';
-    private static final char FREE = '0';
-    private static final char REACHABLE = ' ';
-
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
@@ -334,67 +392,9 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
         }
         return lastMove = saferMoves.iterator().next();
     }
-
-    int countHoleSize(char[][] grid, int x, int y) {
-        if (!isValidPosition(x, y)) {
-            return 0;
-        }
-        if (grid[x][y] == FREE) {
-            grid[x][y] = REACHABLE;
-            return 1
-                    + countHoleSize(grid, x + 1, y)
-                    + countHoleSize(grid, x - 1, y)
-                    + countHoleSize(grid, x, y + 1)
-                    + countHoleSize(grid, x, y - 1);
-        }
-        return 0;
-    }
-
-    protected char[][] initGrid() {
-        char[][] grid = new char[MAX_X + 1][MAX_Y + 1];
-        for (int x = 0; x <= MAX_X; ++x) {
-            for (int y = 0; y <= MAX_Y; ++y) {
-                grid[x][y] = FREE;
-                Position position = new Position(x, y);
-                for (BasePlayer player : players) {
-                    if (player.ownsPosition(position)) {
-                        grid[x][y] = USED;
-                        break;
-                    }
-                }
-            }
-        }
-        return grid;
-    }
-
-    Set<Move> getSaferMoves() {
-        Set<Move> possibleMoves = getPossibleMoves();
-        if (possibleMoves.size() < 2) {
-            return possibleMoves;
-        }
-        TreeMap<Integer, Set<Move>> holeSizeToMoves = new TreeMap<Integer, Set<Move>>();
-        for (Move move : possibleMoves) {
-            int holeSize = countHoleSizeFromMove(move);
-            Set<Move> moves = holeSizeToMoves.get(holeSize);
-            if (moves == null) {
-                moves = new HashSet<Move>();
-                holeSizeToMoves.put(holeSize, moves);
-            }
-            moves.add(move);
-        }
-        return holeSizeToMoves.lastEntry().getValue();
-    }
-
-    private int countHoleSizeFromMove(Move move) {
-        return countHoleSize(initGrid(), getPositionAfterMove(move));
-    }
-
-    private int countHoleSize(char[][] grid, Position position) {
-        return countHoleSize(grid, position.x, position.y);
-    }
 }
 
-class CrazyTrapAvoider extends CrazyStraightTrapAvoider {
+class CrazyTrapAvoider extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
