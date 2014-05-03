@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new Crazy();
+        return new CrazyStraightTrapAvoider();
     }
 
     public static void main(String args[]) {
@@ -186,18 +186,21 @@ abstract class BasePlayer implements IPlayer {
     }
 
     public boolean canMove(Move targetMove) {
-        switch (targetMove) {
+        return isValidAndAvailablePosition(getPositionAfterMove(targetMove));
+    }
+
+    public Position getPositionAfterMove(Move move) {
+        switch (move) {
             case LEFT:
-                return x > MIN_X && isAvailablePosition(x - 1, y);
+                return new Position(x - 1, y);
             case RIGHT:
-                return x < MAX_X && isAvailablePosition(x + 1, y);
+                return new Position(x + 1, y);
             case UP:
-                return y > MIN_Y && isAvailablePosition(x, y - 1);
+                return new Position(x, y - 1);
             case DOWN:
-                return y < MAX_Y && isAvailablePosition(x, y + 1);
-            default:
-                return false;
+                return new Position(x, y + 1);
         }
+        throw new IllegalArgumentException();
     }
 
     public Move[] getMovesArray(Set<Move> moves) {
@@ -213,16 +216,19 @@ abstract class BasePlayer implements IPlayer {
         return getRandomMove(getPossibleMoves());
     }
 
-    protected boolean isValidAndAvailablePosition(int x, int y) {
-        return isValidPosition(x, y) && isAvailablePosition(x, y);
+    protected boolean isValidAndAvailablePosition(Position position) {
+        return isValidPosition(position) && isAvailablePosition(position);
+    }
+
+    protected boolean isValidPosition(Position position) {
+        return isValidPosition(position.x, position.y);
     }
 
     protected boolean isValidPosition(int x, int y) {
         return x >= MIN_X && x <= MAX_X && y >= MIN_Y && y <= MAX_Y;
     }
 
-    protected boolean isAvailablePosition(int x, int y) {
-        Position position = new Position(x, y);
+    protected boolean isAvailablePosition(Position position) {
         for (BasePlayer player : players) {
             if (player.ownsPosition(position)) {
                 return false;
@@ -352,22 +358,11 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
     }
 
     private int countHoleSizeFromMove(Move move) {
-        int newx = getX(), newy = getY();
-        switch (move) {
-            case LEFT:
-                --newx;
-                break;
-            case RIGHT:
-                ++newx;
-                break;
-            case UP:
-                --newy;
-                break;
-            case DOWN:
-                ++newy;
-                break;
-        }
-        return countHoleSize(initGrid(), newx, newy);
+        return countHoleSize(initGrid(), getPositionAfterMove(move));
+    }
+
+    private int countHoleSize(char[][] grid, Position position) {
+        return countHoleSize(grid, position.x, position.y);
     }
 }
 
