@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyStraightTrapAvoider();
+        return new Crazy();
     }
 
     public static void main(String args[]) {
@@ -37,11 +37,25 @@ class Player {
 }
 
 enum Move {
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN;
+    LEFT, RIGHT, UP, DOWN,
+    IMPOSSIBLE("damn");
+
     public static final Move[] MOVES = {LEFT, RIGHT, UP, DOWN};
+
+    private final String message;
+
+    Move() {
+        message = null;
+    }
+
+    Move(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return message != null ? message : name();
+    }
 }
 
 class PlayerInfo {
@@ -166,7 +180,7 @@ abstract class BasePlayer implements IPlayer {
             }
         }
         if (possibleMoves.isEmpty()) {
-            return Collections.singleton(null);
+            return Collections.singleton(Move.IMPOSSIBLE);
         }
         return possibleMoves;
     }

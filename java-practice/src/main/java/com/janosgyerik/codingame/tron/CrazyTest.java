@@ -188,7 +188,7 @@ public class CrazyTest {
         });
         Set<Move> moves = player.getPossibleMoves();
         Assert.assertEquals(1, moves.size());
-        Assert.assertNull(moves.iterator().next());
+        Assert.assertEquals(Move.IMPOSSIBLE, moves.iterator().next());
     }
 
     @Test
