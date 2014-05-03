@@ -147,9 +147,7 @@ abstract class BasePlayer implements IPlayer {
         visitedPositions.add(pos0);
 
         Position pos = new Position(playerInfo.x1, playerInfo.y1);
-        if (!pos.equals(pos0)) {
-            visitedPositions.add(pos);
-        }
+        visitedPositions.add(pos);
 
         players.add(this);
         initOtherPlayers(p, playerInfos);
