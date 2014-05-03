@@ -38,7 +38,7 @@ class Player {
 
 enum Move {
     LEFT, RIGHT, UP, DOWN,
-    IMPOSSIBLE("damn");
+    IMPOSSIBLE("DAAAAAAAAAMN!...");
 
     public static final Move[] MOVES = {LEFT, RIGHT, UP, DOWN};
 
@@ -75,6 +75,13 @@ class PlayerInfo {
         x0 = x1 = position.x;
         y0 = y1 = position.y;
     }
+
+    public PlayerInfo(Position position0, Position position) {
+        x0 = position0.x;
+        y0 = position0.y;
+        x1 = position.x;
+        y1 = position.y;
+    }
 }
 
 interface IPlayer {
@@ -89,6 +96,44 @@ class Position {
     public Position(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    static Position plusMove(Position position, Move... moves) {
+        Position newPosition = position;
+        for (Move move : moves) {
+            newPosition = plusMove(newPosition.x, newPosition.y, move);
+        }
+        return newPosition;
+    }
+
+    static Position plusMove(int x, int y, Move move) {
+        switch (move) {
+            case LEFT:
+                return new Position(x - 1, y);
+            case RIGHT:
+                return new Position(x + 1, y);
+            case UP:
+                return new Position(x, y - 1);
+            case DOWN:
+                return new Position(x, y + 1);
+        }
+        throw new IllegalArgumentException();
+    }
+
+    public static Move getMove(Position pos0, Position pos) {
+        if (pos0.x < pos.x) {
+            return Move.RIGHT;
+        }
+        if (pos0.x > pos.x) {
+            return Move.LEFT;
+        }
+        if (pos0.y < pos.y) {
+            return Move.DOWN;
+        }
+        if (pos0.y > pos.y) {
+            return Move.UP;
+        }
+        return null;
     }
 
     @Override
@@ -144,14 +189,16 @@ abstract class BasePlayer implements IPlayer {
 
     void initPositionHistory(int p, PlayerInfo[] playerInfos) {
         PlayerInfo playerInfo = playerInfos[p];
-        x = playerInfo.x0;
-        y = playerInfo.y0;
+        x = playerInfo.x1;
+        y = playerInfo.y1;
 
         Position pos0 = new Position(playerInfo.x0, playerInfo.y0);
         visitedPositions.add(pos0);
 
         Position pos = new Position(playerInfo.x1, playerInfo.y1);
         visitedPositions.add(pos);
+
+        lastMove = Position.getMove(pos0, pos);
 
         players.add(this);
         initOtherPlayers(p, playerInfos);
@@ -194,17 +241,7 @@ abstract class BasePlayer implements IPlayer {
     }
 
     public Position getPositionAfterMove(Move move) {
-        switch (move) {
-            case LEFT:
-                return new Position(x - 1, y);
-            case RIGHT:
-                return new Position(x + 1, y);
-            case UP:
-                return new Position(x, y - 1);
-            case DOWN:
-                return new Position(x, y + 1);
-        }
-        throw new IllegalArgumentException();
+        return Position.plusMove(x, y, move);
     }
 
     public Move[] getMovesArray(Set<Move> moves) {
@@ -314,6 +351,41 @@ abstract class BasePlayer implements IPlayer {
     private int countHoleSize(char[][] grid, Position position) {
         return countHoleSize(grid, position.x, position.y);
     }
+
+    Set<Move> getSaferMovesToward(OtherPlayer otherPlayer) {
+        Set<Move> saferMoves = getSaferMoves();
+        if (saferMoves.size() < 2) {
+            return saferMoves;
+        }
+        TreeMap<Integer, Set<Move>> distanceToMove = new TreeMap<Integer, Set<Move>>();
+        for (Move move : saferMoves) {
+            int distance = distanceFromPlayerAfterMove(otherPlayer, move);
+            Set<Move> moves = distanceToMove.get(distance);
+            if (moves == null) {
+                moves = new HashSet<Move>();
+                distanceToMove.put(distance, moves);
+            }
+            moves.add(move);
+        }
+        Set<Move> saferMovesToward = distanceToMove.firstEntry().getValue();
+        return saferMovesToward.contains(otherPlayer.lastMove)
+                ? Collections.singleton(otherPlayer.lastMove)
+                : saferMovesToward;
+    }
+
+    private int distanceFromPlayerAfterMove(OtherPlayer otherPlayer, Move move) {
+        return distanceFromPlayer(otherPlayer, getPositionAfterMove(move));
+    }
+
+    private int distanceFromPlayer(OtherPlayer otherPlayer, Position position) {
+        int dx = position.x - otherPlayer.getX();
+        int dy = position.y - otherPlayer.getY();
+        return dx * dx + dy * dy;
+    }
+
+    OtherPlayer getAnotherPlayer() {
+        return otherPlayers.values().iterator().next();
+    }
 }
 
 final class OtherPlayer extends BasePlayer {
@@ -340,38 +412,6 @@ abstract class AggressiveStarter extends BasePlayer {
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
         return lastMove = getRandomMove(getSaferMovesToward(getAnotherPlayer()));
-    }
-
-    Set<Move> getSaferMovesToward(OtherPlayer otherPlayer) {
-        Set<Move> saferMoves = getSaferMoves();
-        if (saferMoves.size() < 2) {
-            return saferMoves;
-        }
-        TreeMap<Integer, Set<Move>> distanceToMove = new TreeMap<Integer, Set<Move>>();
-        for (Move move : saferMoves) {
-            int distance = distanceFromPlayer(otherPlayer, move);
-            Set<Move> moves = distanceToMove.get(distance);
-            if (moves == null) {
-                moves = new HashSet<Move>();
-                distanceToMove.put(distance, moves);
-            }
-            moves.add(move);
-        }
-        return distanceToMove.firstEntry().getValue();
-    }
-
-    private int distanceFromPlayer(OtherPlayer otherPlayer, Move move) {
-        return distanceFromPlayer(otherPlayer, getPositionAfterMove(move));
-    }
-
-    private int distanceFromPlayer(OtherPlayer otherPlayer, Position position) {
-        int dx = position.x - otherPlayer.getX();
-        int dy = position.y - otherPlayer.getY();
-        return dx * dx + dy * dy;
-    }
-
-    OtherPlayer getAnotherPlayer() {
-        return otherPlayers.values().iterator().next();
     }
 }
 
@@ -434,3 +474,5 @@ class CrazyAggressiveTrapAvoider extends AggressiveStarter {
         return lastMove = getRandomMove(getSaferMovesToward(getAnotherPlayer()));
     }
 }
+
+// TODO: don't go in a tunnel of another player
