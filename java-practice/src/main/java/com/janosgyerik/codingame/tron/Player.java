@@ -294,6 +294,14 @@ abstract class BasePlayer implements IPlayer {
         return x != -1;
     }
 
+    private int countHoleSizeFromMove(Move move) {
+        return countHoleSize(initGrid(), getPositionAfterMove(move));
+    }
+
+    private int countHoleSize(char[][] grid, Position position) {
+        return countHoleSize(grid, position.x, position.y);
+    }
+
     int countHoleSize(char[][] grid, int x, int y) {
         if (!isValidPosition(x, y)) {
             return 0;
@@ -342,14 +350,6 @@ abstract class BasePlayer implements IPlayer {
             moves.add(move);
         }
         return holeSizeToMoves.lastEntry().getValue();
-    }
-
-    private int countHoleSizeFromMove(Move move) {
-        return countHoleSize(initGrid(), getPositionAfterMove(move));
-    }
-
-    private int countHoleSize(char[][] grid, Position position) {
-        return countHoleSize(grid, position.x, position.y);
     }
 
     Set<Move> getSaferMovesToward(OtherPlayer otherPlayer) {
