@@ -174,7 +174,7 @@ abstract class BasePlayer implements IPlayer {
 
     private int x;
     private int y;
-    protected Move lastMove;
+    private Move lastMove;
 
     private void initOtherPlayers(int p, PlayerInfo[] playerInfos) {
         for (int i = 0; i < playerInfos.length; ++i) {
@@ -290,6 +290,14 @@ abstract class BasePlayer implements IPlayer {
         return y;
     }
 
+    public Move getLastMove() {
+        return lastMove;
+    }
+
+    protected Move setAndReturnLastMove(Move move) {
+        return lastMove = move;
+    }
+
     public boolean isAlive() {
         return x != -1;
     }
@@ -368,8 +376,8 @@ abstract class BasePlayer implements IPlayer {
             moves.add(move);
         }
         Set<Move> saferMovesToward = distanceToMove.firstEntry().getValue();
-        return saferMovesToward.contains(otherPlayer.lastMove)
-                ? Collections.singleton(otherPlayer.lastMove)
+        return saferMovesToward.contains(otherPlayer.getLastMove())
+                ? Collections.singleton(otherPlayer.getLastMove())
                 : saferMovesToward;
     }
 
@@ -403,7 +411,7 @@ abstract class CrazyStarter extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
-        return lastMove = getRandomMove();
+        return setAndReturnLastMove(getRandomMove());
     }
 }
 
@@ -411,7 +419,7 @@ abstract class AggressiveStarter extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
-        return lastMove = getRandomMove(getSaferMovesToward(getAnotherPlayer()));
+        return setAndReturnLastMove(getRandomMove(getSaferMovesToward(getAnotherPlayer())));
     }
 }
 
@@ -427,10 +435,10 @@ class CrazyStraight extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        if (canMove(lastMove)) {
-            return lastMove;
+        if (canMove(getLastMove())) {
+            return getLastMove();
         }
-        return lastMove = getRandomMove();
+        return setAndReturnLastMove(getRandomMove());
     }
 }
 
@@ -439,7 +447,7 @@ class CrazyHoleAvoider extends CrazyStarter {
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
         Set<Move> saferMoves = getSaferMoves();
-        return lastMove = getRandomMove(saferMoves);
+        return setAndReturnLastMove(getRandomMove(saferMoves));
     }
 }
 
@@ -448,10 +456,10 @@ class CrazyStraightHoleAvoider extends CrazyStarter {
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
         Set<Move> saferMoves = getSaferMoves();
-        if (saferMoves.contains(lastMove)) {
-            return lastMove;
+        if (saferMoves.contains(getLastMove())) {
+            return getLastMove();
         }
-        return lastMove = saferMoves.iterator().next();
+        return setAndReturnLastMove(saferMoves.iterator().next());
     }
 }
 
@@ -460,10 +468,10 @@ class CrazyAggressiveStraightHoleAvoider extends AggressiveStarter {
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
         Set<Move> saferMoves = getSaferMoves();
-        if (saferMoves.contains(lastMove)) {
-            return lastMove;
+        if (saferMoves.contains(getLastMove())) {
+            return getLastMove();
         }
-        return lastMove = saferMoves.iterator().next();
+        return setAndReturnLastMove(saferMoves.iterator().next());
     }
 }
 
@@ -471,7 +479,7 @@ class CrazyAggressiveHoleAvoider extends AggressiveStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        return lastMove = getRandomMove(getSaferMovesToward(getAnotherPlayer()));
+        return setAndReturnLastMove(getRandomMove(getSaferMovesToward(getAnotherPlayer())));
     }
 }
 
