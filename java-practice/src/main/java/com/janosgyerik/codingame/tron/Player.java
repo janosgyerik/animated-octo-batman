@@ -116,6 +116,8 @@ abstract class BasePlayer implements IPlayer {
     static final int MAX_X = 29;
     static final int MIN_Y = 0;
     static final int MAX_Y = 19;
+    static final int MID_X = (MAX_X - MIN_X) / 2;
+    static final int MID_Y = (MAX_Y - MIN_Y) / 2;
 
     private final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
     final Set<BasePlayer> players = new HashSet<BasePlayer>();

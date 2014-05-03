@@ -3,7 +3,7 @@ package com.janosgyerik.codingame.tron;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CrazyLongStraightTest extends CrazyTest {
+public class CrazyLongStraightTest extends BasePlayerTest {
     @Override
     protected BasePlayer createPlayer() {
         return new CrazyLongStraight();

@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import java.util.Set;
 
-public class CrazyTest {
-    protected Position middle = new Position(BasePlayer.MAX_X / 2, BasePlayer.MAX_Y / 2);
-    private Position middleEdge = new Position(BasePlayer.MAX_X / 2, 0);
+public class BasePlayerTest {
+    protected Position middle = new Position(BasePlayer.MID_X, BasePlayer.MID_Y);
+    private Position middleEdge = new Position(BasePlayer.MID_X, 0);
     private Position corner = new Position(0, 0);
     private Position nearCorner = new Position(0, 1);
 
