@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyAggressiveStraightTrapAvoider();
+        return new CrazyAggressiveTrapAvoider();
     }
 
     public static void main(String args[]) {
@@ -339,26 +339,38 @@ abstract class AggressiveStarter extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
-        return lastMove = getRandomMove(getPossibleMovesToward(getAnotherPlayer()));
+        return lastMove = getRandomMove(getSaferMovesToward(getAnotherPlayer()));
     }
 
-    private Set<Move> getPossibleMovesToward(OtherPlayer otherPlayer) {
-        Set<Move> possibleMovesToward = new HashSet<Move>();
-        Set<Move> possibleMoves = getPossibleMoves();
-        if (getX() < otherPlayer.getX() && possibleMoves.contains(Move.RIGHT)) {
-            possibleMovesToward.add(Move.RIGHT);
-        } else if (getX() > otherPlayer.getX() && possibleMoves.contains(Move.LEFT)) {
-            possibleMovesToward.add(Move.LEFT);
+    Set<Move> getSaferMovesToward(OtherPlayer otherPlayer) {
+        Set<Move> saferMoves = getSaferMoves();
+        if (saferMoves.size() < 2) {
+            return saferMoves;
         }
-        if (getY() < otherPlayer.getY() && possibleMoves.contains(Move.DOWN)) {
-            possibleMovesToward.add(Move.DOWN);
-        } else if (getY() > otherPlayer.getY() && possibleMoves.contains(Move.UP)) {
-            possibleMovesToward.add(Move.UP);
+        TreeMap<Integer, Set<Move>> distanceToMove = new TreeMap<Integer, Set<Move>>();
+        for (Move move : saferMoves) {
+            int distance = distanceFromPlayer(otherPlayer, move);
+            Set<Move> moves = distanceToMove.get(distance);
+            if (moves == null) {
+                moves = new HashSet<Move>();
+                distanceToMove.put(distance, moves);
+            }
+            moves.add(move);
         }
-        return !possibleMovesToward.isEmpty() ? possibleMovesToward : possibleMoves;
+        return distanceToMove.firstEntry().getValue();
     }
 
-    private OtherPlayer getAnotherPlayer() {
+    private int distanceFromPlayer(OtherPlayer otherPlayer, Move move) {
+        return distanceFromPlayer(otherPlayer, getPositionAfterMove(move));
+    }
+
+    private int distanceFromPlayer(OtherPlayer otherPlayer, Position position) {
+        int dx = position.x - otherPlayer.getX();
+        int dy = position.y - otherPlayer.getY();
+        return dx * dx + dy * dy;
+    }
+
+    OtherPlayer getAnotherPlayer() {
         return otherPlayers.values().iterator().next();
     }
 }
@@ -412,5 +424,13 @@ class CrazyAggressiveStraightTrapAvoider extends AggressiveStarter {
             return lastMove;
         }
         return lastMove = saferMoves.iterator().next();
+    }
+}
+
+class CrazyAggressiveTrapAvoider extends AggressiveStarter {
+    @Override
+    public Move getNextMove(int p, PlayerInfo[] playerInfos) {
+        updatePositionHistory(p, playerInfos);
+        return lastMove = getRandomMove(getSaferMovesToward(getAnotherPlayer()));
     }
 }
