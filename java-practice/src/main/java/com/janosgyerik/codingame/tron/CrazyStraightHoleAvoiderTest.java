@@ -3,10 +3,10 @@ package com.janosgyerik.codingame.tron;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CrazyStraightTrapAvoiderTest extends BasePlayerTest {
+public class CrazyStraightHoleAvoiderTest extends BasePlayerTest {
     @Override
     protected BasePlayer createPlayer() {
-        return new CrazyStraightTrapAvoider();
+        return new CrazyStraightHoleAvoider();
     }
 
     private BasePlayer forceFirstMove(Move firstMove) {

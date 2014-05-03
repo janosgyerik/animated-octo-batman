@@ -5,7 +5,7 @@ import java.util.*;
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyAggressiveTrapAvoider();
+        return new CrazyAggressiveHoleAvoider();
     }
 
     public static void main(String args[]) {
@@ -434,7 +434,7 @@ class CrazyStraight extends CrazyStarter {
     }
 }
 
-class CrazyTrapAvoider extends CrazyStarter {
+class CrazyHoleAvoider extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
@@ -443,7 +443,7 @@ class CrazyTrapAvoider extends CrazyStarter {
     }
 }
 
-class CrazyStraightTrapAvoider extends CrazyStarter {
+class CrazyStraightHoleAvoider extends CrazyStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
@@ -455,7 +455,7 @@ class CrazyStraightTrapAvoider extends CrazyStarter {
     }
 }
 
-class CrazyAggressiveStraightTrapAvoider extends AggressiveStarter {
+class CrazyAggressiveStraightHoleAvoider extends AggressiveStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
@@ -467,7 +467,7 @@ class CrazyAggressiveStraightTrapAvoider extends AggressiveStarter {
     }
 }
 
-class CrazyAggressiveTrapAvoider extends AggressiveStarter {
+class CrazyAggressiveHoleAvoider extends AggressiveStarter {
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
