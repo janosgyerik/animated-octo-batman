@@ -119,7 +119,7 @@ abstract class BasePlayer implements IPlayer {
     static final int MID_X = (MAX_X - MIN_X) / 2;
     static final int MID_Y = (MAX_Y - MIN_Y) / 2;
 
-    private final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
+    final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
     final Set<BasePlayer> players = new HashSet<BasePlayer>();
     private final Set<Position> visitedPositions = new HashSet<Position>();
 
@@ -270,6 +270,34 @@ abstract class CrazyStarter extends BasePlayer {
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
         return lastMove = getRandomMove();
+    }
+}
+
+abstract class AggressiveStarter extends BasePlayer {
+    @Override
+    public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
+        initPositionHistory(p, playerInfos);
+        return lastMove = getRandomMove(getPossibleMovesToward(getAnotherPlayer()));
+    }
+
+    private Set<Move> getPossibleMovesToward(OtherPlayer otherPlayer) {
+        Set<Move> possibleMovesToward = new HashSet<Move>();
+        Set<Move> possibleMoves = getPossibleMoves();
+        if (getX() < otherPlayer.getX() && possibleMoves.contains(Move.RIGHT)) {
+            possibleMovesToward.add(Move.RIGHT);
+        } else if (getX() > otherPlayer.getX() && possibleMoves.contains(Move.LEFT)) {
+            possibleMovesToward.add(Move.LEFT);
+        }
+        if (getY() < otherPlayer.getY() && possibleMoves.contains(Move.DOWN)) {
+            possibleMovesToward.add(Move.DOWN);
+        } else if (getY() > otherPlayer.getY() && possibleMoves.contains(Move.UP)) {
+            possibleMovesToward.add(Move.UP);
+        }
+        return !possibleMovesToward.isEmpty() ? possibleMovesToward : possibleMoves;
+    }
+
+    private OtherPlayer getAnotherPlayer() {
+        return otherPlayers.values().iterator().next();
     }
 }
 
