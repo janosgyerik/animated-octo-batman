@@ -239,6 +239,17 @@ abstract class BasePlayer implements IPlayer {
         return possibleMoves;
     }
 
+    public int countPossibleMoves(Move afterMove) {
+        int count = 0;
+        Position position = getPositionAfterMove(afterMove);
+        for (Move move : Move.MOVES) {
+            if (isValidAndAvailablePosition(Position.plusMove(position, move))) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
     public boolean canMove(Move targetMove) {
         return isValidAndAvailablePosition(getPositionAfterMove(targetMove));
     }
@@ -371,8 +382,22 @@ abstract class BasePlayer implements IPlayer {
         return holeSizeToMoves.lastEntry().getValue();
     }
 
-    Set<Move> getSaferMovesToward(OtherPlayer otherPlayer) {
+    Set<Move> getEvenSaferMoves() {
         Set<Move> saferMoves = getSaferMoves();
+        if (saferMoves.size() < 2) {
+            return saferMoves;
+        }
+        Set<Move> evenSaferMoves = new HashSet<Move>();
+        for (Move move : saferMoves) {
+            if (countPossibleMoves(move) > 1) {
+                evenSaferMoves.add(move);
+            }
+        }
+        return !evenSaferMoves.isEmpty() ? evenSaferMoves : saferMoves;
+    }
+
+    Set<Move> getSaferMovesToward(OtherPlayer otherPlayer) {
+        Set<Move> saferMoves = getEvenSaferMoves();
         if (saferMoves.size() < 2) {
             return saferMoves;
         }
@@ -495,5 +520,7 @@ class CrazyAggressiveHoleAvoider extends AggressiveStarter {
 }
 
 // TODO: don't go in a tunnel of another player
+
+// TODO: don't go in an area that can become a small hole controlled by the other player
 
 // TODO: if next move will cut off the other player, take it, example: y: (10,10)(8,6)
