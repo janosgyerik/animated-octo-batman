@@ -7,16 +7,16 @@ class CrazyLongStraight extends BasePlayer {
     @Override
     public Move getFirstMove(int p, PlayerInfo[] playerInfos) {
         initPositionHistory(p, playerInfos);
-        return lastMove = getLongestStraightMove();
+        return setAndReturnLastMove(getLongestStraightMove());
     }
 
     @Override
     public Move getNextMove(int p, PlayerInfo[] playerInfos) {
         updatePositionHistory(p, playerInfos);
-        if (canMove(lastMove)) {
-            return lastMove;
+        if (canMove(getLastMove())) {
+            return getLastMove();
         }
-        return lastMove = getLongestStraightMove();
+        return setAndReturnLastMove(getLongestStraightMove());
     }
 
     protected Move getLongestStraightMove() {
@@ -49,7 +49,7 @@ class CrazyLongStraight extends BasePlayer {
                 break;
         }
         int i = 1;
-        while (isValidAndAvailablePosition(getX() + xm * i, getY() + ym * i)) {
+        while (isValidAndAvailablePosition(new Position(getX() + xm * i, getY() + ym * i))) {
             ++i;
         }
         return i - 1;
