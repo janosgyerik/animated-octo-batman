@@ -2,6 +2,8 @@ package com.janosgyerik.codingame.tron;
 
 import java.util.*;
 
+// TODO
+// stop following other player if unreachable
 class Player {
 
     private static IPlayer createPlayer() {

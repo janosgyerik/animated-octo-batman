@@ -15,7 +15,7 @@ public class GetSaferMovesTowardTest extends AbstractPlayerTest {
         BasePlayer player = createPlayer();
         for (Move move : Move.MOVES) {
             player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE, Position.plusMove(MIDDLE, move))});
-            Assert.assertEquals(move, player.lastMove);
+            Assert.assertEquals(move, player.getLastMove());
         }
     }
 
@@ -28,7 +28,7 @@ public class GetSaferMovesTowardTest extends AbstractPlayerTest {
                     new PlayerInfo(MIDDLE, Position.plusMove(MIDDLE, move))
             });
             BasePlayer otherPlayer = player.getAnotherPlayer();
-            Assert.assertEquals(move, otherPlayer.lastMove);
+            Assert.assertEquals(move, otherPlayer.getLastMove());
         }
     }
 
@@ -42,7 +42,7 @@ public class GetSaferMovesTowardTest extends AbstractPlayerTest {
                         Position.plusMove(MIDDLE, Move.DOWN))
         });
         OtherPlayer otherPlayer = player.getAnotherPlayer();
-        Assert.assertEquals(Move.RIGHT, otherPlayer.lastMove);
+        Assert.assertEquals(Move.RIGHT, otherPlayer.getLastMove());
 
         Assert.assertEquals(3, player.getSaferMoves().size());
         Set<Move> saferMovesToward = player.getSaferMovesToward(otherPlayer);
@@ -60,7 +60,7 @@ public class GetSaferMovesTowardTest extends AbstractPlayerTest {
                         Position.plusMove(MIDDLE, Move.DOWN))
         });
         OtherPlayer otherPlayer = player.getAnotherPlayer();
-        Assert.assertEquals(Move.LEFT, otherPlayer.lastMove);
+        Assert.assertEquals(Move.LEFT, otherPlayer.getLastMove());
 
         Assert.assertEquals(3, player.getSaferMoves().size());
         Set<Move> saferMovesToward = player.getSaferMovesToward(otherPlayer);
@@ -78,7 +78,7 @@ public class GetSaferMovesTowardTest extends AbstractPlayerTest {
                         Position.plusMove(MIDDLE, Move.RIGHT))
         });
         OtherPlayer otherPlayer = player.getAnotherPlayer();
-        Assert.assertEquals(Move.UP, otherPlayer.lastMove);
+        Assert.assertEquals(Move.UP, otherPlayer.getLastMove());
 
         Assert.assertEquals(3, player.getSaferMoves().size());
         Set<Move> saferMovesToward = player.getSaferMovesToward(otherPlayer);
@@ -96,7 +96,7 @@ public class GetSaferMovesTowardTest extends AbstractPlayerTest {
                         Position.plusMove(MIDDLE, Move.RIGHT))
         });
         OtherPlayer otherPlayer = player.getAnotherPlayer();
-        Assert.assertEquals(Move.DOWN, otherPlayer.lastMove);
+        Assert.assertEquals(Move.DOWN, otherPlayer.getLastMove());
 
         Assert.assertEquals(3, player.getSaferMoves().size());
         Set<Move> saferMovesToward = player.getSaferMovesToward(otherPlayer);

@@ -6,11 +6,7 @@ import org.junit.Test;
 
 import java.util.Set;
 
-public class BasePlayerTest {
-    protected Position middle = new Position(BasePlayer.MID_X, BasePlayer.MID_Y);
-    private Position middleEdge = new Position(BasePlayer.MID_X, 0);
-    private Position corner = new Position(0, 0);
-    private Position nearCorner = new Position(0, 1);
+public class BasePlayerTest extends AbstractPlayerTest {
 
     protected BasePlayer createPlayer() {
         return new Crazy();
@@ -18,10 +14,10 @@ public class BasePlayerTest {
 
     @Test
     public void can_play_alone_at_least_one_round() {
-        getFirstMove(createPlayer(), middle);
-        getFirstMove(createPlayer(), middleEdge);
-        getFirstMove(createPlayer(), corner);
-        getFirstMove(createPlayer(), nearCorner);
+        getFirstMove(createPlayer(), MIDDLE);
+        getFirstMove(createPlayer(), HORIZONTAL_EDGE_CENTER);
+        getFirstMove(createPlayer(), CORNER);
+        getFirstMove(createPlayer(), NEAR_CORNER);
     }
 
     private Move getFirstMove(BasePlayer player, Position position) {
@@ -69,85 +65,85 @@ public class BasePlayerTest {
 
     @Ignore
     @Test
-    public void test_can_play_at_least_8_rounds_from_middle() {
-        play(10, 8, middle);
+    public void test_can_play_at_least_8_rounds_from_MIDDLE() {
+        play(10, 8, MIDDLE);
     }
 
     @Ignore
     @Test
     public void test_can_play_at_least_5_rounds_from_side() {
-        play(50, 5, middleEdge);
+        play(50, 5, HORIZONTAL_EDGE_CENTER);
     }
 
     @Ignore
     @Test
     public void test_can_play_at_least_3_rounds_from_near_corner() {
-        play(100, 3, nearCorner);
+        play(100, 3, NEAR_CORNER);
     }
 
     @Ignore
     @Test(expected = AssertionError.class)
     public void test_cannot_always_play_100_rounds_from_near_corner() {
-        play(10, 100, nearCorner);
+        play(10, 100, NEAR_CORNER);
     }
 
     @Test
-    public void test_can_move_to_4_directions_from_middle() {
+    public void test_can_move_to_4_directions_from_MIDDLE() {
         BasePlayer player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         Assert.assertEquals(4, player.getPossibleMoves().size());
     }
 
     @Test
     public void test_can_move_to_3_directions_from_edge() {
         BasePlayer player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middleEdge)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(HORIZONTAL_EDGE_CENTER)});
         Assert.assertEquals(3, player.getPossibleMoves().size());
     }
 
     @Test
     public void test_can_move_to_2_directions_from_corner() {
         BasePlayer player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(corner)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(CORNER)});
         Assert.assertEquals(2, player.getPossibleMoves().size());
     }
 
     @Test
     public void test_cannot_move_back_where_came_from() {
         BasePlayer player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         Assert.assertEquals(4, player.getPossibleMoves().size());
 
         player.updatePositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle.x, middle.y, middle.x + 1, middle.y)
+                new PlayerInfo(MIDDLE.x, MIDDLE.y, MIDDLE.x + 1, MIDDLE.y)
         });
         Assert.assertEquals(3, player.getPossibleMoves().size());
 
         player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         player.updatePositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle.x, middle.y, middle.x - 1, middle.y)
+                new PlayerInfo(MIDDLE.x, MIDDLE.y, MIDDLE.x - 1, MIDDLE.y)
         });
         Assert.assertEquals(3, player.getPossibleMoves().size());
 
         player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         player.updatePositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle.x, middle.y, middle.x, middle.y + 1)
+                new PlayerInfo(MIDDLE.x, MIDDLE.y, MIDDLE.x, MIDDLE.y + 1)
         });
         Assert.assertEquals(3, player.getPossibleMoves().size());
 
         player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         player.updatePositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle.x, middle.y, middle.x, middle.y - 1)
+                new PlayerInfo(MIDDLE.x, MIDDLE.y, MIDDLE.x, MIDDLE.y - 1)
         });
         Assert.assertEquals(3, player.getPossibleMoves().size());
 
         player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         player.updatePositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle.x, middle.y, middle.x + 1, middle.y + 1)
+                new PlayerInfo(MIDDLE.x, MIDDLE.y, MIDDLE.x + 1, MIDDLE.y + 1)
         });
         Assert.assertEquals(4, player.getPossibleMoves().size());
     }
@@ -155,36 +151,36 @@ public class BasePlayerTest {
     @Test
     public void test_blocked_by_another_player() {
         BasePlayer player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         Assert.assertEquals(4, player.getPossibleMoves().size());
 
         player.initPositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x + 1, middle.y))
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x + 1, MIDDLE.y))
         });
         Assert.assertEquals(3, player.getPossibleMoves().size());
 
         player.initPositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x + 1, middle.y)),
-                new PlayerInfo(new Position(middle.x - 1, middle.y))
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x + 1, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x - 1, MIDDLE.y))
         });
         Assert.assertEquals(2, player.getPossibleMoves().size());
 
         player.initPositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x + 1, middle.y)),
-                new PlayerInfo(new Position(middle.x - 1, middle.y)),
-                new PlayerInfo(new Position(middle.x, middle.y + 1))
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x + 1, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x - 1, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x, MIDDLE.y + 1))
         });
         Assert.assertEquals(1, player.getPossibleMoves().size());
 
         player.initPositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x + 1, middle.y)),
-                new PlayerInfo(new Position(middle.x - 1, middle.y)),
-                new PlayerInfo(new Position(middle.x, middle.y + 1)),
-                new PlayerInfo(new Position(middle.x, middle.y - 1))
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x + 1, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x - 1, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x, MIDDLE.y + 1)),
+                new PlayerInfo(new Position(MIDDLE.x, MIDDLE.y - 1))
         });
         Set<Move> moves = player.getPossibleMoves();
         Assert.assertEquals(1, moves.size());
@@ -194,19 +190,19 @@ public class BasePlayerTest {
     @Test
     public void test_ignore_lost_players() {
         BasePlayer player = createPlayer();
-        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(middle)});
+        player.initPositionHistory(0, new PlayerInfo[]{new PlayerInfo(MIDDLE)});
         Assert.assertEquals(4, player.getPossibleMoves().size());
 
         player.initPositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(0, 0, middle.x + 1, middle.y)
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(0, 0, MIDDLE.x + 1, MIDDLE.y)
         });
         Assert.assertEquals(3, player.getPossibleMoves().size());
 
         player = createPlayer();
         player.initPositionHistory(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(-1, -1, middle.x + 1, middle.y)
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(-1, -1, MIDDLE.x + 1, MIDDLE.y)
         });
         Assert.assertEquals(4, player.getPossibleMoves().size());
     }

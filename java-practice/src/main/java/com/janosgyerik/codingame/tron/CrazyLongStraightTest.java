@@ -13,24 +13,24 @@ public class CrazyLongStraightTest extends BasePlayerTest {
     public void test_choose_longer_straight_direction() {
         BasePlayer player = createPlayer();
         Assert.assertEquals(Move.LEFT, player.getFirstMove(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x + 3, middle.y))
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x + 3, MIDDLE.y))
         }));
         Assert.assertEquals(Move.RIGHT, player.getFirstMove(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x - 3, middle.y))
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x - 3, MIDDLE.y))
         }));
         Assert.assertEquals(Move.UP, player.getFirstMove(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x - 3, middle.y)),
-                new PlayerInfo(new Position(middle.x + 3, middle.y)),
-                new PlayerInfo(new Position(middle.x, middle.y + 3)),
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x - 3, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x + 3, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x, MIDDLE.y + 3)),
         }));
         Assert.assertEquals(Move.DOWN, player.getFirstMove(0, new PlayerInfo[]{
-                new PlayerInfo(middle),
-                new PlayerInfo(new Position(middle.x - 3, middle.y)),
-                new PlayerInfo(new Position(middle.x + 3, middle.y)),
-                new PlayerInfo(new Position(middle.x, middle.y - 3)),
+                new PlayerInfo(MIDDLE),
+                new PlayerInfo(new Position(MIDDLE.x - 3, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x + 3, MIDDLE.y)),
+                new PlayerInfo(new Position(MIDDLE.x, MIDDLE.y - 3)),
         }));
     }
 }
