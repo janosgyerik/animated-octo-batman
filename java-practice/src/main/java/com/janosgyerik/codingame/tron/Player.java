@@ -2,12 +2,20 @@ package com.janosgyerik.codingame.tron;
 
 import java.util.*;
 
-// TODO
-// stop following other player if unreachable
+// TODO stop following other player if unreachable
+
+// TODO consider potential hole if target player keeps going in the same direction
+
+// TODO consider potential hole if all other players keep going in the same direction
+
+// TODO if next move will cut off the other player, do it, example: y: (10,10)(8,6)
+
+// TODO if dominating a space, don't diminish it, fill it well
+
 class Player {
 
     private static IPlayer createPlayer() {
-        return new CrazyAggressiveHoleAvoider();
+        return new CrazyIntercepterHoleAvoider();
     }
 
     public static void main(String args[]) {
@@ -167,8 +175,9 @@ abstract class BasePlayer implements IPlayer {
     static final int MID_Y = (MAX_Y - MIN_Y) / 2;
 
     private static final char USED = '1';
-    private static final char FREE = '0';
-    private static final char REACHABLE = ' ';
+    static final char FREE = '0';
+    static final char REACHABLE = ' ';
+    static final char TARGET = 'x';
 
     final Map<Integer, OtherPlayer> otherPlayers = new HashMap<Integer, OtherPlayer>();
     final Set<BasePlayer> players = new HashSet<BasePlayer>();
@@ -521,8 +530,58 @@ class CrazyAggressiveHoleAvoider extends AggressiveStarter {
     }
 }
 
-// TODO: don't go in a tunnel of another player
+class CrazyIntercepterHoleAvoider extends AggressiveStarter {
+    @Override
+    public Move getNextMove(int p, PlayerInfo[] playerInfos) {
+        updatePositionHistory(p, playerInfos);
+        OtherPlayer reachablePlayer = getReachablePlayer();
+        if (reachablePlayer != null) {
+            return setAndReturnLastMove(getRandomMove(getSaferMovesToward(reachablePlayer)));
+        }
+        Set<Move> saferMoves = getSaferMoves();
+        if (saferMoves.contains(getLastMove())) {
+            return getLastMove();
+        }
+        return setAndReturnLastMove(saferMoves.iterator().next());
+    }
 
-// TODO: don't go in an area that can become a small hole controlled by the other player
+    OtherPlayer getReachablePlayer() {
+        for (OtherPlayer otherPlayer : otherPlayers.values()) {
+            if (isReachable(otherPlayer)) {
+                return otherPlayer;
+            }
+        }
+        return null;
+    }
 
-// TODO: if next move will cut off the other player, take it, example: y: (10,10)(8,6)
+    private boolean isReachable(OtherPlayer otherPlayer) {
+        return isReachable(otherPlayer.getPosition());
+    }
+
+    private boolean isReachable(Position target) {
+        char[][] grid = initGrid();
+        grid[target.x][target.y] = TARGET;
+        return isReachable(grid, getPosition());
+    }
+
+    private boolean isReachable(char[][] grid, Position position) {
+        return isReachable(grid, position.x, position.y);
+    }
+
+    boolean isReachable(char[][] grid, int x, int y) {
+        if (!isValidPosition(x, y)) {
+            return false;
+        }
+        if (grid[x][y] == TARGET) {
+            return true;
+        }
+        if (grid[x][y] == FREE) {
+            grid[x][y] = REACHABLE;
+            return isReachable(grid, x + 1, y)
+                   || isReachable(grid, x - 1, y)
+                   || isReachable(grid, x, y + 1)
+                   || isReachable(grid, x, y - 1);
+        }
+        return false;
+    }
+}
