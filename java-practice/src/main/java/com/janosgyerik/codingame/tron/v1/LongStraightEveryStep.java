@@ -1,4 +1,4 @@
-package com.janosgyerik.codingame.tron;
+package com.janosgyerik.codingame.tron.v1;
 
 class LongStraightEveryStep extends CrazyLongStraight {
     @Override

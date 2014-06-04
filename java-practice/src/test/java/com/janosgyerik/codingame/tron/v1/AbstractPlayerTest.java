@@ -1,4 +1,7 @@
-package com.janosgyerik.codingame.tron;
+package com.janosgyerik.codingame.tron.v1;
+
+import com.janosgyerik.codingame.tron.v1.BasePlayer;
+import com.janosgyerik.codingame.tron.v1.Position;
 
 public abstract class AbstractPlayerTest {
     static final Position MIDDLE = new Position(BasePlayer.MID_X, BasePlayer.MID_Y);
