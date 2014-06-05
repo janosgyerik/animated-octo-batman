@@ -22,7 +22,7 @@ import java.util.*;
 
 class Player {
 
-    private static final int LOST_PLAYER_X = -1;
+    static final int LOST_PLAYER_X = -1;
 
     private static IPlayer createPlayer() {
         return null;
@@ -275,6 +275,81 @@ class RectangleGrid implements Grid {
         for (Position position : toRemove) {
             positions.remove(position);
         }
+    }
+}
+
+abstract class BasePlayer implements IPlayer {
+    Set<OtherPlayer> getOtherPlayers(int index, Position[] positions) {
+        Set<OtherPlayer> otherPlayers = new HashSet<OtherPlayer>();
+        for (int i = 0; i < positions.length; ++i) {
+            Position position = positions[i];
+            if (i != index && position.x != Player.LOST_PLAYER_X) {
+                otherPlayers.add(new OtherPlayer(position));
+            }
+        }
+        return otherPlayers;
+    }
+
+    OtherPlayer getClosestPlayer(int index, Position[] positions) {
+        Set<OtherPlayer> otherPlayers = getOtherPlayers(index, positions);
+        return getClosestPlayer(otherPlayers);
+    }
+
+    private OtherPlayer getClosestPlayer(Set<OtherPlayer> otherPlayers) {
+        if (otherPlayers.size() == 1) {
+            return otherPlayers.iterator().next();
+        }
+        // TODO
+        return otherPlayers.iterator().next();
+    }
+
+    OtherPlayer getClosestReachablePlayer(int index, Position[] positions) {
+        Set<OtherPlayer> otherPlayers = getOtherPlayers(index, positions);
+        return getClosestReachablePlayer(otherPlayers);
+    }
+
+    private OtherPlayer getClosestReachablePlayer(Set<OtherPlayer> otherPlayers) {
+        SortedMap<Integer, OtherPlayer> distanceToPlayers = new TreeMap<Integer, OtherPlayer>();
+        for (OtherPlayer otherPlayer : otherPlayers) {
+            int distance = getDistance(otherPlayer);
+            if (distance > 0) {
+                distanceToPlayers.put(distance, otherPlayer);
+            }
+        }
+        if (distanceToPlayers.isEmpty()) {
+            return null;
+        }
+        return distanceToPlayers.get(distanceToPlayers.firstKey());
+    }
+
+    private int getDistance(OtherPlayer otherPlayer) {
+        return 0;
+    }
+
+}
+
+class OtherPlayer extends BasePlayer {
+    final Position position;
+
+    public OtherPlayer(Position position) {
+        this.position = position;
+    }
+
+    @Override
+    public Move getNextMove(int index, Position[] positions, Grid grid) {
+        return null;
+    }
+}
+
+class CarefulInterceptor extends BasePlayer {
+    @Override
+    public Move getNextMove(int index, Position[] positions, Grid grid) {
+        Position me = positions[index];
+        Set<OtherPlayer> otherPlayers = getOtherPlayers(index, positions);
+        // TODO get possible moves in the direction of the closest reachable player
+        OtherPlayer enemy = getClosestReachablePlayer(index, positions);
+        // TODO
+        return null;
     }
 
 }
