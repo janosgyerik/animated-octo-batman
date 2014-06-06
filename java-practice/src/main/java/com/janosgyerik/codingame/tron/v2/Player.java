@@ -4,21 +4,23 @@ import java.util.*;
 
 // TODO stop following other player if unreachable
 
+// TODO prefer moves that reduce the freedom of the other player
+
+// TODO avoid moves that give the other player the opportunity to reduce freedom
+// MEMO in addition, when close to the enemy, prefer the same direction
+
 // TODO consider potential hole if target player keeps going in the same direction
 
 // TODO consider potential hole if all other players keep going in the same direction
 
-// TODO if next move will cut off the other player, do it, example: y: (10,10)(8,6)
-// MEMO count reachable positions of other players after a move
+// TODO consider the ability of cutting off players by repeating same move from current pos,
+// or from current pos + move
 
 // TODO if dominating a space, don't diminish it, fill it well
 // MEMO if no reachable players (keep in mind though a dead player might open a wall)
 // MEMO fill well by following a wall in a "safe" direction
 
 // TODO which reachable player is best to attack? the weak or the strong?
-
-// TODO consider the ability of cutting off players by repeating same move from current pos,
-// or from current pos + move
 
 class Player {
 
@@ -32,13 +34,14 @@ class Player {
         Scanner in = new Scanner(System.in);
 
         Grid grid = new RectangleGrid(30, 20);
-        IPlayer me = createPlayer();
+        IPlayer player = createPlayer();
 
         while (true) {
             int n = in.nextInt();
             int index = in.nextInt();
 
-            Position[] positions = new Position[n];
+            Position me = null;
+            Set<Position> others = new HashSet<Position>();
 
             for (int i = 0; i < n; ++i) {
                 int x0 = in.nextInt();
@@ -46,16 +49,21 @@ class Player {
                 int x1 = in.nextInt();
                 int y1 = in.nextInt();
 
-                positions[i] = new Position(x1, y1);
-
                 if (x0 == LOST_PLAYER_X) {
                     grid.removePlayer(i);
                 } else {
+                    Position position = new Position(x1, y1);
                     grid.addPosition(i, new Position(x0, y0));
-                    grid.addPosition(i, new Position(x1, y1));
+                    grid.addPosition(i, position);
+
+                    if (i == index) {
+                        me = position;
+                    } else {
+                        others.add(position);
+                    }
                 }
             }
-            System.out.println(me.getNextMove(index, positions, grid));
+            System.out.println(player.getNextMove(me, others, grid));
         }
     }
 }
@@ -83,7 +91,7 @@ enum Move {
 }
 
 interface IPlayer {
-    Move getNextMove(int index, Position[] positions, Grid grid);
+    Move getNextMove(Position me, Set<Position> others, Grid grid);
 }
 
 class Position {
@@ -173,6 +181,8 @@ interface Grid {
     Set<Position> getAvailablePositions();
 
     Set<Move> getMovesToward(Position from, Position to);
+
+    Position getClosestReachablePosition(Position me, Set<Position> others);
 }
 
 class RectangleGrid implements Grid {
@@ -240,6 +250,21 @@ class RectangleGrid implements Grid {
         return toward;
     }
 
+    @Override
+    public Position getClosestReachablePosition(Position me, Set<Position> others) {
+        SortedMap<Integer, Position> distanceToOthers = new TreeMap<Integer, Position>();
+        for (Position other : others) {
+            int distance = getDistance(me, other);
+            if (distance > 0) {
+                distanceToOthers.put(distance, other);
+            }
+        }
+        if (distanceToOthers.isEmpty()) {
+            return null;
+        }
+        return distanceToOthers.get(distanceToOthers.firstKey());
+    }
+
     private int getDistance(Position from, Position to) {
         // TODO traverse the grid properly instead of this dumb implementation
         int x = from.x - to.x;
@@ -294,7 +319,16 @@ class RectangleGrid implements Grid {
 
     @Override
     public Set<Move> getSaferMovesFrom(Position position) {
-        return null;
+        SortedMap<Integer, Set<Move>> saferMoves = new TreeMap<Integer, Set<Move>>();
+        for (Move move : getPossibleMovesFrom(position)) {
+            Position newPosition = Position.plusMove(position, move);
+            int num = countReachablePositionsFrom(newPosition);
+            if (!saferMoves.containsKey(num)) {
+                saferMoves.put(num, new HashSet<Move>());
+            }
+            saferMoves.get(num).add(move);
+        }
+        return saferMoves.isEmpty() ? Collections.<Move>emptySet() : saferMoves.get(saferMoves.lastKey());
     }
 
     @Override
@@ -330,66 +364,7 @@ class RectangleGrid implements Grid {
 }
 
 abstract class BasePlayer implements IPlayer {
-    Set<OtherPlayer> getOtherPlayers(int index, Position[] positions) {
-        Set<OtherPlayer> otherPlayers = new HashSet<OtherPlayer>();
-        for (int i = 0; i < positions.length; ++i) {
-            Position position = positions[i];
-            if (i != index && position.x != Player.LOST_PLAYER_X) {
-                otherPlayers.add(new OtherPlayer(position));
-            }
-        }
-        return otherPlayers;
-    }
 
-    OtherPlayer getClosestPlayer(int index, Position[] positions) {
-        Set<OtherPlayer> otherPlayers = getOtherPlayers(index, positions);
-        return getClosestPlayer(otherPlayers);
-    }
-
-    private OtherPlayer getClosestPlayer(Set<OtherPlayer> otherPlayers) {
-        if (otherPlayers.size() == 1) {
-            return otherPlayers.iterator().next();
-        }
-        // TODO
-        return otherPlayers.iterator().next();
-    }
-
-    OtherPlayer getClosestReachablePlayer(int index, Position[] positions) {
-        Set<OtherPlayer> otherPlayers = getOtherPlayers(index, positions);
-        return getClosestReachablePlayer(otherPlayers);
-    }
-
-    private OtherPlayer getClosestReachablePlayer(Set<OtherPlayer> otherPlayers) {
-        SortedMap<Integer, OtherPlayer> distanceToPlayers = new TreeMap<Integer, OtherPlayer>();
-        for (OtherPlayer otherPlayer : otherPlayers) {
-            int distance = getDistance(otherPlayer);
-            if (distance > 0) {
-                distanceToPlayers.put(distance, otherPlayer);
-            }
-        }
-        if (distanceToPlayers.isEmpty()) {
-            return null;
-        }
-        return distanceToPlayers.get(distanceToPlayers.firstKey());
-    }
-
-    private int getDistance(OtherPlayer otherPlayer) {
-        return 0;
-    }
-
-}
-
-class OtherPlayer extends BasePlayer {
-    final Position position;
-
-    public OtherPlayer(Position position) {
-        this.position = position;
-    }
-
-    @Override
-    public Move getNextMove(int index, Position[] positions, Grid grid) {
-        return null;
-    }
 }
 
 class CarefulInterceptor extends BasePlayer {
@@ -400,12 +375,11 @@ class CarefulInterceptor extends BasePlayer {
     }
 
     @Override
-    public Move getNextMove(int index, Position[] positions, Grid grid) {
-        Position me = positions[index];
+    public Move getNextMove(Position me, Set<Position> others, Grid grid) {
         Set<Move> safer = grid.getSaferMovesFrom(me);
-        OtherPlayer enemy = getClosestReachablePlayer(index, positions);
-        if (enemy != null) {
-            Set<Move> toward = grid.getMovesToward(me, enemy.position);
+        Position target = grid.getClosestReachablePosition(me, others);
+        if (target != null) {
+            Set<Move> toward = grid.getMovesToward(me, target);
             if (toward.contains(lastMove) && safer.contains(lastMove)) {
                 return lastMove;
             }
@@ -419,6 +393,7 @@ class CarefulInterceptor extends BasePlayer {
             if (safer.contains(lastMove)) {
                 return lastMove;
             }
+            return safer.iterator().next();
         }
         return Move.IMPOSSIBLE;
     }
