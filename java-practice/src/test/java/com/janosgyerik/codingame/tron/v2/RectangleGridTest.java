@@ -107,6 +107,47 @@ public class RectangleGridTest {
         });
         position = grid.getFirstPosition(9);
         Assert.assertEquals(1, grid.getPossibleMovesFrom(position).size());
+
+        grid = createGridFromString(new String[]{
+                "191",
+                "2 2"
+        });
+        position = grid.getFirstPosition(9);
+        Assert.assertEquals(1, grid.getPossibleMovesFrom(position).size());
+    }
+
+    @Test
+    public void testRemovePlayer() {
+        RectangleGrid grid = createGridFromString(new String[]{
+                "  1",
+                "291",
+        });
+        Assert.assertEquals(2, grid.getAvailablePositions().size());
+
+        grid.removePlayer(2);
+        Assert.assertEquals(3, grid.getAvailablePositions().size());
+
+        grid.removePlayer(1);
+        Assert.assertEquals(5, grid.getAvailablePositions().size());
+
+        grid.removePlayer(9);
+        Assert.assertEquals(6, grid.getAvailablePositions().size());
+
+        grid.removePlayer(19);
+    }
+
+    @Test
+    public void testCountReachablePositionsFrom() {
+        RectangleGrid grid;
+        Position position;
+
+        grid = createGridFromString(new String[]{
+                "9 "
+        });
+        position = grid.getFirstPosition(9);
+        Assert.assertEquals(0, grid.countReachablePositionsFrom(position));
+        grid.removePlayer(9);
+        Assert.assertEquals(2, grid.countReachablePositionsFrom(position));
     }
 
     private RectangleGrid createGridFromString(String[] strings) {

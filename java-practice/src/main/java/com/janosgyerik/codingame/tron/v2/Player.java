@@ -25,7 +25,7 @@ class Player {
     static final int LOST_PLAYER_X = -1;
 
     private static IPlayer createPlayer() {
-        return null;
+        return new CarefulInterceptor();
     }
 
     public static void main(String args[]) {
@@ -169,6 +169,8 @@ interface Grid {
     Grid copy(Grid other);
 
     Position getFirstPosition(int playerIndex);
+
+    Set<Position> getAvailablePositions();
 }
 
 class RectangleGrid implements Grid {
@@ -210,6 +212,20 @@ class RectangleGrid implements Grid {
     }
 
     @Override
+    public Set<Position> getAvailablePositions() {
+        Set<Position> available = new HashSet<Position>();
+        for (int i = 0; i < width; ++i) {
+            for (int j = 0; j < height; ++j) {
+                Position position = new Position(i, j);
+                if (isAvailablePosition(position)) {
+                    available.add(position);
+                }
+            }
+        }
+        return available;
+    }
+
+    @Override
     public boolean containsPosition(Position position) {
         return position.x >= 0 && position.x < width && position.y >= 0 && position.y < height;
     }
@@ -226,7 +242,20 @@ class RectangleGrid implements Grid {
 
     @Override
     public int countReachablePositionsFrom(Position position) {
-        return 0;
+        return countReachablePositionsFrom(copy(this), position);
+    }
+
+    private int countReachablePositionsFrom(Grid grid, Position position) {
+        if (!grid.containsPosition(position) || !grid.isAvailablePosition(position)) {
+            return 0;
+        }
+        grid.addPosition(Integer.MAX_VALUE, position);
+        int count = 1;
+        for (Move move : Move.MOVES) {
+            Position next = Position.plusMove(position, move);
+            count += countReachablePositionsFrom(grid, next);
+        }
+        return count;
     }
 
     @Override
