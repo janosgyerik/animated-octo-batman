@@ -171,6 +171,8 @@ interface Grid {
     Position getFirstPosition(int playerIndex);
 
     Set<Position> getAvailablePositions();
+
+    Set<Move> getMovesToward(Position from, Position to);
 }
 
 class RectangleGrid implements Grid {
@@ -223,6 +225,26 @@ class RectangleGrid implements Grid {
             }
         }
         return available;
+    }
+
+    @Override
+    public Set<Move> getMovesToward(Position from, Position to) {
+        Set<Move> toward = new HashSet<Move>();
+        int distance = getDistance(from, to);
+        for (Move move : Move.MOVES) {
+            Position next = Position.plusMove(from, move);
+            if (containsPosition(next) && getDistance(next, to) < distance) {
+                toward.add(move);
+            }
+        }
+        return toward;
+    }
+
+    private int getDistance(Position from, Position to) {
+        // TODO traverse the grid properly instead of this dumb implementation
+        int x = from.x - to.x;
+        int y = from.y - to.y;
+        return x * x + y * y;
     }
 
     @Override
@@ -371,14 +393,34 @@ class OtherPlayer extends BasePlayer {
 }
 
 class CarefulInterceptor extends BasePlayer {
+    private Move lastMove = Move.RIGHT;
+
+    private Move setAndReturnLastMove(Move move) {
+        return lastMove = move;
+    }
+
     @Override
     public Move getNextMove(int index, Position[] positions, Grid grid) {
         Position me = positions[index];
-        Set<OtherPlayer> otherPlayers = getOtherPlayers(index, positions);
-        // TODO get possible moves in the direction of the closest reachable player
+        Set<Move> safer = grid.getSaferMovesFrom(me);
         OtherPlayer enemy = getClosestReachablePlayer(index, positions);
-        // TODO
-        return null;
+        if (enemy != null) {
+            Set<Move> toward = grid.getMovesToward(me, enemy.position);
+            if (toward.contains(lastMove) && safer.contains(lastMove)) {
+                return lastMove;
+            }
+            for (Move move : toward) {
+                if (safer.contains(move)) {
+                    return setAndReturnLastMove(move);
+                }
+            }
+        }
+        if (!safer.isEmpty()) {
+            if (safer.contains(lastMove)) {
+                return lastMove;
+            }
+        }
+        return Move.IMPOSSIBLE;
     }
 
 }
