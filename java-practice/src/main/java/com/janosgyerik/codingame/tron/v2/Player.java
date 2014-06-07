@@ -2,8 +2,6 @@ package com.janosgyerik.codingame.tron.v2;
 
 import java.util.*;
 
-// TODO close the longer distance first (horizontal vs vertical)
-
 // TODO prefer moves that reduce the freedom of the other player
 
 // TODO avoid moves that give the other player the opportunity to reduce freedom
@@ -27,7 +25,7 @@ class Player {
     static final int LOST_PLAYER_X = -1;
 
     private static IPlayer createPlayer() {
-        return new CarefulInterceptor();
+        return new CarefulStraightInterceptor();
     }
 
     public static void main(String args[]) {
@@ -182,7 +180,7 @@ interface Grid {
 
     Set<Move> getMovesToward(Position from, Position to);
 
-    Position getClosestReachablePosition(Position me, Set<Position> others);
+    Position getClosestReachableTarget(Position me, Set<Position> others);
 
     int getDistance(Position from, Position to);
 
@@ -259,7 +257,7 @@ class RectangleGrid implements Grid {
     }
 
     @Override
-    public Position getClosestReachablePosition(Position me, Set<Position> others) {
+    public Position getClosestReachableTarget(Position me, Set<Position> others) {
         SortedMap<Integer, Position> distanceToOthers = new TreeMap<Integer, Position>();
         for (Position other : others) {
             int distance = getDistance(me, other);
@@ -401,20 +399,23 @@ class RectangleGrid implements Grid {
 }
 
 abstract class BasePlayer implements IPlayer {
+    protected Move lastMove = Move.RIGHT;
 
-}
-
-class CarefulInterceptor extends BasePlayer {
-    private Move lastMove = Move.RIGHT;
-
-    private Move setAndReturnLastMove(Move move) {
+    protected Move setAndReturnLastMove(Move move) {
         return lastMove = move;
     }
+}
 
+/**
+ * - move toward the closest reachable target
+ * - prefer to repeat the last move
+ * - choose first if multiple choices
+ */
+class CarefulStraightInterceptor extends BasePlayer {
     @Override
     public Move getNextMove(Position me, Set<Position> others, Grid grid) {
         Set<Move> safer = grid.getSaferMovesFrom(me);
-        Position target = grid.getClosestReachablePosition(me, others);
+        Position target = grid.getClosestReachableTarget(me, others);
         if (target != null) {
             Set<Move> toward = grid.getMovesToward(me, target);
             if (toward.contains(lastMove) && safer.contains(lastMove)) {
@@ -434,5 +435,4 @@ class CarefulInterceptor extends BasePlayer {
         }
         return Move.IMPOSSIBLE;
     }
-
 }
