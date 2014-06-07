@@ -2,7 +2,7 @@ package com.janosgyerik.codingame.tron.v2;
 
 import java.util.*;
 
-// TODO stop following other player if unreachable
+// TODO close the longer distance first (horizontal vs vertical)
 
 // TODO prefer moves that reduce the freedom of the other player
 
@@ -183,6 +183,10 @@ interface Grid {
     Set<Move> getMovesToward(Position from, Position to);
 
     Position getClosestReachablePosition(Position me, Set<Position> others);
+
+    int getDistance(Position from, Position to);
+
+    void removePosition(Position position);
 }
 
 class RectangleGrid implements Grid {
@@ -239,11 +243,15 @@ class RectangleGrid implements Grid {
 
     @Override
     public Set<Move> getMovesToward(Position from, Position to) {
-        Set<Move> toward = new HashSet<Move>();
         int distance = getDistance(from, to);
+        if (distance == 0) {
+            return Collections.emptySet();
+        }
+        Set<Move> toward = new HashSet<Move>();
         for (Move move : Move.MOVES) {
             Position next = Position.plusMove(from, move);
-            if (containsPosition(next) && getDistance(next, to) < distance) {
+            int d = getDistance(next, to);
+            if (d > 0 && d < distance) {
                 toward.add(move);
             }
         }
@@ -265,11 +273,40 @@ class RectangleGrid implements Grid {
         return distanceToOthers.get(distanceToOthers.firstKey());
     }
 
-    private int getDistance(Position from, Position to) {
-        // TODO traverse the grid properly instead of this dumb implementation
-        int x = from.x - to.x;
-        int y = from.y - to.y;
-        return x * x + y * y;
+    @Override
+    public int getDistance(Position from, Position to) {
+        RectangleGrid grid = copy(this);
+        grid.removePosition(from);
+        return getDistance(grid, from, to);
+    }
+
+    @Override
+    public void removePosition(Position position) {
+        positions.remove(position);
+    }
+
+    private int getDistance(Grid grid, Position from, Position to) {
+        Set<Position> flood = new HashSet<Position>();
+        flood.add(from);
+        int distance = 0;
+        while (!flood.isEmpty()) {
+            ++distance;
+            Set<Position> flood0 = flood;
+            flood = new HashSet<Position>();
+            for (Position position : flood0) {
+                for (Move move : Move.MOVES) {
+                    Position next = Position.plusMove(position, move);
+                    if (next.equals(to)) {
+                        return distance;
+                    }
+                    if (grid.containsPosition(next) && grid.isAvailablePosition(next)) {
+                        flood.add(next);
+                    }
+                    grid.addPosition(Integer.MAX_VALUE, next);
+                }
+            }
+        }
+        return -1;
     }
 
     @Override

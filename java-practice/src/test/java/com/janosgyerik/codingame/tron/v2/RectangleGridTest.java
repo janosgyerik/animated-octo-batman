@@ -150,6 +150,76 @@ public class RectangleGridTest {
         Assert.assertEquals(2, grid.countReachablePositionsFrom(position));
     }
 
+    @Test
+    public void testGetDistanceStraight() {
+        RectangleGrid grid = createGridFromString(new String[]{
+                "9 87"
+        });
+        Position from = grid.getFirstPosition(9);
+        Position to = grid.getFirstPosition(7);
+        Assert.assertEquals(-1, grid.getDistance(from, to));
+        grid.removePlayer(8);
+        Assert.assertEquals(3, grid.getDistance(from, to));
+    }
+
+    @Test
+    public void testGetDistanceNotStraight() {
+        RectangleGrid grid = createGridFromString(new String[]{
+                "  6 ",
+                "9 87",
+                "  6 ",
+        });
+        Position from = grid.getFirstPosition(9);
+        Position to = grid.getFirstPosition(7);
+        Assert.assertEquals(-1, grid.getDistance(from, to));
+        grid.removePlayer(6);
+        Assert.assertEquals(5, grid.getDistance(from, to));
+        grid.removePlayer(8);
+        Assert.assertEquals(3, grid.getDistance(from, to));
+    }
+
+    @Test
+    public void testGetDistanceStraightManyWays() {
+        RectangleGrid grid = createGridFromString(new String[]{
+                "      ",
+                " 9 87 ",
+                "      ",
+        });
+        Position from = grid.getFirstPosition(9);
+        Position to = grid.getFirstPosition(7);
+        Assert.assertEquals(5, grid.getDistance(from, to));
+    }
+
+    @Test
+    public void testGetDistanceLabyrinth() {
+        RectangleGrid grid = createGridFromString(new String[]{
+                "   16   ",
+                "91   17 ",
+                "  1   1 ",
+                "  1     ",
+        });
+        Position from = grid.getFirstPosition(9);
+        Position to = grid.getFirstPosition(7);
+        Assert.assertEquals(14, grid.getDistance(from, to));
+        grid.removePlayer(6);
+        Assert.assertEquals(10, grid.getDistance(from, to));
+    }
+
+    @Test
+    public void testGetDistanceLargeGrid() {
+        String line = "                                        ";
+        String[] lines = new String[50];
+        for (int i = 0; i < lines.length; ++i) {
+            lines[i] = line;
+        }
+        lines[0] = lines[0].replaceFirst(" ", "9");
+        lines[lines.length-1] = lines[lines.length-1].replaceFirst(" ", "8");
+        RectangleGrid grid = createGridFromString(lines);
+        Position from = grid.getFirstPosition(9);
+        Position to = grid.getFirstPosition(8);
+        Assert.assertEquals(lines.length - 1, grid.getDistance(from, to));
+    }
+
     private RectangleGrid createGridFromString(String[] strings) {
         int width = strings[0].length();
         int height = strings.length;
