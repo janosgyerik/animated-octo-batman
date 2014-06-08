@@ -254,18 +254,31 @@ class RectangleGrid implements Grid {
     }
 
     @Override
-    public Position getClosestReachableTarget(Position me, Set<Position> others) {
-        SortedMap<Integer, Position> distanceToOthers = new TreeMap<Integer, Position>();
-        for (Position other : others) {
-            int distance = getDistance(me, other);
-            if (distance > 0) {
-                distanceToOthers.put(distance, other);
+    public Position getClosestReachableTarget(Position from, Set<Position> others) {
+        return getClosestReachableTarget(copy(), from, others);
+    }
+
+    private Position getClosestReachableTarget(Grid grid, Position from, Set<Position> targets) {
+        grid.removePosition(from);
+        Set<Position> flood = new HashSet<Position>();
+        flood.add(from);
+        while (!flood.isEmpty()) {
+            Set<Position> flood0 = flood;
+            flood = new HashSet<Position>();
+            for (Position position : flood0) {
+                for (Move move : Move.MOVES) {
+                    Position next = position.plusMove(move);
+                    if (targets.contains(next)) {
+                        return next;
+                    }
+                    if (grid.containsPosition(next) && grid.isAvailablePosition(next)) {
+                        flood.add(next);
+                    }
+                    grid.addPosition(Integer.MAX_VALUE, next);
+                }
             }
         }
-        if (distanceToOthers.isEmpty()) {
-            return null;
-        }
-        return distanceToOthers.get(distanceToOthers.firstKey());
+        return null;
     }
 
     @Override
