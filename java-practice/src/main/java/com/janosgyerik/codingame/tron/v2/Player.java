@@ -2,8 +2,6 @@ package com.janosgyerik.codingame.tron.v2;
 
 import java.util.*;
 
-// TODO fix timeout problem: (5,9)(25,6) with alex
-
 // TODO no need to recalculate reachability if unreachable until player is removed
 
 // TODO prefer moves that reduce the freedom of the other player
@@ -372,16 +370,16 @@ class RectangleGrid implements Grid {
             Grid grid = copy();
             grid.addPosition(9, next);
             int worstNum = Integer.MAX_VALUE;
-            for (Move enemyMove : grid.getPossibleMovesFrom(target)) {
+            Set<Move> possibleEnemyMoves = grid.getPossibleMovesFrom(target);
+            grid.removePosition(next);
+            for (Move enemyMove : possibleEnemyMoves) {
                 Position enemyNext = target.plusMove(enemyMove);
-                Grid grid2 = grid.copy();
-                grid2.addPosition(9, enemyNext);
-                grid2.removePosition(next);
-                int num = grid2.countReachablePositionsFrom(next);
-                grid2.addPosition(9, next);
+                grid.addPosition(9, enemyNext);
+                int num = grid.getPossibleMovesFrom(next).size();
                 if (num < worstNum) {
                     worstNum = num;
                 }
+                grid.removePosition(enemyNext);
             }
             if (!saferMoves.containsKey(worstNum)) {
                 saferMoves.put(worstNum, new HashSet<Move>());
@@ -480,22 +478,24 @@ class CarefulAggressiveInterceptor extends BasePlayer {
                 return lastMove;
             }
             for (Move move : toward) {
-                if (safer2.contains(move)) {
+                if (safer.contains(move) && safer2.contains(move)) {
                     return setAndReturnLastMove(move);
                 }
             }
-            if (!safer2.isEmpty()) {
-                if (safer2.contains(lastMove)) {
-                    return lastMove;
-                }
-                return setAndReturnLastMove(safer2.iterator().next());
-            }
-        }
-        if (!safer.isEmpty()) {
-            if (safer.contains(lastMove)) {
+            if (safer.contains(lastMove) && safer2.contains(lastMove)) {
                 return lastMove;
             }
-            return setAndReturnLastMove(safer.iterator().next());
+            for (Move move : safer2) {
+                if (safer.contains(move)) {
+                    return setAndReturnLastMove(move);
+                }
+            }
+        }
+        if (safer.contains(lastMove)) {
+            return lastMove;
+        }
+        for (Move move : safer) {
+            return setAndReturnLastMove(move);
         }
         return Move.IMPOSSIBLE;
     }
