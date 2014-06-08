@@ -283,17 +283,11 @@ class RectangleGrid implements Grid {
 
     @Override
     public int getDistance(Position from, Position to) {
-        RectangleGrid grid = copy();
-        grid.removePosition(from);
-        return getDistance(grid, from, to);
-    }
-
-    @Override
-    public void removePosition(Position position) {
-        positions.remove(position);
+        return getDistance(copy(), from, to);
     }
 
     private int getDistance(Grid grid, Position from, Position to) {
+        grid.removePosition(from);
         Set<Position> flood = new HashSet<Position>();
         flood.add(from);
         int distance = 0;
@@ -449,6 +443,11 @@ class RectangleGrid implements Grid {
     @Override
     public void addPosition(int playerIndex, Position position) {
         positions.put(position, playerIndex);
+    }
+
+    @Override
+    public void removePosition(Position position) {
+        positions.remove(position);
     }
 
     @Override
