@@ -107,15 +107,7 @@ class Position {
         this.y = y;
     }
 
-    static Position plusMove(Position position, Move... moves) {
-        Position newPosition = position;
-        for (Move move : moves) {
-            newPosition = plusMove(newPosition.x, newPosition.y, move);
-        }
-        return newPosition;
-    }
-
-    static Position plusMove(int x, int y, Move move) {
+    public Position plusMove(Move move) {
         switch (move) {
             case LEFT:
                 return new Position(x - 1, y);
@@ -125,8 +117,9 @@ class Position {
                 return new Position(x, y - 1);
             case DOWN:
                 return new Position(x, y + 1);
+            default:
+                throw new IllegalArgumentException();
         }
-        throw new IllegalArgumentException();
     }
 
     @Override
@@ -255,7 +248,7 @@ class RectangleGrid implements Grid {
         }
         Set<Move> toward = new HashSet<Move>();
         for (Move move : Move.MOVES) {
-            Position next = Position.plusMove(from, move);
+            Position next = from.plusMove(move);
             int d = getDistance(next, to);
             if (d > 0 && d < distance) {
                 toward.add(move);
@@ -301,7 +294,7 @@ class RectangleGrid implements Grid {
             flood = new HashSet<Position>();
             for (Position position : flood0) {
                 for (Move move : Move.MOVES) {
-                    Position next = Position.plusMove(position, move);
+                    Position next = position.plusMove(move);
                     if (next.equals(to)) {
                         return distance;
                     }
@@ -342,7 +335,7 @@ class RectangleGrid implements Grid {
         grid.addPosition(Integer.MAX_VALUE, position);
         int count = 1;
         for (Move move : Move.MOVES) {
-            Position next = Position.plusMove(position, move);
+            Position next = position.plusMove(move);
             count += countReachablePositionsFrom(grid, next);
         }
         return count;
@@ -352,7 +345,7 @@ class RectangleGrid implements Grid {
     public Set<Move> getPossibleMovesFrom(Position position) {
         Set<Move> possibleMoves = new HashSet<Move>();
         for (Move move : Move.MOVES) {
-            Position newPosition = Position.plusMove(position, move);
+            Position newPosition = position.plusMove(move);
             if (containsPosition(newPosition) && isAvailablePosition(newPosition)) {
                 possibleMoves.add(move);
             }
@@ -364,7 +357,7 @@ class RectangleGrid implements Grid {
     public Set<Move> getSaferMovesFrom(Position position) {
         SortedMap<Integer, Set<Move>> saferMoves = new TreeMap<Integer, Set<Move>>();
         for (Move move : getPossibleMovesFrom(position)) {
-            Position newPosition = Position.plusMove(position, move);
+            Position newPosition = position.plusMove(move);
             int num = countReachablePositionsFrom(newPosition);
             if (!saferMoves.containsKey(num)) {
                 saferMoves.put(num, new HashSet<Move>());
@@ -379,12 +372,12 @@ class RectangleGrid implements Grid {
         SortedMap<Integer, Set<Move>> saferMoves = new TreeMap<Integer, Set<Move>>();
         saferMoves.put(0, new HashSet<Move>());
         for (Move move : getPossibleMovesFrom(position)) {
-            Position next = Position.plusMove(position, move);
+            Position next = position.plusMove(move);
             Grid grid = copy(this);
             grid.addPosition(9, next);
             int worstNum = Integer.MAX_VALUE;
             for (Move enemyMove : grid.getPossibleMovesFrom(target)) {
-                Position enemyNext = Position.plusMove(target, enemyMove);
+                Position enemyNext = target.plusMove(enemyMove);
                 Grid grid2 = copy(grid);
                 grid2.addPosition(9, enemyNext);
                 grid2.removePosition(next);
