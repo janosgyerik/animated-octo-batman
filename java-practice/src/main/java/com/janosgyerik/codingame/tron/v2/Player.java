@@ -259,7 +259,6 @@ class RectangleGrid implements Grid {
     }
 
     private Position getClosestReachableTarget(Grid grid, Position from, Set<Position> targets) {
-        grid.removePosition(from);
         Set<Position> flood = new HashSet<Position>();
         flood.add(from);
         while (!flood.isEmpty()) {
@@ -287,7 +286,6 @@ class RectangleGrid implements Grid {
     }
 
     private int getDistance(Grid grid, Position from, Position to) {
-        grid.removePosition(from);
         Set<Position> flood = new HashSet<Position>();
         flood.add(from);
         int distance = 0;
