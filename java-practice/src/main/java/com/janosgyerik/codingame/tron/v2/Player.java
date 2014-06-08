@@ -243,7 +243,7 @@ class RectangleGrid implements Grid {
             return Collections.emptySet();
         }
         Set<Move> toward = new HashSet<Move>();
-        for (Move move : Move.MOVES) {
+        for (Move move : getPossibleMovesFrom(from)) {
             Position next = from.plusMove(move);
             int d = getDistance(next, to);
             if (d > 0 && d < distance) {
