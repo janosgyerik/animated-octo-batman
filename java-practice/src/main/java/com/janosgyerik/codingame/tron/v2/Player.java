@@ -29,7 +29,7 @@ class Player {
     static final int LOST_PLAYER_X = -1;
 
     private static IPlayer createPlayer() {
-        return new CarefulAggressiveInterceptor();
+        return new CarefulAggressiveInterceptor2();
     }
 
     public static void main(String args[]) {
@@ -160,6 +160,8 @@ interface Grid {
     Set<Move> getSaferMovesFrom(Position position);
 
     Set<Move> getSaferMovesFrom(Position position, Position target);
+
+    Set<Move> getKillerMoves(Position position, Position target);
 
     void applyMove(IPlayer player, Move move);
 
@@ -390,6 +392,35 @@ class RectangleGrid implements Grid {
     }
 
     @Override
+    public Set<Move> getKillerMoves(Position position, Position target) {
+        Set<Move> enemyPossibleMoves = getPossibleMovesFrom(target);
+        if (enemyPossibleMoves.size() == 1) {
+            Grid grid = copy();
+            grid.removePosition(target);
+            int reachableBefore = grid.countReachablePositionsFrom(target) - 1;
+            int minReachable = reachableBefore;
+            Move killer = null;
+            for (Move move : getPossibleMovesFrom(position)) {
+                Position next = position.plusMove(move);
+                grid.addPosition(9, next);
+                if (grid.getPossibleMovesFrom(target).isEmpty()) {
+                    return Collections.singleton(move);
+                }
+                int reachableNum = grid.countReachablePositionsFrom(target);
+                if (reachableNum < minReachable) {
+                    minReachable = reachableNum;
+                    killer = move;
+                }
+                grid.removePosition(next);
+            }
+            if (killer != null) {
+                return Collections.singleton(killer);
+            }
+        }
+        return Collections.emptySet();
+    }
+
+    @Override
     public void applyMove(IPlayer player, Move move) {
     }
 
@@ -500,18 +531,134 @@ class CarefulAggressiveInterceptor extends BasePlayer {
 }
 
 class MoveFilter {
-    final Set<Move> moves;
+    Set<Move> moves = null;
+
+    MoveFilter() {
+    }
 
     MoveFilter(Set<Move> moves) {
         this.moves = moves;
     }
 
     MoveFilter filter(MoveFilter moveFilter) {
-        return this;
+        // stop filtering
+        if (moves.size() < 2) {
+            return this;
+        }
+        return moveFilter.apply(moves);
     }
 
     public Move getRandomMove() {
+        if (moves.isEmpty()) {
+            return Move.IMPOSSIBLE;
+        }
+        // TODO make it proper random
         return moves.iterator().next();
+    }
+
+    public void useIntersectionIfExists(Set<Move> incoming) {
+        Set<Move> intersection = new HashSet<Move>(moves);
+        intersection.retainAll(incoming);
+        if (!intersection.isEmpty()) {
+            moves = intersection;
+        }
+    }
+
+    MoveFilter apply(Set<Move> moves) {
+        this.moves = moves;
+        return this;
+    }
+}
+
+class LargerSpaceFilter extends MoveFilter {
+    private final Grid grid;
+    private final Position me;
+
+    LargerSpaceFilter(Grid grid, Position me) {
+        this.grid = grid;
+        this.me = me;
+    }
+
+    @Override
+    MoveFilter apply(Set<Move> moves) {
+        super.apply(moves);
+        SortedMap<Integer, Set<Move>> reachableNumByMoves = new TreeMap<Integer, Set<Move>>();
+        for (Move move : moves) {
+            Position next = me.plusMove(move);
+            int num = grid.countReachablePositionsFrom(next);
+            if (!reachableNumByMoves.containsKey(num)) {
+                reachableNumByMoves.put(num, new HashSet<Move>());
+            }
+            reachableNumByMoves.get(num).add(move);
+        }
+        useIntersectionIfExists(reachableNumByMoves.get(reachableNumByMoves.lastKey()));
+        return this;
+    }
+}
+
+class MoveTowardFilter extends MoveFilter {
+    private final Grid grid;
+    private final Position me;
+    private final Position target;
+
+    MoveTowardFilter(Grid grid, Position position, Position target) {
+        this.grid = grid;
+        this.me = position;
+        this.target = target;
+    }
+
+    @Override
+    MoveFilter apply(Set<Move> moves) {
+        super.apply(moves);
+        if (target != null) {
+            Set<Move> toward = grid.getMovesToward(me, target);
+            useIntersectionIfExists(toward);
+        }
+        return this;
+    }
+}
+
+class ImminentTrapFilter extends MoveFilter {
+    private final Grid grid;
+    private final Position me;
+    private final Position target;
+
+    ImminentTrapFilter(Grid grid, Position me, Position target) {
+        this.grid = grid;
+        this.me = me;
+        this.target = target;
+    }
+
+    @Override
+    MoveFilter apply(Set<Move> moves) {
+        super.apply(moves);
+        if (target != null) {
+            Set<Move> safer2 = grid.getSaferMovesFrom(me, target);
+            useIntersectionIfExists(safer2);
+        }
+        return this;
+    }
+}
+
+class KillerMoveFilter extends MoveFilter {
+    private final Grid grid;
+    private final Position me;
+    private final Position target;
+
+    public KillerMoveFilter(Grid grid, Position me, Position target) {
+        this.grid = grid;
+        this.me = me;
+        this.target = target;
+    }
+
+    @Override
+    MoveFilter apply(Set<Move> moves) {
+        super.apply(moves);
+        if (target != null) {
+            Set<Move> killerMoves = grid.getKillerMoves(me, target);
+            useIntersectionIfExists(killerMoves);
+        }
+        return this;
     }
 }
 
@@ -523,48 +670,17 @@ class MoveFilter {
 class CarefulAggressiveInterceptor2 extends BasePlayer {
     @Override
     public Move getNextMove(Position me, Set<Position> others, Grid grid) {
-        Move nextMove = new MoveFilter(grid.getPossibleMovesFrom(me))
-                // keep only the moves that lead to larger space
-                .filter(new MoveFilter(null))
-                // keep the moves that avoid imminent traps
-                .filter(new MoveFilter(null))
-                // keep the moves that hurt the target
-                .filter(new MoveFilter(null))
-                .getRandomMove();
-        // possible moves
-        // larger space moves
-        // trap avoider moves
-        // trap setter moves
-        // space divider moves
-        // toward target moves
-        Set<Move> safer = grid.getSaferMovesFrom(me);
         Position target = grid.getClosestReachableTarget(me, others);
-        if (target != null) {
-            Set<Move> toward = grid.getMovesToward(me, target);
-            Set<Move> safer2 = grid.getSaferMovesFrom(me, target);
-            if (toward.contains(lastMove) && safer.contains(lastMove) && safer2.contains(lastMove)) {
-                return lastMove;
-            }
-            for (Move move : toward) {
-                if (safer.contains(move) && safer2.contains(move)) {
-                    return setAndReturnLastMove(move);
-                }
-            }
-            if (safer.contains(lastMove) && safer2.contains(lastMove)) {
-                return lastMove;
-            }
-            for (Move move : safer2) {
-                if (safer.contains(move)) {
-                    return setAndReturnLastMove(move);
-                }
-            }
-        }
-        if (safer.contains(lastMove)) {
-            return lastMove;
-        }
-        for (Move move : safer) {
-            return setAndReturnLastMove(move);
-        }
-        return Move.IMPOSSIBLE;
+        Move move = new MoveFilter(grid.getPossibleMovesFrom(me))
+                .filter(new LargerSpaceFilter(grid, me))
+                .filter(new KillerMoveFilter(grid, me, target))
+                .filter(new ImminentTrapFilter(grid, me, target))
+                // keep the moves that hurt the target
+//                .filter(new MoveFilter(null))
+                // keep the moves that don't close down space
+//                .filter(new MoveFilter(null))
+                .filter(new MoveTowardFilter(grid, me, target))
+                .getRandomMove();
+        return setAndReturnLastMove(move);
     }
 }

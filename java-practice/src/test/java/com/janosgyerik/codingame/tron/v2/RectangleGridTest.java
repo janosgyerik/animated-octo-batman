@@ -234,6 +234,22 @@ public class RectangleGridTest {
         Assert.assertEquals(2, grid.getSaferMovesFrom(from, target).size());
     }
 
+    @Test
+    public void testKillerMoves() {
+        RectangleGrid grid = createGridFromString(new String[]{
+                "228     ",
+                "11119   ",
+                "337     ",
+        });
+        Position from = grid.getFirstPosition(9);
+        Position target1 = grid.getFirstPosition(8);
+        Position target2 = grid.getFirstPosition(7);
+        Assert.assertEquals(1, grid.getKillerMoves(from, target1).size());
+        Assert.assertEquals(Move.UP, grid.getKillerMoves(from, target1).iterator().next());
+        Assert.assertEquals(1, grid.getKillerMoves(from, target2).size());
+        Assert.assertEquals(Move.DOWN, grid.getKillerMoves(from, target2).iterator().next());
+    }
+
     private RectangleGrid createGridFromString(String[] strings) {
         int width = strings[0].length();
         int height = strings.length;
