@@ -173,7 +173,7 @@ interface Grid {
 
     void removePlayer(int index);
 
-    Grid copy(Grid other);
+    Grid copy();
 
     Position getFirstPosition(int playerIndex);
 
@@ -204,16 +204,12 @@ class RectangleGrid implements Grid {
     private RectangleGrid(RectangleGrid other) {
         this.width = other.width;
         this.height = other.height;
-        this.positions = new HashMap<Position, Integer>();
-        positions.putAll(other.positions);
+        this.positions = new HashMap<Position, Integer>(other.positions);
     }
 
     @Override
-    public RectangleGrid copy(Grid other) {
-        if (other instanceof RectangleGrid) {
-            return new RectangleGrid((RectangleGrid) other);
-        }
-        return null;
+    public RectangleGrid copy() {
+        return new RectangleGrid(this);
     }
 
     @Override
@@ -274,7 +270,7 @@ class RectangleGrid implements Grid {
 
     @Override
     public int getDistance(Position from, Position to) {
-        RectangleGrid grid = copy(this);
+        RectangleGrid grid = copy();
         grid.removePosition(from);
         return getDistance(grid, from, to);
     }
@@ -325,7 +321,7 @@ class RectangleGrid implements Grid {
 
     @Override
     public int countReachablePositionsFrom(Position position) {
-        return countReachablePositionsFrom(copy(this), position);
+        return countReachablePositionsFrom(copy(), position);
     }
 
     private int countReachablePositionsFrom(Grid grid, Position position) {
@@ -373,12 +369,12 @@ class RectangleGrid implements Grid {
         saferMoves.put(0, new HashSet<Move>());
         for (Move move : getPossibleMovesFrom(position)) {
             Position next = position.plusMove(move);
-            Grid grid = copy(this);
+            Grid grid = copy();
             grid.addPosition(9, next);
             int worstNum = Integer.MAX_VALUE;
             for (Move enemyMove : grid.getPossibleMovesFrom(target)) {
                 Position enemyNext = target.plusMove(enemyMove);
-                Grid grid2 = copy(grid);
+                Grid grid2 = grid.copy();
                 grid2.addPosition(9, enemyNext);
                 grid2.removePosition(next);
                 int num = grid2.countReachablePositionsFrom(next);
