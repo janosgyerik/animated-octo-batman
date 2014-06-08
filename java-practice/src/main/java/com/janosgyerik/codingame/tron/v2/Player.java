@@ -2,7 +2,7 @@ package com.janosgyerik.codingame.tron.v2;
 
 import java.util.*;
 
-// TODO fix timeout problem: (1,9)(2,12) with alex
+// TODO fix timeout problem: (5,9)(25,6) with alex
 
 // TODO no need to recalculate reachability if unreachable until player is removed
 
@@ -23,6 +23,8 @@ import java.util.*;
 // TODO which reachable player is best to attack? the weak or the strong?
 
 // TODO don't walk into a tunnel whose end is longer then the enemy can reach
+
+// TODO don't create an island that nobody can access
 
 class Player {
 
@@ -465,7 +467,7 @@ class CarefulStraightInterceptor extends BasePlayer {
             if (safer.contains(lastMove)) {
                 return lastMove;
             }
-            return safer.iterator().next();
+            return setAndReturnLastMove(safer.iterator().next());
         }
         return Move.IMPOSSIBLE;
     }
@@ -497,14 +499,14 @@ class CarefulAggressiveInterceptor extends BasePlayer {
                 if (safer2.contains(lastMove)) {
                     return lastMove;
                 }
-                return safer2.iterator().next();
+                return setAndReturnLastMove(safer2.iterator().next());
             }
         }
         if (!safer.isEmpty()) {
             if (safer.contains(lastMove)) {
                 return lastMove;
             }
-            return safer.iterator().next();
+            return setAndReturnLastMove(safer.iterator().next());
         }
         return Move.IMPOSSIBLE;
     }
