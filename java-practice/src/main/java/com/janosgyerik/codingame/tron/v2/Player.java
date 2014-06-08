@@ -2,17 +2,19 @@ package com.janosgyerik.codingame.tron.v2;
 
 import java.util.*;
 
+// TODO fix timeout problem: (1,9)(2,12) with alex
+
+// TODO no need to recalculate reachability if unreachable until player is removed
+
 // TODO prefer moves that reduce the freedom of the other player
+// MEMO consider round +1 too
 
 // TODO avoid moves that give the other player the opportunity to reduce freedom
-// MEMO in addition, when close to the enemy, prefer the same direction
+// MEMO in addition, when close to the enemy, prefer the same direction as enemy.lastMove
 
 // TODO consider potential hole if target player keeps going in the same direction
 
 // TODO consider potential hole if all other players keep going in the same direction
-
-// TODO consider the ability of cutting off players by repeating same move from current pos,
-// or from current pos + move
 
 // TODO if dominating a space, don't diminish it, fill it well
 // MEMO if no reachable players (keep in mind though a dead player might open a wall)
@@ -20,12 +22,14 @@ import java.util.*;
 
 // TODO which reachable player is best to attack? the weak or the strong?
 
+// TODO don't walk into a tunnel whose end is longer then the enemy can reach
+
 class Player {
 
     static final int LOST_PLAYER_X = -1;
 
     private static IPlayer createPlayer() {
-        return new CarefulStraightInterceptor();
+        return new CarefulAggressiveInterceptor();
     }
 
     public static void main(String args[]) {
@@ -161,6 +165,8 @@ interface Grid {
      * @return a non-empty Set of safer moves
      */
     Set<Move> getSaferMovesFrom(Position position);
+
+    Set<Move> getSaferMovesFrom(Position position, Position target);
 
     void applyMove(IPlayer player, Move move);
 
@@ -367,6 +373,34 @@ class RectangleGrid implements Grid {
     }
 
     @Override
+    public Set<Move> getSaferMovesFrom(Position position, Position target) {
+        SortedMap<Integer, Set<Move>> saferMoves = new TreeMap<Integer, Set<Move>>();
+        saferMoves.put(0, new HashSet<Move>());
+        for (Move move : getPossibleMovesFrom(position)) {
+            Position next = Position.plusMove(position, move);
+            Grid grid = copy(this);
+            grid.addPosition(9, next);
+            int worstNum = Integer.MAX_VALUE;
+            for (Move enemyMove : grid.getPossibleMovesFrom(target)) {
+                Position enemyNext = Position.plusMove(target, enemyMove);
+                Grid grid2 = copy(grid);
+                grid2.addPosition(9, enemyNext);
+                grid2.removePosition(next);
+                int num = grid2.countReachablePositionsFrom(next);
+                grid2.addPosition(9, next);
+                if (num < worstNum) {
+                    worstNum = num;
+                }
+            }
+            if (!saferMoves.containsKey(worstNum)) {
+                saferMoves.put(worstNum, new HashSet<Move>());
+            }
+            saferMoves.get(worstNum).add(move);
+        }
+        return saferMoves.get(saferMoves.lastKey());
+    }
+
+    @Override
     public void applyMove(IPlayer player, Move move) {
     }
 
@@ -425,6 +459,45 @@ class CarefulStraightInterceptor extends BasePlayer {
                 if (safer.contains(move)) {
                     return setAndReturnLastMove(move);
                 }
+            }
+        }
+        if (!safer.isEmpty()) {
+            if (safer.contains(lastMove)) {
+                return lastMove;
+            }
+            return safer.iterator().next();
+        }
+        return Move.IMPOSSIBLE;
+    }
+}
+
+/**
+ * - move toward the closest reachable target
+ * - avoid moves that let the other player to reduce mobility
+ * (27,19)(0,19) against burlyman
+ * - prefer moves that reduce mobility of the other player
+ */
+class CarefulAggressiveInterceptor extends BasePlayer {
+    @Override
+    public Move getNextMove(Position me, Set<Position> others, Grid grid) {
+        Set<Move> safer = grid.getSaferMovesFrom(me);
+        Position target = grid.getClosestReachableTarget(me, others);
+        if (target != null) {
+            Set<Move> toward = grid.getMovesToward(me, target);
+            Set<Move> safer2 = grid.getSaferMovesFrom(me, target);
+            if (toward.contains(lastMove) && safer.contains(lastMove) && safer2.contains(lastMove)) {
+                return lastMove;
+            }
+            for (Move move : toward) {
+                if (safer2.contains(move)) {
+                    return setAndReturnLastMove(move);
+                }
+            }
+            if (!safer2.isEmpty()) {
+                if (safer2.contains(lastMove)) {
+                    return lastMove;
+                }
+                return safer2.iterator().next();
             }
         }
         if (!safer.isEmpty()) {

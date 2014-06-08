@@ -220,6 +220,20 @@ public class RectangleGridTest {
         Assert.assertEquals(lines.length - 1, grid.getDistance(from, to));
     }
 
+    @Test
+    public void testAvoidImminentTrap() {
+        RectangleGrid grid = createGridFromString(new String[]{
+                " 8     ",
+                "22 9111",
+        });
+        Position from = grid.getFirstPosition(9);
+        Position target = grid.getFirstPosition(8);
+        Assert.assertEquals(1, grid.getSaferMovesFrom(from, target).size());
+        Assert.assertEquals(Move.UP, grid.getSaferMovesFrom(from, target).iterator().next());
+        grid.removePlayer(2);
+        Assert.assertEquals(2, grid.getSaferMovesFrom(from, target).size());
+    }
+
     private RectangleGrid createGridFromString(String[] strings) {
         int width = strings[0].length();
         int height = strings.length;
