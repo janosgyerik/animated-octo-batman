@@ -375,7 +375,7 @@ class RectangleGrid implements Grid {
             for (Move enemyMove : possibleEnemyMoves) {
                 Position enemyNext = target.plusMove(enemyMove);
                 grid.addPosition(9, enemyNext);
-                int num = grid.getPossibleMovesFrom(next).size();
+                int num = Math.min(grid.getPossibleMovesFrom(next).size(), 2);
                 if (num < worstNum) {
                     worstNum = num;
                 }
@@ -463,12 +463,80 @@ class CarefulStraightInterceptor extends BasePlayer {
 /**
  * - move toward the closest reachable target
  * - avoid moves that let the other player to reduce mobility
- * (27,19)(0,19) against burlyman
- * - prefer moves that reduce mobility of the other player
  */
 class CarefulAggressiveInterceptor extends BasePlayer {
     @Override
     public Move getNextMove(Position me, Set<Position> others, Grid grid) {
+        Set<Move> safer = grid.getSaferMovesFrom(me);
+        Position target = grid.getClosestReachableTarget(me, others);
+        if (target != null) {
+            Set<Move> toward = grid.getMovesToward(me, target);
+            Set<Move> safer2 = grid.getSaferMovesFrom(me, target);
+            if (toward.contains(lastMove) && safer.contains(lastMove) && safer2.contains(lastMove)) {
+                return lastMove;
+            }
+            for (Move move : toward) {
+                if (safer.contains(move) && safer2.contains(move)) {
+                    return setAndReturnLastMove(move);
+                }
+            }
+            if (safer.contains(lastMove) && safer2.contains(lastMove)) {
+                return lastMove;
+            }
+            for (Move move : safer2) {
+                if (safer.contains(move)) {
+                    return setAndReturnLastMove(move);
+                }
+            }
+        }
+        if (safer.contains(lastMove)) {
+            return lastMove;
+        }
+        for (Move move : safer) {
+            return setAndReturnLastMove(move);
+        }
+        return Move.IMPOSSIBLE;
+    }
+}
+
+class MoveFilter {
+    final Set<Move> moves;
+
+    MoveFilter(Set<Move> moves) {
+        this.moves = moves;
+    }
+
+    MoveFilter filter(MoveFilter moveFilter) {
+        return this;
+    }
+
+    public Move getRandomMove() {
+        return moves.iterator().next();
+    }
+}
+
+/**
+ * - move toward the closest reachable target
+ * - prefer safer moves that reduce mobility of the target
+ * - avoid moves that let the target to reduce mobility
+ */
+class CarefulAggressiveInterceptor2 extends BasePlayer {
+    @Override
+    public Move getNextMove(Position me, Set<Position> others, Grid grid) {
+        Move nextMove = new MoveFilter(grid.getPossibleMovesFrom(me))
+                // keep only the moves that lead to larger space
+                .filter(new MoveFilter(null))
+                // keep the moves that avoid imminent traps
+                .filter(new MoveFilter(null))
+                // keep the moves that hurt the target
+                .filter(new MoveFilter(null))
+                .getRandomMove();
+        // possible moves
+        // larger space moves
+        // trap avoider moves
+        // trap setter moves
+        // space divider moves
+        // toward target moves
         Set<Move> safer = grid.getSaferMovesFrom(me);
         Position target = grid.getClosestReachableTarget(me, others);
         if (target != null) {
