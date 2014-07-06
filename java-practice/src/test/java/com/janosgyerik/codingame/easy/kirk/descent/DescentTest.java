@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class DescentTest {
     @Test
     public void testGetNextTarget() {
-        int length = 8;
+        int length = Player.MOUNTAINS;
         for (int i = 0; i < length; ++i) {
             int[] ints = new int[length];
             ints[i] = 1;

@@ -1,9 +1,9 @@
 package com.janosgyerik.codingame.easy.kirk.descent;
 
-import java.util.*;
+import java.util.Scanner;
 
 class Player {
-    private static final int MOUNTAINS = 8;
+    static final int MOUNTAINS = 8;
 
     public static void main(String args[]) {
         Scanner scanner = new Scanner(System.in);
@@ -46,7 +46,7 @@ class Player {
         return ints;
     }
 
-    static void readAndIgnoreInts(Scanner scanner, int count) {
+    private static void readAndIgnoreInts(Scanner scanner, int count) {
         for (int i = 0; i < count; ++i) {
             scanner.nextInt();
         }
