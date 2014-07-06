@@ -1,10 +1,10 @@
-package com.janosgyerik.codingame.easy;
+package com.janosgyerik.codingame.easy.asciiart;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class AsciiArt {
+class AsciiArt {
 
     public List<String> toAsciiArt(String[] alphabet, String text, int width) {
         List<String> lines = new ArrayList<String>();
@@ -22,12 +22,16 @@ public class AsciiArt {
         }
         return lines;
     }
+}
+
+class Solution {
 
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
         int width = in.nextInt();
         int height = in.nextInt();
         in.nextLine();
+
         String text = in.nextLine();
         String[] ascii = new String[height];
         for (int i = 0; i < ascii.length; ++i) {

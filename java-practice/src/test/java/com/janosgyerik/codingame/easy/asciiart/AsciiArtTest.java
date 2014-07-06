@@ -1,6 +1,5 @@
-package com.janosgyerik.codingame.easy;
+package com.janosgyerik.codingame.easy.asciiart;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class AsciiArtTest {
