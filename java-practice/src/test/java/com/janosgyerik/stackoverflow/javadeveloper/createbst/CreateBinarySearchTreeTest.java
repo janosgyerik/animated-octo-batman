@@ -3,7 +3,6 @@ package com.janosgyerik.stackoverflow.javadeveloper.createbst;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 // http://codereview.stackexchange.com/questions/31994/creating-a-binary-search-tree/60885#60885
 class CreateBinarySearchTree {
