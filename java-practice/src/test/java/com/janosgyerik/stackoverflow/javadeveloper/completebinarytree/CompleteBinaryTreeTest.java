@@ -3,6 +3,9 @@ package com.janosgyerik.stackoverflow.javadeveloper.completebinarytree;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +23,7 @@ class CompleteBinaryTreeDetection<T> {
 		create(items);
 	}
 
-	private void create (List<T> items) {
+	private void create(List<T> items) {
 		root = new TreeNode<>(null, items.get(0), null);
 
 		final Queue<TreeNode<T>> queue = new LinkedList<>();
@@ -28,21 +31,26 @@ class CompleteBinaryTreeDetection<T> {
 
 		final int half = items.size() / 2;
 
-		for (int i = 0; i < half; i++) {
-			if (items.get(i) != null) {
+		int i = 0;
+		for (T item : items) {
+			if (i >= half) {
+				break;
+			}
+			if (item != null) {
 				final TreeNode<T> current = queue.poll();
 				int left = 2 * i + 1;
 				int right = 2 * i + 2;
 
 				if (items.get(left) != null) {
-					current.left = new TreeNode<>(null, items.get(left), null);
+					current.left = new TreeNode<>(items.get(left));
 					queue.add(current.left);
 				}
 				if (right < items.size() && items.get(right) != null) {
-					current.right = new TreeNode<>(null, items.get(right), null);
+					current.right = new TreeNode<>(items.get(right));
 					queue.add(current.right);
 				}
 			}
+			++i;
 		}
 	}
 
@@ -56,27 +64,17 @@ class CompleteBinaryTreeDetection<T> {
 			this.item = item;
 			this.right = right;
 		}
-	}
 
-	/**
-	 * Returns true if binary tree is complete
-	 *
-	 * @return  true if tree is complete else false.
-	 */
-	public boolean isComplete() {
-		if (root == null) {
-			return true;
+		public TreeNode(T item) {
+			this(null, item, null);
 		}
-		return false;
-//		int leftHeight = height(root.left);
-//		int rightHeight = height(root.right);
-//		return leftHeight == rightHeight ? leftHeight : -1;
 	}
 
-	public boolean isComplete2() {
+	public boolean isComplete() {
 		if (root == null) {
 			throw new NoSuchElementException();
 		}
+		ConcurrentHashMap x;
 		final Queue<TreeNode<T>> queue = new LinkedList<>();
 		queue.add(root);
 
@@ -100,6 +98,20 @@ class CompleteBinaryTreeDetection<T> {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return toString(root);
+	}
+
+	private String toString(TreeNode<T> node) {
+		if (node == null) {
+			return null;
+		}
+		return "[" + toString(node.left)
+				+ "," + node.item
+				+ "," + toString(node.right) + "]";
 	}
 }
 
@@ -207,4 +219,10 @@ public class CompleteBinaryTreeTest {
 		CompleteBinaryTreeDetection<Integer> createTree9 = new CompleteBinaryTreeDetection<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, null, null, null, 9));
 		assertFalse(createTree9.isComplete());
 	}
+
+	@Test
+	public void testEmpty() {
+//		new CompleteBinaryTreeDetection<>(Arrays.asList());
+	}
+
 }
