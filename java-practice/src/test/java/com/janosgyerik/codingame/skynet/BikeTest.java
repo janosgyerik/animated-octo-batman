@@ -7,9 +7,15 @@ import static org.junit.Assert.*;
 public class BikeTest {
 
     private GameState applyMoves(GameState start, Move... moves) {
+        return applyMoves(false, start, moves);
+    }
+
+    private GameState applyMoves(boolean debug, GameState start, Move... moves) {
         GameState state = start;
         for (Move move : moves) {
-//            System.out.println(state + " -> " + move);
+            if (debug) {
+                System.out.println(state + " -> " + move);
+            }
             state = state.transition(move);
             assertFalse(state.isLose());
         }
@@ -18,7 +24,7 @@ public class BikeTest {
 
     @Test
     public void testLoseIfFailToJump() {
-        GameState start = new GameState(10, 2, 20, 0, 0);
+        GameState start = new GameState(11, 2, 20, 0, 0);
         GameState state = applyMoves(start, Move.SPEED, Move.SPEED, Move.SPEED, Move.SPEED);
         assertFalse(state.isLose());
         assertTrue(state.transition(Move.SPEED).isLose());
@@ -29,26 +35,12 @@ public class BikeTest {
 
     @Test
     public void testTransitionsToVictory() {
-        GameState start = new GameState(10, 2, 20, 0, 0);
+        GameState start = new GameState(7, 2, 20, 0, 0);
         GameState state = applyMoves(start,
-                Move.SPEED, Move.SPEED, Move.SPEED, Move.SPEED,
+                Move.SPEED, Move.SPEED, Move.SPEED,
                 Move.JUMP,
-                Move.SLOW, Move.SLOW, Move.SLOW, Move.SLOW);
+                Move.SLOW, Move.SLOW, Move.SLOW);
         assertTrue(state.isWin());
-    }
-
-    @Test
-    public void testTransitionsExample() {
-        GameState state = new GameState(11, 3, 7, 0, 0);
-        state = applyMoves(state,
-                Move.SPEED,
-                Move.JUMP,
-                Move.SPEED,
-//                Move.SPEED,
-                Move.SPEED
-        );
-//        System.out.println(state);
-//        assertTrue(state.isWin());
     }
 
     @Test
@@ -58,30 +50,30 @@ public class BikeTest {
 
     @Test
     public void testCannotReachVictory() {
-//        assertFalse(new GameState(10, 3, 2, 0, 0).canReachVictory());
+        assertFalse(new GameState(10, 3, 2, 0, 0).canReachVictory());
         assertFalse(new GameState(0, 1, 1, 0, 0).canReachVictory());
         assertFalse(new GameState(3, 2, 5, 0, 0).canReachVictory());
     }
 
     @Test
     public void testIsWin() {
-        assertTrue(new GameState(12, 2, 1, 0, 15).isWin());
+        assertTrue(new GameState(12, 2, 1, 0, 14).isWin());
         assertFalse(new GameState(12, 2, 1, 1, 15).isWin());
         assertFalse(new GameState(12, 2, 1, 0, 16).isWin());
-        assertFalse(new GameState(12, 3, 1, 0, 15).isWin());
+        assertFalse(new GameState(12, 3, 1, 0, 14).isWin());
         assertFalse(new GameState(12, 3, 1, 0, 0).isWin());
 
-        assertFalse(new GameState(12, 3, 1, 0, 12 + 3).isWin());
-        assertTrue(new GameState(12, 3, 1, 0, 12 + 3 + 1).isWin());
-        assertFalse(new GameState(12, 3, 1, 0, 12 + 3 + 1 + 1).isWin());
+        assertFalse(new GameState(12, 3, 1, 0, 12 + 3 - 1).isWin());
+        assertTrue(new GameState(12, 3, 1, 0, 12 + 3).isWin());
+        assertFalse(new GameState(12, 3, 1, 0, 12 + 3 + 1).isWin());
     }
 
     @Test
     public void testIsLose() {
         assertTrue(new GameState(12, 2, 1, 0, 12 + 1).isLose());
-        assertTrue(new GameState(12, 2, 1, 0, 12 + 2).isLose());
-        assertFalse(new GameState(12, 2, 1, 0, 12 + 3).isLose());
-        assertFalse(new GameState(12, 2, 1, 0, 12).isLose());
+        assertTrue(new GameState(12, 2, 1, 0, 12 + 3).isLose());
+        assertFalse(new GameState(12, 2, 1, 0, 12 + 2).isLose());
+        assertFalse(new GameState(12, 2, 1, 0, 12 - 1).isLose());
     }
 
     @Test
