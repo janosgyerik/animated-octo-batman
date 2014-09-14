@@ -1,165 +1,187 @@
 package com.janosgyerik.codingame.skynet;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.*;
 
 public class BikeTest {
 
-    // X                1   1
-    // X 1              2   2
-    // X 22 1           3   4
-    // X 333 22 1       4   7
-    // X 4444 333 22 1  5   11  sum 1..n = 1 3 6 10 15 21 28 36 = n * ( n + 1 ) / 2 = given S, n = ? < (n + 1)^2 / 2
-    //                                     1 2 3 4  5  6  7  8  = 5 -> 15, 6 -> 21  = n * n / 2 + n / 2
-    private static Map<Integer, Integer> speedToLanding = new HashMap<Integer, Integer>();
-
-    private int computeMaxSpeedForLanding(int landing) {
-        int speed;
-        for (speed = 1; speed < Math.sqrt(2 * landing) + 1; ++speed) {
-            int landingNeeded = speed * (speed - 1) / 2 + 1;
-            //speedToLanding.put(speed, landingNeeded);
-            if (landingNeeded > landing) {
-                --speed;
-                break;
-            }
-            if (landingNeeded == landing) {
-                break;
-            }
+    private GameState applyMoves(GameState start, Move... moves) {
+        GameState state = start;
+        for (Move move : moves) {
+//            System.out.println(state + " -> " + move);
+            state = state.transition(move);
+            assertFalse(state.isLose());
         }
-        return speed;
+        return state;
     }
 
     @Test
-    public void testComputeMaxSpeed() {
-        Assert.assertEquals("if landing=1", 1, computeMaxSpeedForLanding(1));
-        Assert.assertEquals("if landing=2", 2, computeMaxSpeedForLanding(2));
-        Assert.assertEquals("if landing=3", 2, computeMaxSpeedForLanding(3));
-        Assert.assertEquals(3, computeMaxSpeedForLanding(4));
-        Assert.assertEquals(3, computeMaxSpeedForLanding(5));
-        Assert.assertEquals(3, computeMaxSpeedForLanding(6));
-        Assert.assertEquals(4, computeMaxSpeedForLanding(7));
+    public void testLoseIfFailToJump() {
+        GameState start = new GameState(10, 2, 20, 0, 0);
+        GameState state = applyMoves(start, Move.SPEED, Move.SPEED, Move.SPEED, Move.SPEED);
+        assertFalse(state.isLose());
+        assertTrue(state.transition(Move.SPEED).isLose());
+        assertTrue(state.transition(Move.WAIT).isLose());
+        assertTrue(state.transition(Move.SLOW).isLose());
+        assertFalse(state.transition(Move.JUMP).isLose());
     }
 
-    // test 1 input: road = 16, gap = 2
-    // 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 GG GG
-    //  1  2  2  3  3  3  x  x  x  y  y  y  z  z  z
-    // test 2 input: road = 11, gap = 3
-    // 0  1  2 3  4 5 6  7 8 9 10  G G G
-    // 0+ 1+ 2 2+ 3 3 3+ 4 4 4  4+
-    private String computeAction(int road, int gap, int landing, int speed, int x) {
-        if (x > road) {
-            return "SLOW";
-        }
+    @Test
+    public void testTransitionsToVictory() {
+        GameState start = new GameState(10, 2, 20, 0, 0);
+        GameState state = applyMoves(start,
+                Move.SPEED, Move.SPEED, Move.SPEED, Move.SPEED,
+                Move.JUMP,
+                Move.SLOW, Move.SLOW, Move.SLOW, Move.SLOW);
+        assertTrue(state.isWin());
+    }
+
+    @Test
+    public void testTransitionsExample() {
+        GameState state = new GameState(11, 3, 7, 0, 0);
+        state = applyMoves(state,
+                Move.SPEED,
+                Move.JUMP,
+                Move.SPEED,
+//                Move.SPEED,
+                Move.SPEED
+        );
+//        System.out.println(state);
+//        assertTrue(state.isWin());
+    }
+
+    @Test
+    public void testCanReachVictory() {
+        assertTrue(new GameState(10, 2, 20, 0, 0).canReachVictory());
+    }
+
+    @Test
+    public void testCannotReachVictory() {
+//        assertFalse(new GameState(10, 3, 2, 0, 0).canReachVictory());
+        assertFalse(new GameState(0, 1, 1, 0, 0).canReachVictory());
+        assertFalse(new GameState(3, 2, 5, 0, 0).canReachVictory());
+    }
+
+    @Test
+    public void testIsWin() {
+        assertTrue(new GameState(12, 2, 1, 0, 15).isWin());
+        assertFalse(new GameState(12, 2, 1, 1, 15).isWin());
+        assertFalse(new GameState(12, 2, 1, 0, 16).isWin());
+        assertFalse(new GameState(12, 3, 1, 0, 15).isWin());
+        assertFalse(new GameState(12, 3, 1, 0, 0).isWin());
+
+        assertFalse(new GameState(12, 3, 1, 0, 12 + 3).isWin());
+        assertTrue(new GameState(12, 3, 1, 0, 12 + 3 + 1).isWin());
+        assertFalse(new GameState(12, 3, 1, 0, 12 + 3 + 1 + 1).isWin());
+    }
+
+    @Test
+    public void testIsLose() {
+        assertTrue(new GameState(12, 2, 1, 0, 12 + 1).isLose());
+        assertTrue(new GameState(12, 2, 1, 0, 12 + 2).isLose());
+        assertFalse(new GameState(12, 2, 1, 0, 12 + 3).isLose());
+        assertFalse(new GameState(12, 2, 1, 0, 12).isLose());
+    }
+
+    @Test
+    public void testTransition() {
+        int speed = 2;
+        int pos = 5;
+        GameState start = new GameState(12, 3, 4, speed, pos);
+
+        assertEquals(speed - 1, start.transition(Move.SLOW).speed);
+        assertEquals(speed, start.transition(Move.WAIT).speed);
+        assertEquals(speed, start.transition(Move.JUMP).speed);
+        assertEquals(speed + 1, start.transition(Move.SPEED).speed);
+
+        assertEquals(pos + speed - 1, start.transition(Move.SLOW).pos);
+        assertEquals(pos + speed, start.transition(Move.WAIT).pos);
+        assertEquals(pos + speed, start.transition(Move.JUMP).pos);
+        assertEquals(pos + speed + 1, start.transition(Move.SPEED).pos);
+    }
+
+
+    private static String computeAction2(int road, int gap, int landing, int speed, int pos) {
+        final String action;
+        int maxSpeed = maxSpeedToSlowDownWithinDistance(landing);
         int minSpeed = gap + 1;
-        if (speed < minSpeed) {
-            return "SPEED";
+        if (pos >= road + gap) {
+            action = "SLOW";
+        } else if (pos + speed >= road + gap && speed <= maxSpeed) {
+            action = "JUMP";
+            //        } else if (isTooFast(road, gap, landing, speed, pos)) {
+            //            action = "SLOW";
+            //        } else if (isCurrentSpeedGood(road, gap, landing, speed, pos)) {
+            //            action = "WAIT";
+        } else {
+            action = "SPEED";
         }
-        if (x + speed >= road + gap) {
-            return "JUMP";
-        }
-        int maxSpeed = computeMaxSpeedForLanding(landing);
-        if (speed > maxSpeed) {
-            return "SLOW";
-        }
-        if (x + speed + 1 < road && speed < maxSpeed) {
-            return "SPEED";
-        }
-        if (x + speed >= road) {
-            return "SLOW";
-        }
-        return "WAIT";
+        return action;
     }
 
-    private static final char ROAD = '.';
-    private static final char GAP = '0';
+    class PossibleLanding {
+        final int speed;
+        final int jumpPosition;
 
-    private static class GapInfo {
-        private final int start;
-        private final int size;
-        private final int lane;
-
-        public GapInfo(int start, int size, int lane) {
-            this.start = start;
-            this.size = size;
-            this.lane = lane;
+        PossibleLanding(int speed, int jumpPosition) {
+            this.speed = speed;
+            this.jumpPosition = jumpPosition;
         }
     }
 
-    private static String computeAction(int minToSurvive, char[][] road, int speed, int[] allX, int[] y, int[] states) {
-        int x = getSurvivedX(allX, states);
-        GapInfo gapInfo = nextMostSignificantGap(road, x);
-        int minSpeed = gapInfo.size + 1;
-        if (speed < minSpeed || x > gapInfo.start) {
-            return "SPEED";
-        }
-        if (x + speed >= gapInfo.start + gapInfo.size) {
-            return "JUMP";
-        }
-        if (shouldSlowDown(x, speed, gapInfo)) {
-            return "SLOW";
-        }
-//        int maxSpeed = computeMaxSpeedForLanding(landing);
-//        if (speed > maxSpeed) {
-//            return "SLOW";
-//        }
-//        if (x + speed + 1 < gapInfo.start && speed < maxSpeed) {
-        if (x + speed + 1 < gapInfo.start) {
-            return "SPEED";
-        }
-//        if (x + speed >= road) {
-//            return "SLOW";
-//        }
-        return "WAIT";
+
+    private static boolean isSafeToSpeed(int road, int gap, int landing, int speed, int pos) {
+        // SPEED* (WAIT | SLOW)* JUMP SLOW*
+        // given landing length and speed, calculate required jump position
+        // given jump position and speed, calculate if we should SPEED / SLOW / WAIT
+        // - calculate if too fast: should SLOW
+        // - calculate if no change will succeed: WAIT
+        // - otherwise SPEED
+        int distanceToGap = road - pos;
+        int maxSpeed = maxSpeedToSlowDownWithinDistance(landing);
+        int distanceNeeded = minDistanceNeededToSlowDown(speed + 1, maxSpeed);
+        return distanceNeeded < distanceToGap - speed;
     }
 
-    // if we reduce until min speed and survive the gap, then we should
-    private static boolean shouldSlowDown(int x, int speed, GapInfo gapInfo) {
-        int i = x;
-        for (; i < gapInfo.start && speed > gapInfo.size + 1; --speed, i += speed);
-        return i < gapInfo.start && i + speed >= gapInfo.start + gapInfo.size;
+    private static int maxSpeedToSlowDownWithinDistance(int distance) {
+        int i = (int) Math.sqrt(distance);
+        while (distance >= sumOfNums(i)) {
+            ++i;
+        }
+        return i - 1;
+    }
+
+    private static int minDistanceNeededToSlowDown(int currentSpeed, int targetSpeed) {
+        return sumOfNums(currentSpeed) - sumOfNums(targetSpeed);
+    }
+
+    private static int sumOfNums(int N) {
+        return N * (N + 1) / 2;
     }
 
     @Test
-    public void testShouldSlowDown() {
-        Assert.assertTrue(shouldSlowDown(0, 8, new GapInfo(14, 5, 0)));
-    }
-
-    private static GapInfo nextMostSignificantGap(char[][] road, int x) {
-        for (int i = x + 1; i < road[0].length; ++i) {
-            for (int lane = 0; lane < road.length; ++lane) {
-                if (road[lane][i] == GAP) {
-                    return new GapInfo(i, gapSize(road, lane, i), lane);
-                }
-            }
-        }
-        return new GapInfo(0, 0, 0);
-    }
-
-    private static int gapSize(char[][] road, int lane, int start) {
-        int length = 1;
-        for (int i = start + length; i < road[lane].length && road[lane][i] == GAP; ++i, ++length);
-        return length;
+    public void testMaxSpeedToSlowDownWithinDistance() {
+        assertEquals(6, maxSpeedToSlowDownWithinDistance(21));
+        assertEquals(6, maxSpeedToSlowDownWithinDistance(22));
+        assertEquals(6, maxSpeedToSlowDownWithinDistance(23));
+        assertEquals(6, maxSpeedToSlowDownWithinDistance(24));
+        assertEquals(6, maxSpeedToSlowDownWithinDistance(25));
+        assertEquals(6, maxSpeedToSlowDownWithinDistance(26));
+        assertEquals(6, maxSpeedToSlowDownWithinDistance(27));
+        assertEquals(7, maxSpeedToSlowDownWithinDistance(28));
     }
 
     @Test
-    public void testGapSize() {
-        Assert.assertEquals(2, gapSize(new char[][]{ new char[]{ ROAD, GAP, GAP, ROAD }}, 0, 1));
-        Assert.assertEquals(2, gapSize(new char[][]{ new char[]{ ROAD, GAP, GAP }}, 0, 1));
-        Assert.assertEquals(2, gapSize(new char[][]{ new char[]{ GAP, GAP }}, 0, 0));
-        Assert.assertEquals(1, gapSize(new char[][]{ new char[]{ GAP, ROAD, GAP }}, 0, 0));
-        Assert.assertEquals(1, gapSize(new char[][]{ new char[]{ GAP, ROAD, GAP }}, 0, 2));
-        Assert.assertEquals(2, gapSize(new char[][]{ new char[]{ GAP, ROAD, GAP, GAP }}, 0, 2));
+    public void testMinDistanceNeededToSlowDown() {
+        assertEquals(7, minDistanceNeededToSlowDown(7, 6));
+        assertEquals(0, minDistanceNeededToSlowDown(6, 6));
+        assertEquals(-6, minDistanceNeededToSlowDown(5, 6));
     }
 
-    private static int getSurvivedX(int[] x, int[] states) {
-        for (int i = 0; i < states.length; ++i) {
-            if (states[i] == 1) {
-                return x[i];
-            }
-        }
-        return 0;
+    @Test
+    public void testIsSafeToSpeed() {
+        //        assertTrue(isSafeToSpeed(4, 7, 3));
     }
+
 }
