@@ -1,4 +1,4 @@
-package com.janosgyerik.codingame.easy;
+package com.janosgyerik.codingame.easy.horse;
 
 import java.util.Iterator;
 import java.util.Scanner;

@@ -1,11 +1,7 @@
-package com.janosgyerik.codingame.easy;
+package com.janosgyerik.codingame.easy.horse;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Iterator;
-import java.util.Scanner;
-import java.util.TreeSet;
 
 public class HorseRacingTest {
 
