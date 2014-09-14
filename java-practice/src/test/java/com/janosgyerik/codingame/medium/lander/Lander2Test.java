@@ -1,4 +1,4 @@
-package com.janosgyerik.codingame.medium;
+package com.janosgyerik.codingame.medium.lander;
 
 import org.junit.Assert;
 import org.junit.Test;

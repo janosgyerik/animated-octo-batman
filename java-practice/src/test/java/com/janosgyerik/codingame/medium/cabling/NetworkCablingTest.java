@@ -1,4 +1,4 @@
-package com.janosgyerik.codingame.medium;
+package com.janosgyerik.codingame.medium.cabling;
 
 import org.junit.Assert;
 import org.junit.Ignore;

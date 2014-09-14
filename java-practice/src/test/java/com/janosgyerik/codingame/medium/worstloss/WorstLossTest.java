@@ -1,4 +1,4 @@
-package com.janosgyerik.codingame.medium;
+package com.janosgyerik.codingame.medium.worstloss;
 
 import org.junit.Assert;
 import org.junit.Test;
