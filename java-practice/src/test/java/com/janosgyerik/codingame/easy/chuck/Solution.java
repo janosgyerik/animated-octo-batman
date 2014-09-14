@@ -1,24 +1,28 @@
-package com.janosgyerik.codingame.easy;
-
-import org.junit.Assert;
-import org.junit.Test;
+package com.janosgyerik.codingame.easy.chuck;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
-public class ChuckNorrisTest {
+class SequenceItem {
+    final int num;
+    final int count;
 
-    class SequenceItem {
-        final int num;
-        final int count;
+    public SequenceItem(int num, int count) {
+        this.num = num;
+        this.count = count;
+    }
+}
 
-        public SequenceItem(int num, int count) {
-            this.num = num;
-            this.count = count;
-        }
+class Solution {
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        String line = in.nextLine();
+        System.out.println(encodeChuckNorrisSequence(line));
     }
 
-    public String encodeChuckNorrisSequence(String text) {
+    public static String encodeChuckNorrisSequence(String text) {
         List<SequenceItem> items = new ArrayList<SequenceItem>();
         boolean first = true;
         int prevNum = 0;
@@ -67,13 +71,4 @@ public class ChuckNorrisTest {
         return builder.toString();
     }
 
-    @Test
-    public void testC() {
-        Assert.assertEquals("0 0 00 0000 0 00", encodeChuckNorrisSequence("C"));
-    }
-
-    @Test
-    public void testCC() {
-        Assert.assertEquals("0 0 00 0000 0 000 00 0000 0 00", encodeChuckNorrisSequence("CC"));
-    }
 }
