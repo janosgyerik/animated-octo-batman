@@ -17,7 +17,7 @@ class Solution {
     }
 }
 
-public class HorseRacing {
+class HorseRacing {
     public int diffBetweenTwoClosest(int[] strengths) {
         TreeSet<Integer> sorted = new TreeSet<Integer>();
         for (int value : strengths) {
