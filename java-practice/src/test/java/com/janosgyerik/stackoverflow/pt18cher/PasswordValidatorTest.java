@@ -10,10 +10,10 @@ import static org.junit.Assert.assertEquals;
 class PasswordValidator {
     private static final Logger logger = Logger.getLogger(PasswordValidator.class.getSimpleName());
 
-    private final Pattern hasUppercase = Pattern.compile("[A-Z]");
-    private final Pattern hasLowercase = Pattern.compile("[a-z]");
-    private final Pattern hasNumber = Pattern.compile("\\d");
-    private final Pattern hasSpecialChar = Pattern.compile("[^a-zA-Z0-9 ]");
+    private final Pattern hasUppercase = Pattern.compile("\\p{javaUpperCase}");
+    private final Pattern hasLowercase = Pattern.compile("\\p{javaLowerCase}");
+    private final Pattern hasNumber = Pattern.compile("\\p{javaDigit}");
+    private final Pattern hasSpecialChar = Pattern.compile("[^\\p{javaLetterOrDigit} ]");
 
     public String validateNewPass(String pass1, String pass2) {
         if (pass1 == null || pass2 == null) {
@@ -74,5 +74,7 @@ public class PasswordValidatorTest {
         assertEquals("Passwords don't match<br>", validator.validateNewPass("therejacX", "abc"));
         assertEquals("Password is too short. Needs to have 11 characters <br>", validator.validateNewPass("erejacX1!", "erejacX1!"));
         assertEquals("Success", validator.validateNewPass("hellotherejackX2@", "hellotherejackX2@"));
+        assertEquals("Success", validator.validateNewPass("éééééééééééééééééééÉ2@", "éééééééééééééééééééÉ2@"));
+        assertEquals("Password needs a special character i.e. !,@,#, etc.  <br>", validator.validateNewPass("éééééééééééééééééééÉ2", "éééééééééééééééééééÉ2"));
     }
 }
