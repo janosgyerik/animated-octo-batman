@@ -40,7 +40,19 @@ public class SolutionTest {
 //        return minimumTotal(triangle);
         assert !triangle.isEmpty();
         assert !triangle.get(0).isEmpty();
-        return getMin(triangle, 0, 0, 0);
+//        return getMin(triangle, 0, 0, 0);
+        return getMin(triangle, 0, 0);
+    }
+
+    public static int getMin(List<List<Integer>> triangle, int level, int index) {
+        if (level == triangle.size()) {
+            return 0;
+        }
+        int current = triangle.get(level).get(index);
+        return Math.min(
+                current + getMin(triangle, level + 1, index),
+                current + getMin(triangle, level + 1, index + 1)
+        );
     }
 
     public static int getMin(List<List<Integer>> triangle, int level, int index, int accum) {
