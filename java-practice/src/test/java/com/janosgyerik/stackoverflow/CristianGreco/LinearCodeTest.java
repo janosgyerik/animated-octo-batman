@@ -55,8 +55,7 @@ public class LinearCodeTest {
 
     @Test
     public void testSampleExercise2() {
-        assertEquals(1, LinearCode.getMinimumDistance(new int[][]{
-                {3, 2},
+        assertEquals(0, LinearCode.getMinimumDistance(new int[][]{
                 {1, 1},
                 {0, 0},
                 {1, 1},
