@@ -65,6 +65,12 @@
             <artifactId>joda-time</artifactId>
             <version>2.4</version>
         </dependency>
+	    <dependency>
+		    <groupId>microbench</groupId>
+		    <artifactId>microbench</artifactId>
+		    <version>0.0.1-SNAPSHOT</version>
+		    <scope>test</scope>
+	    </dependency>
     </dependencies>
     <build>
         <plugins>
