@@ -11,10 +11,10 @@
 //import java.nio.channels.Channels;
 //import java.nio.channels.FileChannel;
 //import java.nio.channels.ReadableByteChannel;
-//import java.util.concurrent.ExecutorService;
-//import java.util.concurrent.Executors;
-//import java.util.concurrent.atomic.AtomicLong;
-//import java.util.concurrent.atomic.AtomicLongArray;
+//import java.com.janosgyerik.examples.util.concurrent.ExecutorService;
+//import java.com.janosgyerik.examples.util.concurrent.Executors;
+//import java.com.janosgyerik.examples.util.concurrent.atomic.AtomicLong;
+//import java.com.janosgyerik.examples.util.concurrent.atomic.AtomicLongArray;
 //
 ////import java.io.File;
 //import java.io.FileNotFoundException;
@@ -24,11 +24,11 @@
 //import java.nio.channels.Channels;
 //import java.nio.channels.FileChannel;
 //import java.nio.channels.ReadableByteChannel;
-//import java.util.concurrent.ExecutorService;
-//import java.util.concurrent.Executors;
-//import java.util.concurrent.atomic.AtomicInteger;
-//import java.util.concurrent.atomic.AtomicLong;
-//import java.util.concurrent.atomic.AtomicLongArray;
+//import java.com.janosgyerik.examples.util.concurrent.ExecutorService;
+//import java.com.janosgyerik.examples.util.concurrent.Executors;
+//import java.com.janosgyerik.examples.util.concurrent.atomic.AtomicInteger;
+//import java.com.janosgyerik.examples.util.concurrent.atomic.AtomicLong;
+//import java.com.janosgyerik.examples.util.concurrent.atomic.AtomicLongArray;
 //import org.apache.http.client.methods.CloseableHttpResponse;
 //import org.apache.http.client.methods.HttpGet;
 //import org.apache.http.impl.client.CloseableHttpClient;

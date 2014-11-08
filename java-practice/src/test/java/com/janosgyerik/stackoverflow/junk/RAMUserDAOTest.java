@@ -1,8 +1,8 @@
 //package com.janosgyerik.stackoverflow;
 //
 //import javax.swing.text.html.parser.DTDConstants;
-//import java.util.Map;
-//import java.util.concurrent.ConcurrentHashMap;
+//import java.com.janosgyerik.examples.util.Map;
+//import java.com.janosgyerik.examples.util.concurrent.ConcurrentHashMap;
 //
 //interface GenericDAO<T, U, V> {
 //    User findByKey(String key, Boolean active) throws NotFoundException;
