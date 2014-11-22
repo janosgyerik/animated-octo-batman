@@ -1,7 +1,7 @@
 package com.janosgyerik.stackoverflow.vogel;
 
 /**
- * Class for containing the main method. Will only start up the Screen and keep
+ * Class for containing the countWords method. Will only start up the Screen and keep
  * running until screen terminates (or rather signals execution stop)
  *
  * @author vogel612

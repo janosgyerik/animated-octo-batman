@@ -48,7 +48,7 @@ class RandomPicker<T> {
 //    private String fileName = "src/app/wordlist.txt";
 //    List<String> lines = null;
 //
-//    public static void main(String[] args) {
+//    public static void countWords(String[] args) {
 //        RandomWord randomWord = new RandomWord();
 //        randomWord.init();
 //    }

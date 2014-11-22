@@ -474,7 +474,7 @@ class FixedRecordSortFile implements AutoCloseable {
 		smallSort();
 
 		// repeatedly merge the blocks from the temp file, to the
-		// main file, then swap them, and repeat until all sorted.
+		// countWords file, then swap them, and repeat until all sorted.
 		FastFile from = workspace;
 		FastFile to = source;
 		FastFile tmp;
