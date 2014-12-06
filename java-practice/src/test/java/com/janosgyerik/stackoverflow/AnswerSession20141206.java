@@ -1,4 +1,4 @@
-package com.janosgyerik.so;
+package com.janosgyerik.stackoverflow;
 
 import org.junit.Test;
 
