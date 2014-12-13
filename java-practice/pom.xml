@@ -65,12 +65,12 @@
             <artifactId>joda-time</artifactId>
             <version>2.4</version>
         </dependency>
-	    <dependency>
-		    <groupId>com.janosgyerik</groupId>
-		    <artifactId>microbench</artifactId>
-		    <version>1.0</version>
-		    <scope>test</scope>
-	    </dependency>
+        <dependency>
+            <groupId>com.janosgyerik</groupId>
+            <artifactId>microbench</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
