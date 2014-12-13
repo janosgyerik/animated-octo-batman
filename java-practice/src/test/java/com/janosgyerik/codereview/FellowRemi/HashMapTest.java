@@ -35,24 +35,25 @@ class HashMap {
     public void put(String key, int value) {
         table[findIndex(key)] = new HashEntry(key, value);
     }
-}
 
-class HashEntry {
-    private String key;
-    private int value;
+    private static class HashEntry {
+        private String key;
+        private int value;
 
-    HashEntry(String key, int value) {
-        this.key = key;
-        this.value = value;
+        HashEntry(String key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getValue() {
+            return value;
+        }
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public int getValue() {
-        return value;
-    }
 }
 
 public class HashMapTest {
