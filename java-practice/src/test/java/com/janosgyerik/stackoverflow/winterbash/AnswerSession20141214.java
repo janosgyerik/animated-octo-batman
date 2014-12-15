@@ -2,10 +2,10 @@ package com.janosgyerik.stackoverflow.winterbash;
 
 import org.junit.Test;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -59,4 +59,87 @@ public class AnswerSession20141214 {
         System.out.println(formatter.format(date));
     }
 
+    @Test
+    public void testScanInteger() {
+        Scanner scanner = new Scanner("3");
+        String line = scanner.nextLine();
+        int choice = Integer.parseInt(line);
+        assertEquals(3, choice);
+    }
+
+    @Test
+    public void testScanIntegerFails() {
+        Scanner scanner = new Scanner("x3");
+        String line = scanner.nextLine();
+        try {
+            int choice = Integer.parseInt(line);
+            assertEquals(3, choice);
+        } catch (NumberFormatException e) {
+
+        }
+        //        assertTrue(new Scanner("x3").hasNextInt());
+    }
+
+    @Test
+    public void answer() {
+        boolean loop = false;
+        Scanner scanner = new Scanner("");
+        int choice;
+        while (loop && scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(line);
+                assertEquals(3, choice);
+            } catch (NumberFormatException e) {
+                System.out.println("That is not a correct choice. Please try again!");
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    //                    language = "FRENCH";
+                    loop = false;
+                    break;
+                case 2:
+                    //                    language = "GERMAN";
+                    loop = false;
+                    break;
+                case 3:
+                    //                    language = "SPANISH";
+                    loop = false;
+                    break;
+                default:
+                    System.out.println("That is not a correct choice. Please try again!");
+                    break;
+            }
+        }
+    }
+
+    class Player {
+
+        private String name;
+
+        public void setName(String pName) {
+            name = pName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return "Player{name='" + name + "'}";
+        }
+    }
+
+    @Test
+    public void test6() {
+        for (int i = 10; i > 1; --i) {
+            if (i % 2 == 0) {
+                System.out.print(i / 2);
+                if (i != 2) System.out.print(",");
+            }
+        }
+    }
 }
