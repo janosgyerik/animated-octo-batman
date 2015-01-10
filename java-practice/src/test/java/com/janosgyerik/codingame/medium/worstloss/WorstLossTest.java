@@ -4,15 +4,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class WorstLossTest {
-    private int calculateWorstLossNaive(int[] values) {
+    private int calculateWorstLossNaive(int[] curve) {
         int biggest = 0;
-        for (int i = 0; i < values.length - 1; ++i) {
-            for (int j = i + 1; j < values.length; ++j) {
-                if (values[j] < values[i]) {
-                    if (values[j] - values[i] < biggest) {
-                        biggest = Math.min(biggest, values[j] - values[i]);
-                        System.out.println(String.format("i=%s j=%s biggest=%s", i, j, biggest));
-                        // 67 91
+        for (int i = 0; i < curve.length - 1; ++i) {
+            for (int j = i + 1; j < curve.length; ++j) {
+                if (curve[j] < curve[i]) {
+                    if (curve[j] - curve[i] < biggest) {
+                        biggest = Math.min(biggest, curve[j] - curve[i]);
                     }
                 }
             }
@@ -20,63 +18,8 @@ public class WorstLossTest {
         return biggest;
     }
 
-    private int calculateWorstLoss(int[] values) {
-        int biggest = 0;
-        // if below last min, update last min and biggest
-        // if above last max, update local max
-        // if diff from local max below biggest, update all
-//        biggest = prevmin - prevmax;
-//        System.out.println(String.format("y=%s biggest=%s", i, biggest));
-        if (values.length > 1) {
-            int prevmin = values[0];
-            int prevmax = values[0];
-            int localmax = prevmin;
-            for (int i = 1; i < values.length; ++i) {
-                int current = values[i];
-                if (current < prevmin) {
-                    prevmin = current;
-                    biggest = prevmin - prevmax;
-                } else if (current > prevmax && current > localmax) {
-                    localmax = current;
-                }
-                if (current - localmax < biggest) {
-                    prevmax = localmax;
-                    prevmin = current;
-                    biggest = prevmin - prevmax;
-                }
-            }
-        }
-        return biggest;
-    }
-
-    private int calculateWorstLossSmart2(int[] values) {
-        int biggest = 0;
-        if (values.length > 1) {
-            int prevmin = values[0];
-            int prevmax = values[0];
-            int localmax = prevmin;
-            int i = 1;
-            while (true) {
-                for (; i < values.length && values[i] >= localmax; ++i) localmax = values[i];
-                int localmin = localmax;
-                for (; i < values.length && values[i] <= localmin; ++i) localmin = values[i];
-                if (prevmax > localmax) {
-                    if (localmin < prevmin) {
-                        prevmin = localmin;
-                        biggest = prevmin - prevmax;
-                    }
-                } else if (localmax - localmin > prevmax - prevmin) {
-                    prevmax = localmax;
-                    prevmin = localmin;
-                    biggest = prevmin - prevmax;
-                }
-                if (i == values.length) {
-                    break;
-                }
-                localmax = localmin;
-            }
-        }
-        return biggest;
+    private int calculateWorstLoss(int[] curve) {
+        return Solution.solution(curve);
     }
 
     @Test
