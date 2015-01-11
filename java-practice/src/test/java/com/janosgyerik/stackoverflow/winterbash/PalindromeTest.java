@@ -2,8 +2,6 @@ package com.janosgyerik.stackoverflow.winterbash;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -18,18 +16,15 @@ public class PalindromeTest {
         return result.equalsIgnoreCase(end);
     }
 
-    private boolean checkPalindrome(String string) {
-        char[] chars = string.replaceAll(" ", "").toLowerCase().toCharArray();
-        for (int i = 0; i < chars.length / 2; ++i) {
-            if (chars[i] != chars[chars.length - 1 - i]) {
+    private boolean isPalindrome(String string) {
+        String text = string.replaceAll("\\W+", "").toLowerCase();
+        int len = text.length();
+        for (int i = 0; i < len / 2; ++i) {
+            if (text.charAt(i) != text.charAt(len - 1 - i)) {
                 return false;
             }
         }
         return true;
-    }
-
-    private boolean isPalindrome(String string) {
-        return checkPalindrome(string);
     }
 
     @Test
