@@ -58,4 +58,26 @@ public class MayanCalculationTest {
         ));
         assertEquals(0, calculator.intValue(mayanZero));
     }
+
+    @Test
+    public void testNumeralValue() {
+        List<String> alphabet = Arrays.asList(
+                ".oo.o...oo..ooo.oooo....o...oo..ooo.oooo____o...oo..ooo.oooo____o...oo..ooo.oooo",
+                "o..o................____________________________________________________________",
+                ".oo.........................................____________________________________",
+                "................................................................________________");
+        MayanCalculator calculator = MayanCalculator.fromAlphabet(alphabet, 4);
+
+        MayanNumeral mayan21 = new MayanNumeral(Arrays.asList(
+           "o...",
+           "....",
+           "....",
+           "....",
+           "o...",
+           "....",
+           "....",
+           "...."
+        ));
+        assertEquals(mayan21, calculator.numeralValue(21));
+    }
 }

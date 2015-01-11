@@ -1,13 +1,12 @@
 package com.janosgyerik.codingame.medium.mayan;
 
-import java.lang.StringBuilder;
 import java.util.*;
 
 class MayanNumeral {
     private final List<String> lines;
 
     public MayanNumeral(List<String> lines) {
-        this.lines = lines;
+        this.lines = new ArrayList<>(lines);
     }
 
     @Override
@@ -28,9 +27,22 @@ class MayanNumeral {
         }
         return builder.toString();
     }
+
+    public void prependDigit(MayanNumeral numeral) {
+        List<String> copy = new ArrayList<>(lines);
+        lines.clear();
+        lines.addAll(numeral.lines);
+        lines.addAll(copy);
+    }
+
+    public MayanNumeral copy() {
+        return new MayanNumeral(this.lines);
+    }
 }
 
 class MayanCalculator {
+
+    private static final int BASE = 20;
 
     private final Map<MayanNumeral, Integer> numeralToInt;
     private final Map<Integer, MayanNumeral> intToNumeral;
@@ -69,7 +81,15 @@ class MayanCalculator {
     }
 
     public MayanNumeral numeralValue(int num) {
-        return intToNumeral.get(num);
+        int work = num;
+        MayanNumeral result = intToNumeral.get(work % BASE).copy();
+        while (work > BASE) {
+            work /= BASE;
+            int digit = work % BASE;
+            MayanNumeral numeral = intToNumeral.get(digit);
+            result.prependDigit(numeral);
+        }
+        return result;
     }
 }
 
@@ -108,8 +128,27 @@ class Solution {
         int int1 = calculator.intValue(num1);
         int int2 = calculator.intValue(num2);
 
-        MayanNumeral result = calculator.numeralValue(int1 + int2);
+        int result;
 
-        System.out.print(result);
+        switch (operation) {
+            case "+":
+                result = int1 + int2;
+                break;
+            case "-":
+                result = int1 - int2;
+                break;
+            case "*":
+                result = int1 * int2;
+                break;
+            case "/":
+                result = int1 / int2;
+                break;
+            default:
+                result = 0;
+        }
+
+        MayanNumeral mayanNumeral = calculator.numeralValue(result);
+
+        System.out.print(mayanNumeral);
     }
 }
