@@ -2,12 +2,11 @@ package com.janosgyerik.codereview.scratch;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class Scratch2 {
     public String everyNth(String str, int n) {
@@ -92,6 +91,11 @@ public class Scratch2 {
             //Below code generate error: required: T, found: int
 //            newList.addNode(5);  //How to add an int 5 here when it is expecting Type:T?
         }
+    }
+
+    @Test
+    public void test2() {
+        assertEquals("", Arrays.toString("3*52+11+3/2".split("\\b")));
     }
 
     class Node<T> {
