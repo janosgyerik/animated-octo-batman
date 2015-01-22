@@ -2,8 +2,12 @@ package com.janosgyerik.codereview.magulla;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.EmptyStackException;
+import java.lang.ref.WeakReference;
+import java.util.Objects;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 interface Stack<T> {
     void push(T object);
@@ -14,24 +18,20 @@ interface Stack<T> {
 }
 
 class StackImpl implements Stack<Object> {
-    private Object[] elements;
-    private int size = 0;
-    private static final int DEFAULT_INITIAL_CAPACITY = 16;
+    private int size;
+    private Object[] data = new Object[10];
 
-    public StackImpl() {
-        elements = new Object[DEFAULT_INITIAL_CAPACITY];
+    @Override
+    public void push(Object object) {
+        data[size] = object;
+        size++;
     }
 
-    public void push(Object e) {
-        ensureCapacity();
-        elements[size++] = e;
-    }
-
+    @Override
     public Object pop() {
-        if (size == 0)
-            throw new EmptyStackException();
-        Object result = elements[--size];
-        elements[size] = null;
+        --size;
+        Object result = data[size];
+        data[size] = null;
         return result;
     }
 
@@ -39,45 +39,20 @@ class StackImpl implements Stack<Object> {
     public int size() {
         return size;
     }
-
-    /**
-     * Ensure space for at least one more element, roughly
-     * doubling the capacity each time the array needs to grow.
-     */
-    private void ensureCapacity() {
-        if (elements.length == size)
-            elements = Arrays.copyOf(elements, 2 * size + 1);
-    }
 }
 
 public class StackTest {
-    long getAvailableMemory() {
-        Runtime runtime = Runtime.getRuntime();
-        runtime.gc();
-        return runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
-    }
-
     @Test
-    public void testMemoryUse() {
-        System.out.println(getAvailableMemory());
+    public void testPopCleansUpReference() {
+        Stack<Object> stack = new StackImpl();
+        Object value = new Object();
+        stack.push(value);
 
-        Stack stack = new StackImpl();
-        int size = 1000000;
-        for (int i = 0; i < size; ++i) {
-            Object obj = new Integer(i);
-            stack.push(obj);
-        }
-        System.out.println(getAvailableMemory());
-        while (stack.size() > 0) {
-            stack.pop();
-        }
+        WeakReference<Object> reference = new WeakReference<>(value);
+        value = null;
 
-        System.out.println(getAvailableMemory());
-
-        stack.push(3);
-        //        Stack<Integer> stack = new Stack<>();
-        //        stack.push(4);
-        //        stack.pop();
-        //        stack.pop();
+        stack.pop();
+        Runtime.getRuntime().gc();
+        assertNull(reference.get());
     }
 }
