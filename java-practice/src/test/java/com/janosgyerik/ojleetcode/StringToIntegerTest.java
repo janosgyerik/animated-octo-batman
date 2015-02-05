@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class AtoiTest {
+public class StringToIntegerTest {
     int atoi(String str) {
         int len = str.length();
 
