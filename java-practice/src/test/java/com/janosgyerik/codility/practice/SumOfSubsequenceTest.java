@@ -45,4 +45,9 @@ public class SumOfSubsequenceTest {
     public void test_6_2_7_4_1_3_6__16() {
         assertFalse(hasSubsequenceWithSum(new int[]{6, 2, 7, 4, 1, 3, 6}, 16));
     }
+
+    @Test
+    public void test_6_2_7_14_1_3_6__12() {
+        assertFalse(hasSubsequenceWithSum(new int[]{6, 2, 7, 14, 1, 3, 6}, 12));
+    }
 }
