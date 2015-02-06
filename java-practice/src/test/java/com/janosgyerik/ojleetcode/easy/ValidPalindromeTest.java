@@ -1,4 +1,4 @@
-package com.janosgyerik.ojleetcode;
+package com.janosgyerik.ojleetcode.easy;
 
 public class ValidPalindromeTest {
     public boolean isPalindrome(String s) {

@@ -1,4 +1,4 @@
-package com.janosgyerik.ojleetcode;
+package com.janosgyerik.ojleetcode.easy;
 
 import org.junit.Test;
 
