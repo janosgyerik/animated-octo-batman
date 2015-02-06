@@ -35,4 +35,14 @@ public class ExcelSheetColumnIndexTest {
         assertEquals(28, titleToNumber("AB"));
     }
 
+    @Test
+    public void test_abcd() {
+        assertEquals(19010, titleToNumber("ABCD"));
+    }
+
+    @Test
+    public void test_zz() {
+        assertEquals(702, titleToNumber("ZZ"));
+    }
+
 }
