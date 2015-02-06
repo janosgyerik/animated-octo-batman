@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExcelSheetColumnTitleTest {
+public class ExcelSheetColumnIndexTest {
     public int titleToNumber(String s) {
         int number = 0;
         int len = s.length();
