@@ -3,6 +3,7 @@ package com.janosgyerik.ojleetcode.medium;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,13 +24,7 @@ public class RepeatedDNASequencesTest {
                 seen.add(hashCode);
             }
         }
-        List<String> reallyRepeated = new ArrayList<>();
-        for (String string : repeated) {
-            if (s.indexOf(string) < s.lastIndexOf(string)) {
-                reallyRepeated.add(string);
-            }
-        }
-        return reallyRepeated;
+        return repeated.stream().filter(string -> s.indexOf(string) < s.lastIndexOf(string)).collect(Collectors.toList());
     }
 
     @Test
