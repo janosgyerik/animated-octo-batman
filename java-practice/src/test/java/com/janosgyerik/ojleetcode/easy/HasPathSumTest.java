@@ -25,12 +25,11 @@ public class HasPathSumTest {
         if (root == null) {
             return false;
         }
-        int diff = sum - root.val;
-        if (diff == 0 && root.left == null && root.right == null) {
+        int nextSum = sum - root.val;
+        if (nextSum == 0 && root.left == null && root.right == null) {
             return true;
         }
-        return root.left != null && hasPathSum(root.left, diff)
-                || root.right != null && hasPathSum(root.right, diff);
+        return hasPathSum(root.left, nextSum) || hasPathSum(root.right, nextSum);
     }
 
     @Test
