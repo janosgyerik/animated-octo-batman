@@ -7,11 +7,8 @@ import static org.junit.Assert.assertEquals;
 public class FindPeakElementTest {
     public int findPeakElement(int[] num) {
         int len = num.length;
-        if (len == 1 || num[1] < num[0]) {
-            return 0;
-        }
-        for (int i = 2; i < len; ++i) {
-            if (num[i] < num[i - 1] && num[i - 2] < num[i - 1]) {
+        for (int i = 1; i < len; ++i) {
+            if (num[i] < num[i - 1]) {
                 return i - 1;
             }
         }
