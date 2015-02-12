@@ -11,13 +11,14 @@ import static org.junit.Assert.assertEquals;
 public class FractionRecurringDecimalTest {
     public String fractionToDecimal(int numerator, int denominator) {
         StringBuilder builder = new StringBuilder();
-        if (numerator > 0 && denominator < 0) {
+        if (numerator != 0 && numerator < 0 ^ denominator < 0) {
             builder.append("-");
         }
-        builder.append((long) numerator / denominator);
 
+        long num = Math.abs((long) numerator);
         long den = Math.abs((long) denominator);
-        long remainder = Math.abs((long) numerator) % den;
+        builder.append(num / den);
+        long remainder = num % den;
 
         if (remainder == 0) {
             return builder.toString();
