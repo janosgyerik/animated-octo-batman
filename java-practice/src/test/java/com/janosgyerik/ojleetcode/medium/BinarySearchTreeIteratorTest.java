@@ -2,12 +2,12 @@ package com.janosgyerik.ojleetcode.medium;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 class TreeNode {
     int val;
@@ -26,30 +26,69 @@ class TreeNode {
 
 class BSTIterator {
 
-    private final LinkedList<TreeNode> nodes = new LinkedList<>();
+    private final Stack<TreeNode> nodes = new Stack<>();
+    private int currentVal;
+    private boolean foundNext = false;
 
     public BSTIterator(TreeNode root) {
-        populate(root);
+        if (root != null) {
+            findSmallestAndSetCurrentVal(root);
+        }
     }
 
-    private final void populate(TreeNode node) {
-        if (node != null) {
-            populate(node.left);
-            nodes.add(node);
-            populate(node.right);
+    private void findSmallestAndSetCurrentVal(TreeNode node) {
+        nodes.push(node);
+        if (node.left != null) {
+            findSmallestAndSetCurrentVal(node.left);
+        } else {
+            currentVal = node.val;
+            foundNext = true;
         }
     }
 
     public boolean hasNext() {
-        return !nodes.isEmpty();
+        return foundNext;
     }
 
     public int next() {
-        return nodes.pollFirst().val;
+        int previousVal = currentVal;
+        TreeNode last = nodes.peek();
+        if (last.right != null) {
+            findSmallestAndSetCurrentVal(last.right);
+        } else {
+            while (nodes.peek().val <= currentVal) {
+                nodes.pop();
+                if (nodes.empty()) {
+                    foundNext = false;
+                    return currentVal;
+                }
+            }
+            currentVal = nodes.peek().val;
+        }
+        return previousVal;
     }
 }
 
 public class BinarySearchTreeIteratorTest {
+    @Test
+    public void test_empty() {
+        assertFalse(new BSTIterator(null).hasNext());
+    }
+
+    @Test
+    public void test_1() {
+        BSTIterator iterator = new BSTIterator(new TreeNode(12));
+        assertTrue(iterator.hasNext());
+    }
+
+    private List<Integer> toList(BSTIterator iterator) {
+        List<Integer> list = new LinkedList<>();
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        return list;
+    }
+
     private void assertValuesInSequence(BSTIterator iterator) {
         assertTrue(iterator.hasNext());
         int i = 1;
@@ -77,5 +116,21 @@ public class BinarySearchTreeIteratorTest {
         root.right.right = new TreeNode(5);
 
         assertValuesInSequence(new BSTIterator(root));
+    }
+
+    @Test
+    public void test_1_2_left() {
+        TreeNode root = new TreeNode(2);
+        root.left = new TreeNode(1);
+
+        assertEquals(Arrays.asList(1, 2), toList(new BSTIterator(root)));
+    }
+
+    @Test
+    public void test_1_2_right() {
+        TreeNode root = new TreeNode(1);
+        root.right = new TreeNode(2);
+
+        assertEquals(Arrays.asList(1, 2), toList(new BSTIterator(root)));
     }
 }
