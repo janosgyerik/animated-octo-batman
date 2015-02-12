@@ -29,11 +29,14 @@ public class FractionRecurringDecimalTest {
         int index = builder.length();
         while (remainder != 0) {
             map.put(remainder, index++);
+
             remainder *= 10;
             builder.append(remainder / den);
             remainder %= den;
-            if (map.containsKey(remainder)) {
-                builder.insert(map.get(remainder), "(");
+
+            Integer remainderIndex = map.get(remainder);
+            if (remainderIndex != null) {
+                builder.insert(remainderIndex, "(");
                 builder.append(")");
                 break;
             }
