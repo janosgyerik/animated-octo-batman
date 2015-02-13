@@ -25,9 +25,11 @@ public class BalancedBinaryTreeTest {
             return new SearchInfo(0, true);
         }
         SearchInfo left = isBalancedHelper(node.left);
-        SearchInfo right = isBalancedHelper(node.right);
-        if (left.balanced && right.balanced && Math.abs(left.height - right.height) < 2) {
-            return new SearchInfo(1 + Math.max(left.height, right.height), true);
+        if (left.balanced) {
+            SearchInfo right = isBalancedHelper(node.right);
+            if (right.balanced && Math.abs(left.height - right.height) < 2) {
+                return new SearchInfo(1 + Math.max(left.height, right.height), true);
+            }
         }
         return new SearchInfo(-1, false);
     }
