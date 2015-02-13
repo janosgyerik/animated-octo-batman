@@ -6,32 +6,27 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 
 public class BalancedBinaryTreeTest {
-    private static final class SearchInfo {
-        private final int height;
-        private final boolean balanced;
 
-        private SearchInfo(int height, boolean balanced) {
-            this.height = height;
-            this.balanced = balanced;
-        }
-    }
+    private static final int UNBALANCED = -1;
 
     public boolean isBalanced(TreeNode root) {
-        return isBalancedHelper(root).balanced;
+        return depth(root) != UNBALANCED;
     }
 
-    private SearchInfo isBalancedHelper(TreeNode node) {
+    private int depth(TreeNode node) {
         if (node == null) {
-            return new SearchInfo(0, true);
+            return 0;
         }
-        SearchInfo left = isBalancedHelper(node.left);
-        if (left.balanced) {
-            SearchInfo right = isBalancedHelper(node.right);
-            if (right.balanced && Math.abs(left.height - right.height) < 2) {
-                return new SearchInfo(1 + Math.max(left.height, right.height), true);
+        int left = depth(node.left);
+        if (left != UNBALANCED) {
+            int right = depth(node.right);
+            if (right != UNBALANCED) {
+                if (Math.abs(left - right) <= 1) {
+                    return 1 + Math.max(left, right);
+                }
             }
         }
-        return new SearchInfo(-1, false);
+        return UNBALANCED;
     }
 
     @Test
