@@ -90,4 +90,43 @@ public class TreeNodeUtilsTest {
         assertEquals(null, root.right.left.right.left);
         assertEquals(null, root.right.left.right.right);
     }
+
+    @Test
+    public void testDeserialize_1_x_2_x_3_x_4_x_5() {
+        TreeNode root = deserialize("{1,#,2,#,3,#,4,#,5}");
+
+        assertEquals(1, root.val);
+        assertEquals(null, root.left);
+
+        assertEquals(2, root.right.val);
+        assertEquals(null, root.right.left);
+
+        assertEquals(3, root.right.right.val);
+        assertEquals(null, root.right.right.left);
+
+        assertEquals(4, root.right.right.right.val);
+        assertEquals(null, root.right.right.right.left);
+
+        assertEquals(5, root.right.right.right.right.val);
+        assertEquals(null, root.right.right.right.right.left);
+        assertEquals(null, root.right.right.right.right.right);
+    }
+
+    @Test
+    public void testDeserialize_1_2_x_3_x_4() {
+        TreeNode root = deserialize("{1,2,#,3,#,4}");
+
+        assertEquals(1, root.val);
+        assertEquals(null, root.right);
+
+        assertEquals(2, root.left.val);
+        assertEquals(null, root.left.right);
+
+        assertEquals(3, root.left.left.val);
+        assertEquals(null, root.left.left.right);
+
+        assertEquals(4, root.left.left.left.val);
+        assertEquals(null, root.left.left.left.left);
+        assertEquals(null, root.left.left.left.right);
+    }
 }
