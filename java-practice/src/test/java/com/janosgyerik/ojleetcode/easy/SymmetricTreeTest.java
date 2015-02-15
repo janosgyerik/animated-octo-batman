@@ -43,6 +43,22 @@ public class SymmetricTreeTest {
     }
 
     public boolean isSymmetric(TreeNode root) {
+        return root == null || isSymmetric(root.left, root.right);
+    }
+
+    public boolean isSymmetric(TreeNode left, TreeNode right) {
+        if (left == null ^ right == null) {
+            return false;
+        }
+        if (left == null) {
+            return true;
+        }
+        return left.val == right.val
+                && isSymmetric(left.left, right.right)
+                && isSymmetric(left.right, right.left);
+    }
+
+    public boolean isSymmetric_Iterative(TreeNode root) {
         if (root == null) {
             return true;
         }
@@ -104,5 +120,10 @@ public class SymmetricTreeTest {
     @Test
     public void test_2_3_3_4_5_5_4_x_x_8_9_x_x_9_8() {
         assertFalse(isSymmetric(TreeNodeUtils.deserialize("{2,3,3,4,5,5,4,#,#,8,9,#,#,9,8}")));
+    }
+
+    @Test
+    public void test_1_2_3() {
+        assertFalse(isSymmetric(TreeNodeUtils.deserialize("{1,2,3}")));
     }
 }
