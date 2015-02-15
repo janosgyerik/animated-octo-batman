@@ -6,7 +6,7 @@ import java.util.Queue;
 
 public class TreeNodeBreadthFirstIterator implements Iterator<Integer> {
 
-    private final Queue<TreeNode> nodeQueue = new LinkedList<>();
+    protected final Queue<TreeNode> nodeQueue = new LinkedList<>();
 
     public TreeNodeBreadthFirstIterator(TreeNode node) {
         if (node != null) {
