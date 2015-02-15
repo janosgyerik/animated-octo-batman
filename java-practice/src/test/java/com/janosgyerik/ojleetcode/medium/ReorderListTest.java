@@ -1,6 +1,6 @@
 package com.janosgyerik.ojleetcode.medium;
 
-import com.janosgyerik.codereview.morrisb.InterestCalculatorTest;
+import com.janosgyerik.ojleetcode.common.ListNode;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,16 +9,6 @@ import java.util.List;
 import java.util.Stack;
 
 import static org.junit.Assert.assertEquals;
-
-class ListNode {
-    int val;
-    ListNode next;
-
-    ListNode(int x) {
-        val = x;
-        next = null;
-    }
-}
 
 public class ReorderListTest {
     public void reorderList(ListNode head) {
