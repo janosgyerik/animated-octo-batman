@@ -1,18 +1,9 @@
 package com.janosgyerik.ojleetcode.easy;
 
+import com.janosgyerik.ojleetcode.common.ListNode;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
-class ListNode {
-    int val;
-    ListNode next;
-
-    ListNode(int x) {
-        val = x;
-        next = null;
-    }
-}
 
 public class IntersectionTwoLinkedListsTest {
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
