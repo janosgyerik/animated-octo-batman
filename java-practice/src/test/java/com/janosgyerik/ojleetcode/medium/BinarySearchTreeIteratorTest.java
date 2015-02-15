@@ -1,5 +1,6 @@
 package com.janosgyerik.ojleetcode.medium;
 
+import com.janosgyerik.ojleetcode.common.TreeNode;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -8,21 +9,6 @@ import java.util.List;
 import java.util.Stack;
 
 import static org.junit.Assert.*;
-
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-
-    TreeNode(int x) {
-        val = x;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(val);
-    }
-}
 
 class BSTIterator {
 
