@@ -2,7 +2,6 @@ package com.janosgyerik.ojleetcode.common;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class TreeNodeBreadthFirstIterator implements Iterator<Integer> {
@@ -27,9 +26,21 @@ public class TreeNodeBreadthFirstIterator implements Iterator<Integer> {
             return null;
         }
         if (node.left != null || node.right != null) {
-            nodeQueue.add(node.left);
-            nodeQueue.add(node.right);
+            enqueueFirstChild(node);
+            enqueueSecondChild(node);
         }
         return node.val;
+    }
+
+    public void enqueueFirstChild(TreeNode node) {
+        enqueueNode(node.left);
+    }
+
+    public void enqueueSecondChild(TreeNode node) {
+        enqueueNode(node.right);
+    }
+
+    public void enqueueNode(TreeNode node) {
+        nodeQueue.add(node);
     }
 }
