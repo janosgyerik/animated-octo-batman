@@ -2,6 +2,8 @@ package com.janosgyerik.ojleetcode.easy;
 
 import org.junit.Test;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Stack;
 
 import static org.junit.Assert.assertFalse;
@@ -9,6 +11,8 @@ import static org.junit.Assert.assertTrue;
 
 public class ValidParenthesesTest {
     public boolean isValid(String s) {
+        char[] arr = "hello".toCharArray();
+        Arrays.sort(arr);
         Stack<Character> nextExpectedClosing = new Stack<>();
         int len = s.length();
         for (int pos = 0; pos < len; ++pos) {
