@@ -29,7 +29,7 @@ public class ListNodeUtils {
 
     public static String serialize(ListNode node) {
         StringBuilder builder = new StringBuilder();
-        builder.append("{");
+        builder.append("[");
         if (node != null) {
             builder.append(node.val);
             node = node.next;
@@ -38,6 +38,6 @@ public class ListNodeUtils {
                 node = node.next;
             }
         }
-        return builder.append("}").toString();
+        return builder.append("]").toString();
     }
 }

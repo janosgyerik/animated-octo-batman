@@ -11,7 +11,7 @@ public class ListNode {
 
     @Override
     public String toString() {
-        return ListNodeUtils.serialize(this);
+        return String.valueOf(this.val);
     }
 }
 
