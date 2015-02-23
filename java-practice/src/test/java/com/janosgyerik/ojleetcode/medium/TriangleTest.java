@@ -12,14 +12,27 @@ public class TriangleTest {
         if (triangle.isEmpty()) {
             return 0;
         }
+
+        int[] minSums = initMinSums(triangle);
+
         for (int rowIndex = triangle.size() - 2; rowIndex >= 0; --rowIndex) {
             List<Integer> currentRow = triangle.get(rowIndex);
-            List<Integer> nextRow = triangle.get(rowIndex + 1);
+            int leftValue = minSums[0];
             for (int colIndex = 0; colIndex <= rowIndex; ++colIndex) {
-                currentRow.set(colIndex, currentRow.get(colIndex) + Math.min(nextRow.get(colIndex), nextRow.get(colIndex + 1)));
+                minSums[colIndex] = currentRow.get(colIndex) + Math.min(leftValue, minSums[colIndex + 1]);
+                leftValue = minSums[colIndex + 1];
             }
         }
-        return triangle.get(0).get(0);
+        return minSums[0];
+    }
+
+    private int[] initMinSums(List<List<Integer>> triangle) {
+        int[] minSums = new int[triangle.size()];
+        List<Integer> lastRow = triangle.get(triangle.size() - 1);
+        for (int i = 0; i < minSums.length; ++i) {
+            minSums[i] = lastRow.get(i);
+        }
+        return minSums;
     }
 
     public int minimumTotal_Greedy(List<List<Integer>> triangle) {
