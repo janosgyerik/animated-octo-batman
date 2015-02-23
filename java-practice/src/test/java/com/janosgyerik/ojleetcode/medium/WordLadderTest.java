@@ -11,10 +11,11 @@ public class WordLadderTest {
     public int ladderLength(String start, String end, Set<String> dict) {
         Queue<String> queue = new LinkedList<>();
         queue.add(start);
-        int level = 2;
+        int level = 1;
+        dict.add(end);
         while (!queue.isEmpty()) {
             for (String item : new LinkedList<>(queue)) {
-                if (distance(item, end) == 1) {
+                if (item.equals(end)) {
                     return level;
                 }
                 queue.poll();
