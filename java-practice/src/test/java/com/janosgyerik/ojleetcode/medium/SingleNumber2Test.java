@@ -6,11 +6,28 @@ import static org.junit.Assert.assertEquals;
 
 public class SingleNumber2Test {
     public int singleNumber(int[] A) {
-        int xor = 0;
-        for (int num : A) {
-            xor ^= num;
+        long sum = computeSum(A);
+        
+        OUTER:
+        for (int i = 0; i < A.length; ++i) {
+            if ((sum - A[i]) % 3 == 0) {
+                for (int j = 0; j < A.length; ++j) {
+                    if (i != j && A[i] == A[j]) {
+                        continue OUTER;
+                    }
+                }
+                return A[i];
+            }
         }
-        return xor;
+        return -1;
+    }
+
+    public long computeSum(int[] arr) {
+        long sum = 0;
+        for (int num : arr) {
+            sum += num;
+        }
+        return sum;
     }
 
     @Test
