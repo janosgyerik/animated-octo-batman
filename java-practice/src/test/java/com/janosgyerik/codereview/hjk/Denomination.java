@@ -40,11 +40,11 @@ enum Denomination {
      * @return a two-element array, the first being the quotient (aka multiplier) and the second
      *         being the remainder
      */
-    public double[] breakdown(double input) {
+    public Breakdown breakdown(double input) {
         int intValue = Double.valueOf(MULTIPLIER * input).intValue();
-        int div = intValue / value;
+        int count = intValue / value;
         int remainder = intValue % value;
-        return new double[] { div, (double) remainder / MULTIPLIER };
+        return new Breakdown(count, (double) remainder / MULTIPLIER);
     }
 
     @Override
@@ -68,4 +68,13 @@ enum Denomination {
         return (double) value * multiplier / MULTIPLIER;
     }
 
+    public static class Breakdown {
+        final int count;
+        final double remainder;
+
+        public Breakdown(int count, double remainder) {
+            this.count = count;
+            this.remainder = remainder;
+        }
+    }
 }

@@ -21,12 +21,12 @@ class Calculator {
      */
     public static Map<Denomination, Integer> getBreakdown(double input) {
         final Map<Denomination, Integer> result = new EnumMap<>(Denomination.class);
-        double temp = input;
-        for (final Denomination current : Denomination.values()) {
-            if (current.canBreakdown(temp)) {
-                final double[] parts = current.breakdown(temp);
-                result.put(current, Double.valueOf(parts[0]).intValue());
-                temp = parts[1];
+        double remainder = input;
+        for (final Denomination denomination : Denomination.values()) {
+            if (denomination.canBreakdown(remainder)) {
+                Denomination.Breakdown breakdown = denomination.breakdown(remainder);
+                result.put(denomination, breakdown.count);
+                remainder = breakdown.remainder;
             }
         }
         return Collections.unmodifiableMap(result);
