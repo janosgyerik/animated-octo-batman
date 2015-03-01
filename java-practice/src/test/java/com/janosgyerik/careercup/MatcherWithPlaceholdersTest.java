@@ -85,12 +85,14 @@ public class MatcherWithPlaceholdersTest {
 
     @Test
     public void test_enumerateStarPos_2() {
-        assertEquals("[[], [0], [1], [0, 1]]", matcher.enumerateStarPositions(2).toString());
+        assertEquals("[[], [0], [1], [0, 1]]",
+                matcher.enumerateStarPositions(2).toString());
     }
 
     @Test
     public void test_enumerateStarPos_3() {
-        assertEquals("[[], [0], [1], [2], [0, 1], [0, 2], [1, 2], [0, 1, 2]]", matcher.enumerateStarPositions(3).toString());
+        assertEquals("[[], [0], [1], [2], [0, 1], [0, 2], [1, 2], [0, 1, 2]]",
+                matcher.enumerateStarPositions(3).toString());
     }
 
     @Test
