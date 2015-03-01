@@ -8,15 +8,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-class Matcher {
-    final Set<String> index = new HashSet<>();
+class MatcherWithPlaceholders {
 
-    Matcher(List<String> words) {
+    protected final Set<String> index = new HashSet<>();
+
+    public MatcherWithPlaceholders(List<String> words) {
         words.forEach(this::addPermutations);
     }
 
-    final void addPermutations(String word) {
-        index.add(word);
+    private final void addPermutations(String word) {
         char[] letters = word.toCharArray();
         for (List<Integer> starPositions : enumerateStarPositions(word.length())) {
             String wordWithStars = getWordWithStars(letters, starPositions);
@@ -34,8 +34,9 @@ class Matcher {
         }
     }
 
-    List<List<Integer>> enumerateStarPositions(int length) {
+    protected List<List<Integer>> enumerateStarPositions(int length) {
         List<List<Integer>> results = new LinkedList<>();
+        results.add(Arrays.asList());
 
         Queue<ListWithIndex> canGrow = new LinkedList<>();
         canGrow.add(new ListWithIndex(new LinkedList<>(), 0));
@@ -69,62 +70,66 @@ class Matcher {
 
 }
 
-public class PlaceholderMatcherTest {
-    private Matcher matcher = new Matcher(Arrays.asList("hazem", "ahmed", "moustafa", "fizo"));
+public class MatcherWithPlaceholdersTest {
+    private MatcherWithPlaceholders matcher =
+            new MatcherWithPlaceholders(Arrays.asList("hazem", "ahmed", "moustafa", "fizo"));
+
+    private boolean hasMatch(String query) {
+        return matcher.hasMatch(query);
+    }
 
     @Test
     public void test_enumerateStarPos_1() {
-        assertEquals("[[0]]", matcher.enumerateStarPositions(1).toString());
+        assertEquals("[[], [0]]", matcher.enumerateStarPositions(1).toString());
     }
 
     @Test
     public void test_enumerateStarPos_2() {
-        assertEquals("[[0], [1], [0, 1]]", matcher.enumerateStarPositions(2).toString());
+        assertEquals("[[], [0], [1], [0, 1]]", matcher.enumerateStarPositions(2).toString());
     }
 
     @Test
     public void test_enumerateStarPos_3() {
-        assertEquals("[[0], [1], [2], [0, 1], [0, 2], [1, 2], [0, 1, 2]]", matcher.enumerateStarPositions(3).toString());
-    }
-
-    @Test
-    public void test_enumerateStarPos_4() {
-        assertEquals("[[0], [1], [2], [3], [0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3], [0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3], [0, 1, 2, 3]]",
-                matcher.enumerateStarPositions(4).toString());
+        assertEquals("[[], [0], [1], [2], [0, 1], [0, 2], [1, 2], [0, 1, 2]]", matcher.enumerateStarPositions(3).toString());
     }
 
     @Test
     public void test_ahmed() {
-        assertTrue(matcher.hasMatch("ahmed"));
+        assertTrue(hasMatch("ahmed"));
     }
 
     @Test
-    public void test_mxxstafa() {
-        assertTrue(matcher.hasMatch("m**stafa"));
+    public void test_m00stafa() {
+        assertTrue(hasMatch("m**stafa"));
     }
 
     @Test
-    public void test_zzzzz() {
-        assertTrue(matcher.hasMatch("*****"));
+    public void test_00() {
+        assertFalse(hasMatch("**"));
     }
 
     @Test
-    public void test_zzzz() {
-        assertTrue(matcher.hasMatch("****"));
+    public void test_0000() {
+        assertTrue(hasMatch("****"));
     }
 
     @Test
-    public void test_zz() {
-        assertFalse(matcher.hasMatch("**"));
+    public void test_00000() {
+        assertTrue(hasMatch("*****"));
+    }
+
+    @Test
+    public void test_000000000000000() {
+        assertFalse(hasMatch("***************"));
     }
 
     @Test
     public void test_fizoo() {
-        assertFalse(matcher.hasMatch("fizoo"));
+        assertFalse(hasMatch("fizoo"));
     }
 
     @Test
     public void test_fizd() {
-        assertFalse(matcher.hasMatch("fizd"));
+        assertFalse(hasMatch("fizd"));
     }
 }
