@@ -61,7 +61,7 @@ public class CalculatorTest {
         System.out.println(remainder);
         System.out.println((double) remainder / MULTIPLIER);
 
-        assertEquals("", Calculator.getBreakdown(100.75).toString());
+//        assertEquals("", Calculator.getBreakdown(100.75).toString());
     }
 
     private static void addCase(final Collection<Object[]> cases, double testValue,
