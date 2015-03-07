@@ -14,11 +14,15 @@ public class PaintingTheFacadeTest {
     private static final char BLANK = '.';
     private static final char PAINTED = '#';
 
-    private String solve(Scanner input) {
-        StringBuilder builder = new StringBuilder();
+    private String generateNaiveSolution(Facade facade) {
         String newline = String.format("%n");
-        Facade facade = Facade.fromScanner(input);
-        for (Facade.Cell cell : facade.getPaintedCells()) {
+
+        StringBuilder builder = new StringBuilder();
+
+        List<Facade.Cell> cells = facade.getPaintedCells();
+        builder.append(cells.size()).append(newline);
+
+        for (Facade.Cell cell : cells) {
             builder.append(new PaintCommand(cell)).append(newline);
         }
         return builder.toString();
@@ -29,6 +33,7 @@ public class PaintingTheFacadeTest {
 
             final int row;
             final int col;
+
             Cell(int row, int col) {
                 this.row = row;
                 this.col = col;
@@ -201,33 +206,28 @@ public class PaintingTheFacadeTest {
         return facade.toString();
     }
 
+    private final String simpleFacadeString = "5 7\n" +
+            "....#..\n" +
+            "..###..\n" +
+            "..#.#..\n" +
+            "..###..\n" +
+            "..#....\n";
+
+    private final Facade simpleFacade = Facade.fromScanner(new Scanner(simpleFacadeString));
+
     @Test
     public void testExecuteSimpleExample() {
-        String target = "5 7\n" +
-                "....#..\n" +
-                "..###..\n" +
-                "..#.#..\n" +
-                "..###..\n" +
-                "..#....\n";
-        Facade facade = new Facade(5, 7);
-        assertEquals(target, execute(facade, new Scanner("4\n" +
-                "PAINTSQ 2 3 1\n" +
-                "PAINTSQ 0 4 0\n" +
-                "PAINTSQ 4 2 0\n" +
-                "ERASECELL 2 3\n")));
+        assertEquals(simpleFacadeString, execute(simpleFacade,
+                new Scanner("4\n" +
+                        "PAINTSQ 2 3 1\n" +
+                        "PAINTSQ 0 4 0\n" +
+                        "PAINTSQ 4 2 0\n" +
+                        "ERASECELL 2 3\n")));
     }
 
     @Test
-    public void testSimpleExample() {
-        String target = "5 7\n" +
-                "....#..\n" +
-                "..###..\n" +
-                "..#.#..\n" +
-                "..###..\n" +
-                "..#....\n";
-        Facade facade = new Facade(5, 7);
-//        assertEquals(target, execute(facade, new Scanner(solve(new Scanner(target)))));
-//        System.out.println(execute(facade, new Scanner(solve(new Scanner(target)))));
-        System.out.println(solve(new Scanner(target)));
+    public void testNaiveSolution() {
+        assertEquals(simpleFacadeString, execute(simpleFacade,
+                new Scanner(generateNaiveSolution(simpleFacade))));
     }
 }
