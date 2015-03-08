@@ -43,6 +43,12 @@ public class RemoveOddValueNodeTest {
         assertEquals("[2]", ListNodeUtils.serialize(removeOdd(head)));
     }
 
+    @Test
+    public void test7() {
+        ListNode head = ListNodeUtils.deserialize("[2,4,6,8,9,1]");
+        assertEquals("[2,4,6,8]", ListNodeUtils.serialize(removeOdd(head)));
+    }
+
     private ListNode removeOdd(ListNode head) {
         while (head != null && head.val % 2 != 0) {
             head = head.next;
@@ -52,7 +58,6 @@ public class RemoveOddValueNodeTest {
         }
         ListNode lastEven = head;
         ListNode current = head.next;
-        lastEven.next = null;
         while (current != null) {
             if (current.val % 2 == 0) {
                 lastEven.next = current;
@@ -60,6 +65,7 @@ public class RemoveOddValueNodeTest {
             }
             current = current.next;
         }
+        lastEven.next = null;
         return head;
     }
 }
