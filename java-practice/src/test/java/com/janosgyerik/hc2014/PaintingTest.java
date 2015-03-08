@@ -1,31 +1,42 @@
 package com.janosgyerik.hc2014;
 
 
+import com.janosgyerik.ojleetcode.common.ListNode;
+import com.janosgyerik.ojleetcode.common.ListNodeUtils;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
 public class PaintingTest {
 
-    private String generateNaiveSolution(Facade facade) {
+    private String commandsToString(List<Commands.Command> commands) {
         String newline = String.format("%n");
 
         StringBuilder builder = new StringBuilder();
+        builder.append(commands.size()).append(newline);
 
-        Set<Facade.Cell> cells = facade.getPaintedCells();
-        builder.append(cells.size()).append(newline);
-
-        for (Facade.Cell cell : cells) {
-            builder.append(new Commands.PaintCommand(cell)).append(newline);
+        for (Commands.Command command : commands) {
+            builder.append(command).append(newline);
         }
         return builder.toString();
     }
 
-    private String generateSolutionUsing3x3(Facade facade) {
-        String newline = String.format("%n");
+    private List<Commands.Command> generateNaiveSolution(Facade facade) {
+        List<Commands.Command> commands = new LinkedList<>();
+        Set<Facade.Cell> cells = facade.getPaintedCells();
+        for (Facade.Cell cell : cells) {
+            commands.add(new Commands.PaintCommand(cell));
+        }
+        return commands;
+    }
 
+    private List<Commands.Command> generateSolutionUsing3x3(Facade facade) {
         Set<Facade.Cell> originalPaintedCells = facade.getPaintedCells();
         Set<Facade.Cell> paintedCells = new HashSet<>(originalPaintedCells);
         SortedSet<Facade.CellWithPaintedNeighborCount> cellsWithPaintedNeighborCount =
@@ -48,16 +59,10 @@ public class PaintingTest {
             }
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(commands.size() + paintedCells.size()).append(newline);
-
-        for (Commands.Command command : commands) {
-            builder.append(command).append(newline);
-        }
         for (Facade.Cell cell : paintedCells) {
-            builder.append(new Commands.PaintCommand(cell)).append(newline);
+            commands.add(new Commands.PaintCommand(cell));
         }
-        return builder.toString();
+        return commands;
     }
 
     private String execute(Facade facade, Scanner commands) {
@@ -66,6 +71,13 @@ public class PaintingTest {
         for (int i = 0; i < commandsCount; ++i) {
             String commandString = commands.nextLine();
             Commands.Command command = Commands.fromString(commandString);
+            command.apply(facade);
+        }
+        return facade.toString();
+    }
+
+    private String execute(Facade facade, List<Commands.Command> commands) {
+        for (Commands.Command command : commands) {
             command.apply(facade);
         }
         return facade.toString();
@@ -93,12 +105,44 @@ public class PaintingTest {
     @Test
     public void testNaiveSolution() {
         assertEquals(simpleFacadeString, execute(simpleFacade,
-                new Scanner(generateNaiveSolution(simpleFacade))));
+                new Scanner(commandsToString(generateNaiveSolution(simpleFacade)))));
     }
 
     @Test
     public void testSolutionUsing3x3() {
         assertEquals(simpleFacadeString, execute(simpleFacade,
-                new Scanner(generateSolutionUsing3x3(simpleFacade))));
+                new Scanner(commandsToString(generateSolutionUsing3x3(simpleFacade)))));
     }
+
+    private static final Facade longFacade;
+    private static final String longFacadeString;
+
+    static {
+        Facade facade = null;
+        try {
+            facade = Facade.fromScanner(new Scanner(new File("src/test/resources/hc2014/doodle.txt")));
+        } catch (FileNotFoundException e) {
+            facade = new Facade(0, 0);
+        }
+        longFacade = facade;
+        longFacadeString = facade.toString();
+    }
+
+    @Test
+    public void testLongSolutionUsingNaive() {
+        List<Commands.Command> commands = generateNaiveSolution(longFacade);
+        assertEquals(185309, commands.size());
+        assertEquals(longFacadeString, execute(longFacade, commands));
+    }
+
+    @Test
+    public void testLongSolutionUsing3x3() throws IOException {
+        List<Commands.Command> commands = generateSolutionUsing3x3(longFacade);
+        assertEquals(203197, commands.size());
+        assertEquals(longFacadeString, execute(longFacade, commands));
+//        try (FileWriter writer = new FileWriter("/tmp/facade.out")) {
+//            writer.write(commandsToString(commands));
+//        }
+    }
+
 }
