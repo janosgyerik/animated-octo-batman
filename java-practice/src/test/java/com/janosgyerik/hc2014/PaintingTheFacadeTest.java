@@ -1,4 +1,4 @@
-package com.janosgyerik.hashcode2014;
+package com.janosgyerik.hc2014;
 
 
 import org.junit.Test;
