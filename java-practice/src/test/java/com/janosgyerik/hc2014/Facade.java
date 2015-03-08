@@ -42,6 +42,43 @@ public class Facade {
             result = 31 * result + col;
             return result;
         }
+
+        @Override
+        public String toString() {
+            return String.format("(%s,%s)", row, col);
+        }
+
+        public Cell afterMove(MoveOffset moveOffset) {
+            return new Cell(row + moveOffset.rowOffset, col + moveOffset.colOffset);
+        }
+    }
+
+    static class CellWithPaintedNeighborCount implements Comparable<CellWithPaintedNeighborCount> {
+        final Cell cell;
+        private final int count;
+
+        public CellWithPaintedNeighborCount(Cell cell, int count) {
+            this.cell = cell;
+            this.count = count;
+        }
+
+        @Override
+        public int compareTo(CellWithPaintedNeighborCount o) {
+            int compare = Integer.compare(count, o.count);
+            if (compare != 0) {
+                return -compare;
+            }
+            compare = Integer.compare(cell.row, o.cell.row);
+            if (compare != 0) {
+                return compare;
+            }
+            return Integer.compare(cell.col, o.cell.col);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s:%s", cell, count);
+        }
     }
 
     final int height;
@@ -87,8 +124,67 @@ public class Facade {
         return painted;
     }
 
+    public SortedSet<CellWithPaintedNeighborCount> getCellsWithPaintedNeighborCount(Set<Cell> cells, int threshold) {
+        SortedSet<CellWithPaintedNeighborCount> result = new TreeSet<>();
+        for (Cell cell : cells) {
+            for (Cell neighbor : getValidNeighbors(cell)) {
+                int count = countPaintedNeighbors(neighbor);
+                if (count < threshold) {
+                    continue;
+                }
+                result.add(new CellWithPaintedNeighborCount(neighbor, count));
+            }
+        }
+        return result;
+    }
+
+    enum MoveOffset {
+        UPLEFT(-1, -1),
+        UP(-1, 0),
+        UPRIGHT(-1, 1),
+        RIGHT(0, 1),
+        DOWNRIGHT(1, 1),
+        DOWN(1, 0),
+        DOWNLEFT(1, -1),
+        LEFT(0, -1)
+        ;
+        private final int rowOffset;
+        private final int colOffset;
+
+        MoveOffset(int rowOffset, int colOffset) {
+            this.rowOffset = rowOffset;
+            this.colOffset = colOffset;
+        }
+    }
+
+    List<Cell> getValidNeighbors(Cell cell) {
+        List<Cell> validNeighbors = new LinkedList<>();
+        for (MoveOffset moveOffset : MoveOffset.values()) {
+            Cell neighbor = cell.afterMove(moveOffset);
+            if (0 <= neighbor.row && neighbor.row < height
+                    && 0 <= neighbor.col && neighbor.col < width) {
+                validNeighbors.add(neighbor);
+            }
+        }
+        return validNeighbors;
+    }
+
+    private int countPaintedNeighbors(Cell cell) {
+        int count = 0;
+        for (Cell neighbor : getValidNeighbors(cell)) {
+            if (isPainted(neighbor)) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
     private boolean isPainted(int row, int col) {
         return facade[row][col] == PAINTED;
+    }
+
+    private boolean isPainted(Cell cell) {
+        return isPainted(cell.row, cell.col);
     }
 
     @Override

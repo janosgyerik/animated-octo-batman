@@ -77,5 +77,10 @@ public class Commands {
         public void apply(Facade facade) {
             facade.paintCell(row, col, Facade.BLANK);
         }
+
+        @Override
+        public String toString() {
+            return String.format("%s %d %d", NAME, row, col);
+        }
     }
 }

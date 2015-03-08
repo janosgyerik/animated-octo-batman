@@ -3,9 +3,7 @@ package com.janosgyerik.hc2014;
 
 import org.junit.Test;
 
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,6 +18,43 @@ public class PaintingTest {
         builder.append(cells.size()).append(newline);
 
         for (Facade.Cell cell : cells) {
+            builder.append(new Commands.PaintCommand(cell)).append(newline);
+        }
+        return builder.toString();
+    }
+
+    private String generateSolutionUsing3x3(Facade facade) {
+        String newline = String.format("%n");
+
+        Set<Facade.Cell> originalPaintedCells = facade.getPaintedCells();
+        Set<Facade.Cell> paintedCells = new HashSet<>(originalPaintedCells);
+        SortedSet<Facade.CellWithPaintedNeighborCount> cellsWithPaintedNeighborCount =
+                facade.getCellsWithPaintedNeighborCount(paintedCells, 6);
+
+        List<Commands.Command> commands = new LinkedList<>();
+        for (Facade.CellWithPaintedNeighborCount cellWithPaintedNeighborCount : cellsWithPaintedNeighborCount) {
+            Facade.Cell cell = cellWithPaintedNeighborCount.cell;
+            commands.add(new Commands.PaintCommand(cell.row, cell.col, 1));
+            if (!originalPaintedCells.contains(cell)) {
+                commands.add(new Commands.EraseCommand(cell.row, cell.col));
+            }
+
+            paintedCells.remove(cell);
+            for (Facade.Cell neighbor : facade.getValidNeighbors(cell)) {
+                paintedCells.remove(neighbor);
+                if (!originalPaintedCells.contains(neighbor)) {
+                    commands.add(new Commands.EraseCommand(neighbor.row, neighbor.col));
+                }
+            }
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(commands.size() + paintedCells.size()).append(newline);
+
+        for (Commands.Command command : commands) {
+            builder.append(command).append(newline);
+        }
+        for (Facade.Cell cell : paintedCells) {
             builder.append(new Commands.PaintCommand(cell)).append(newline);
         }
         return builder.toString();
@@ -59,5 +94,11 @@ public class PaintingTest {
     public void testNaiveSolution() {
         assertEquals(simpleFacadeString, execute(simpleFacade,
                 new Scanner(generateNaiveSolution(simpleFacade))));
+    }
+
+    @Test
+    public void testSolutionUsing3x3() {
+        assertEquals(simpleFacadeString, execute(simpleFacade,
+                new Scanner(generateSolutionUsing3x3(simpleFacade))));
     }
 }
