@@ -82,5 +82,33 @@ public class Commands {
         public String toString() {
             return String.format("%s %d %d", NAME, row, col);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            EraseCommand that = (EraseCommand) o;
+
+            if (col != that.col) {
+                return false;
+            }
+            if (row != that.row) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = row;
+            result = 31 * result + col;
+            return result;
+        }
     }
 }
