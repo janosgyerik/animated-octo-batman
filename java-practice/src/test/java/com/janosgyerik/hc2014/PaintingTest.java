@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,7 +16,7 @@ public class PaintingTest {
 
         StringBuilder builder = new StringBuilder();
 
-        List<Facade.Cell> cells = facade.getPaintedCells();
+        Set<Facade.Cell> cells = facade.getPaintedCells();
         builder.append(cells.size()).append(newline);
 
         for (Facade.Cell cell : cells) {

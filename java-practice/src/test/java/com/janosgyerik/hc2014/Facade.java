@@ -1,8 +1,6 @@
 package com.janosgyerik.hc2014;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Facade {
     static final char BLANK = '.';
@@ -77,8 +75,8 @@ public class Facade {
         return facade;
     }
 
-    public List<Cell> getPaintedCells() {
-        List<Cell> painted = new LinkedList<>();
+    public Set<Cell> getPaintedCells() {
+        Set<Cell> painted = new HashSet<>();
         for (int row = 0; row < height; ++row) {
             for (int col = 0; col < width; ++col) {
                 if (isPainted(row, col)) {
