@@ -22,7 +22,8 @@ public class CountPossibleTrianglesTest {
                 y = x + 1;
             } else {
                 ++z;
-                y = x + 1;
+                x = 0;
+                y = 1;
             }
         }
         return count;
@@ -55,6 +56,7 @@ public class CountPossibleTrianglesTest {
         // 3 4 5
         // 3 4 6
         // 4 5 6
-        assertEquals(6, countPossibleTriangles(new int[]{1, 2, 3, 4, 5, 6}));
+        // 3 5 6
+        assertEquals(7, countPossibleTriangles(new int[]{1, 2, 3, 4, 5, 6}));
     }
 }
