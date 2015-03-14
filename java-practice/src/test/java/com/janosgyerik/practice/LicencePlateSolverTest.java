@@ -61,12 +61,14 @@ class LicencePlateSolver {
 
     private String findShortestMatch(List<LetterCount> letterCounts) {
         Set<String> matches = new HashSet<>();
+        boolean first = true;
         for (LetterCount lc : letterCounts) {
             Set<String> nextSet = index.get(lc);
             if (nextSet == null) {
                 return null;
             }
-            if (matches.isEmpty()) {
+            if (first) {
+                first = false;
                 matches.addAll(nextSet);
             } else {
                 matches.retainAll(nextSet);
@@ -94,6 +96,14 @@ class LicencePlateSolver {
         LetterCount(char letter, int count) {
             this.letter = letter;
             this.count = count;
+        }
+
+        @Override
+        public String toString() {
+            return "LetterCount{" +
+                    "letter=" + letter +
+                    ", count=" + count +
+                    '}';
         }
 
         @Override
@@ -125,7 +135,7 @@ class LicencePlateSolver {
         }
     }
 
-    private static List<LetterCount> getLetterCounts(char[] letters) {
+    static List<LetterCount> getLetterCounts(char[] letters) {
         int[] counts = new int[26];
         for (char c : letters) {
             ++counts[c - 'a'];
@@ -150,7 +160,7 @@ class LicencePlateSolver {
 public class LicencePlateSolverTest {
 
     private static LicencePlateSolver solver = LicencePlateSolver
-            .fromWords(new HashSet<>(Arrays.asList("hello", "hi")));
+            .fromWords(new HashSet<>(Arrays.asList("hello", "hi", "szia")));
 
     //    @BeforeClass
     //    public static void setUpBeforeClass() throws IOException {
@@ -175,5 +185,10 @@ public class LicencePlateSolverTest {
     @Test
     public void test_h_123() {
         assertEquals("hi", solver.findShortestWord("h 123"));
+    }
+
+    @Test
+    public void test_hx_123() {
+        assertEquals(null, solver.findShortestWord("haz 123"));
     }
 }
