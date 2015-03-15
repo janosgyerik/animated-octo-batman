@@ -82,8 +82,8 @@ public class RotateImageTest {
 
     @Test
     public void test_2x2() {
-        int[][] matrix = {{1,2}, {3, 4}};
-        int[][] expected = {{3,1}, {4, 2}};
+        int[][] matrix = {{1, 2}, {3, 4}};
+        int[][] expected = {{3, 1}, {4, 2}};
         rotate(matrix);
         assertEquals(MatrixUtils.toString(expected), MatrixUtils.toString(matrix));
     }
