@@ -24,4 +24,8 @@ public enum Move {
     public String toString() {
         return String.format("(%d, %d)", x, y);
     }
+
+    public boolean isCorner() {
+        return x != 1 && (x == y || x == 2 - y);
+    }
 }
