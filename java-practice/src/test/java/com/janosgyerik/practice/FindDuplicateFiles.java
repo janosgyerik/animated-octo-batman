@@ -16,32 +16,32 @@ public class FindDuplicateFiles {
     }
 
     private static class Finder extends SimpleFileVisitor<Path> {
-        private final List<Path> files = new ArrayList<>();
+        private final List<File> files = new ArrayList<>();
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            files.add(file);
+            files.add(file.toFile());
             return FileVisitResult.CONTINUE;
         }
     }
 
-    public static List<Path> findFiles(File basedir) throws IOException {
+    public static List<File> findFiles(File basedir) throws IOException {
         Finder finder = new Finder();
         Files.walkFileTree(Paths.get(basedir.getAbsolutePath()), finder);
         return finder.files;
     }
 
-    public static Set<Set<Path>> findDuplicates(File basedir) throws IOException {
-        List<Path> filesList = findFiles(basedir);
-        Path[] files = filesList.toArray(new Path[filesList.size()]);
+    public static Set<Set<File>> findDuplicates(File basedir) throws IOException {
+        List<File> filesList = findFiles(basedir);
+        File[] files = filesList.toArray(new File[filesList.size()]);
 
-        DupTracker<Path> tracker = new DupTracker<>();
+        DupTracker<File> tracker = new DupTracker<>();
         mergeSort(files, 0, files.length, tracker);
 
         return tracker.getDups();
     }
 
-    private static void mergeSort(Path[] files, int start, int end, DupTracker<Path> tracker) {
+    private static void mergeSort(File[] files, int start, int end, DupTracker<File> tracker) {
         int diff = end - start;
         if (diff < 2) {
             return;
@@ -53,11 +53,11 @@ public class FindDuplicateFiles {
         merge(files, start, mid, end, tracker);
     }
 
-    private static void merge(Path[] files, int start, int mid, int end, DupTracker<Path> tracker) {
+    private static void merge(File[] files, int start, int mid, int end, DupTracker<File> tracker) {
         int i = start;
         int j = mid;
         int k = 0;
-        Path[] merged = new Path[end - start];
+        File[] merged = new File[end - start];
 
         while (i < mid && j < end) {
             int cmp = compare(files[i], files[j]);
@@ -80,8 +80,8 @@ public class FindDuplicateFiles {
         System.arraycopy(merged, 0, files, start, merged.length);
     }
 
-    private static int compare(Path file1, Path file2) {
-        int cmp = file1.getFileName().compareTo(file2.getFileName());
+    private static int compare(File file1, File file2) {
+        int cmp = Long.compare(file1.length(), file2.length());
         if (cmp != 0) {
             return cmp;
         }
