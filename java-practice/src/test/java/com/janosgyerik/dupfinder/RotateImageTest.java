@@ -1,6 +1,6 @@
-package com.janosgyerik.practice;
+package com.janosgyerik.dupfinder;
 
-import com.janosgyerik.examples.util.MatrixUtils;
+import com.janosgyerik.tools.util.MatrixUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

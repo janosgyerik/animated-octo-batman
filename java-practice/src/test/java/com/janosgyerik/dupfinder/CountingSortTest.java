@@ -1,4 +1,4 @@
-package com.janosgyerik.practice;
+package com.janosgyerik.dupfinder;
 
 import org.junit.Test;
 
