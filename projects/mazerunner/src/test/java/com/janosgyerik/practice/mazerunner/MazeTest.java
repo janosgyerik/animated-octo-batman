@@ -18,7 +18,7 @@ public class MazeTest {
                 "#G S#\n" +
                 "#####\n";
         Maze maze = Maze.fromString(mazeString);
-        assertEquals(Arrays.asList(Move.LEFT, Move.LEFT), maze.solveUsingBFS());
+        assertEquals(Arrays.asList(Move.WEST, Move.WEST), maze.solveUsingBFS());
     }
 
     @Test
@@ -30,7 +30,7 @@ public class MazeTest {
                 "#S  #\n" +
                 "#####\n";
         Maze maze = Maze.fromString(mazeString);
-        assertEquals(Arrays.asList(Move.RIGHT, Move.UP, Move.UP, Move.LEFT), maze.solveUsingBFS());
+        assertEquals(Arrays.asList(Move.EAST, Move.NORTH, Move.NORTH, Move.WEST), maze.solveUsingBFS());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class MazeTest {
                 "#   S#\n" +
                 "######\n";
         Maze maze = Maze.fromString(mazeString);
-        assertEquals(Arrays.asList(Move.UP, Move.UP, Move.LEFT, Move.LEFT, Move.LEFT), maze.solveUsingBFS());
+        assertEquals(Arrays.asList(Move.NORTH, Move.NORTH, Move.WEST, Move.WEST, Move.WEST), maze.solveUsingBFS());
     }
 
     @Test
@@ -55,11 +55,11 @@ public class MazeTest {
                 "#############\n";
         Maze maze = Maze.fromString(mazeString);
         assertEquals(Arrays.asList(
-                Move.LEFT, Move.LEFT, Move.LEFT, Move.LEFT,
-                Move.UP,
-                Move.LEFT, Move.LEFT,
-                Move.UP,
-                Move.LEFT, Move.LEFT, Move.LEFT, Move.LEFT
+                Move.WEST, Move.WEST, Move.WEST, Move.WEST,
+                Move.NORTH,
+                Move.WEST, Move.WEST,
+                Move.NORTH,
+                Move.WEST, Move.WEST, Move.WEST, Move.WEST
         ), maze.solveUsingBFS());
     }
 
@@ -76,6 +76,6 @@ public class MazeTest {
                 "#        #      #\n" +
                 "#################\n";
         Maze maze = Maze.fromString(mazeString);
-//        assertEquals(Arrays.asList(Move.LEFT, Move.LEFT), maze.solveUsingBFS());
+//        assertEquals(Arrays.asList(Move.WEST, Move.WEST), maze.solveUsingBFS());
     }
 }

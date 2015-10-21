@@ -36,29 +36,29 @@ class Grid {
     private List<Move> getPossibleMoves(Cell cell) {
         List<Move> moves = new ArrayList<>();
         if (cell.x > 0 && grid[cell.x-1][cell.y] != CellType.WALL.symbol) {
-            moves.add(Move.UP);
+            moves.add(Move.NORTH);
         }
         if (cell.x < height - 1 && grid[cell.x+1][cell.y] != CellType.WALL.symbol) {
-            moves.add(Move.DOWN);
+            moves.add(Move.SOUTH);
         }
         if (cell.y > 0 && grid[cell.x][cell.y-1] != CellType.WALL.symbol) {
-            moves.add(Move.LEFT);
+            moves.add(Move.WEST);
         }
         if (cell.y < width - 1 && grid[cell.x][cell.y+1] != CellType.WALL.symbol) {
-            moves.add(Move.RIGHT);
+            moves.add(Move.EAST);
         }
         return moves;
     }
 
     private Cell getCellAfterMove(Cell from, Move move) {
         switch (move) {
-            case UP:
+            case NORTH:
                 return new Cell(from.x - 1, from.y);
-            case DOWN:
+            case SOUTH:
                 return new Cell(from.x + 1, from.y);
-            case LEFT:
+            case WEST:
                 return new Cell(from.x, from.y - 1);
-            case RIGHT:
+            case EAST:
                 return new Cell(from.x, from.y + 1);
         }
         throw new IllegalStateException("Unsupported move: " + move);
