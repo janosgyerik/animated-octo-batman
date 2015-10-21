@@ -15,7 +15,7 @@ class Grid {
 
     public List<Move> findPathDFS(Cell from, Cell to, Stack<Move> moves, Set<Cell> visited) {
         if (from.equals(to)) {
-            return new ArrayList<Move>(moves);
+            return new ArrayList<>(moves);
         }
         for (Move move : getPossibleMoves(from)) {
             Cell cell = getCellAfterMove(from, move);
@@ -34,7 +34,7 @@ class Grid {
     }
 
     private List<Move> getPossibleMoves(Cell cell) {
-        List<Move> moves = new ArrayList<Move>();
+        List<Move> moves = new ArrayList<>();
         if (cell.x > 0 && grid[cell.x-1][cell.y] != CellType.WALL.symbol) {
             moves.add(Move.UP);
         }
@@ -65,8 +65,8 @@ class Grid {
     }
 
     public List<Move> findPathDFS(Cell from, Cell to) {
-        Stack<Move> moves = new Stack<Move>();
-        Set<Cell> visited = new HashSet<Cell>();
+        Stack<Move> moves = new Stack<>();
+        Set<Cell> visited = new HashSet<>();
         return findPathDFS(from, to, moves, visited);
     }
 
@@ -81,16 +81,16 @@ class Grid {
             }
         }
 
-        Queue<CellAndMoves> queue = new LinkedList<CellAndMoves>();
-        queue.add(new CellAndMoves(from, new ArrayList<Move>()));
+        Queue<CellAndMoves> queue = new LinkedList<>();
+        queue.add(new CellAndMoves(from, new ArrayList<>()));
 
-        Set<Cell> visited = new HashSet<Cell>();
+        Set<Cell> visited = new HashSet<>();
         visited.add(from);
 
         while (!queue.isEmpty()) {
-            List<CellAndMoves> level = new ArrayList<CellAndMoves>(queue);
+            List<CellAndMoves> level = new ArrayList<>(queue);
             queue.clear();
-            for (CellAndMoves cellAndMoves : level) {
+            for (CellAndMoves cellAndMoves : level)
                 for (Move move : getPossibleMoves(cellAndMoves.cell)) {
                     Cell cell = getCellAfterMove(cellAndMoves.cell, move);
                     if (cell.equals(to)) {
@@ -99,18 +99,17 @@ class Grid {
                     }
                     if (!visited.contains(cell)) {
                         visited.add(cell);
-                        List<Move> moves = new ArrayList<Move>(cellAndMoves.moves);
+                        List<Move> moves = new ArrayList<>(cellAndMoves.moves);
                         moves.add(move);
                         queue.add(new CellAndMoves(cell, moves));
                     }
                 }
-            }
         }
         return Collections.emptyList();
     }
 
     public static Grid fromString(String string) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         Scanner scanner = new Scanner(string);
         while (scanner.hasNextLine()) {
             lines.add(scanner.nextLine());
