@@ -11,5 +11,5 @@ public interface MazeSolver {
      * @param to   The target position
      * @return The list of moves to reach the target
      */
-    List<Move> findPath(Grid grid, Cell from, Cell to);
+    List<Move> findPath(GridMaze grid, Cell from, Cell to);
 }

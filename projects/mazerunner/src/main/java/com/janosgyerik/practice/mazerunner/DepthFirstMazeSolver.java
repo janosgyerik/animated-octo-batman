@@ -5,13 +5,13 @@ import java.util.*;
 public class DepthFirstMazeSolver implements MazeSolver {
 
     @Override
-    public List<Move> findPath(Grid grid, Cell from, Cell to) {
+    public List<Move> findPath(GridMaze grid, Cell from, Cell to) {
         Stack<Move> moves = new Stack<>();
         Set<Cell> visited = new HashSet<>();
         return findPathDFS(grid, from, to, moves, visited);
     }
 
-    private List<Move> findPathDFS(Grid grid, Cell from, Cell to, Stack<Move> moves, Set<Cell> visited) {
+    private List<Move> findPathDFS(GridMaze grid, Cell from, Cell to, Stack<Move> moves, Set<Cell> visited) {
         if (from.equals(to)) {
             return new ArrayList<>(moves);
         }

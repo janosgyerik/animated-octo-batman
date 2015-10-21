@@ -3,6 +3,7 @@ package com.janosgyerik.practice.mazerunner;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,6 +49,7 @@ public class BreadthFirstMazeSolverTest extends MazeSolverTest {
                 "#   #  # # # #  #\n" +
                 "#        #      #\n" +
                 "#################\n";
-        //        assertEquals(Arrays.asList(Move.WEST, Move.WEST), maze.solveUsingBFS());
+        List<Move> path = solve(mazeString);
+        System.out.println(path);
     }
 }

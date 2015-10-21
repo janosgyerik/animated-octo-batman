@@ -2,18 +2,26 @@ package com.janosgyerik.practice.mazerunner;
 
 import java.util.*;
 
-class Grid {
+public class GridMaze implements Maze {
+
+    private final Cell startPosition;
+    private final Cell targetPosition;
+    private Cell currentPosition;
+
     private final char[][] grid;
     private final int width;
     private final int height;
 
-    private Grid(char[][] grid) {
+    private GridMaze(char[][] grid) {
         this.grid = grid;
         width = grid[0].length;
         height = grid.length;
+
+        currentPosition = startPosition = findCell(CellType.START);
+        targetPosition = findCell(CellType.GOAL);
     }
 
-    public static Grid fromString(String string) {
+    public static GridMaze fromString(String string) {
         List<String> lines = new ArrayList<>();
         Scanner scanner = new Scanner(string);
         while (scanner.hasNextLine()) {
@@ -27,7 +35,7 @@ class Grid {
             grid[row] = lines.get(row).toCharArray();
         }
 
-        return new Grid(grid);
+        return new GridMaze(grid);
     }
 
     public List<Move> getPossibleMoves(Cell cell) {
@@ -70,5 +78,42 @@ class Grid {
             }
         }
         throw new IllegalArgumentException("No such cell in grid: " + cellType);
+    }
+
+    @Override
+    public void initialize() {
+        currentPosition = startPosition;
+    }
+
+    @Override
+    public boolean move(Direction direction) {
+        int x = currentPosition.x;
+        int y = currentPosition.y;
+        switch (direction) {
+            case UP:
+                --x;
+                break;
+            case DOWN:
+                ++x;
+                break;
+            case LEFT:
+                --y;
+                break;
+            case RIGHT:
+                ++y;
+                break;
+            default:
+                throw new IllegalStateException("Unsupported direction: " + direction);
+        }
+        if (0 <= x && x < width && 0 <= y && y < height && grid[x][y] != CellType.WALL.symbol) {
+            currentPosition = new Cell(x, y);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isSuccess() {
+        return currentPosition.equals(targetPosition);
     }
 }

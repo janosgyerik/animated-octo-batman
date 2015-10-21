@@ -14,7 +14,7 @@ public abstract class MazeSolverTest {
     protected abstract MazeSolver createMazeSolver();
 
     protected List<Move> solve(String mazeString) {
-        Grid grid = Grid.fromString(mazeString);
+        GridMaze grid = GridMaze.fromString(mazeString);
         return solver.findPath(grid, grid.findCell(CellType.START), grid.findCell(CellType.GOAL));
     }
 

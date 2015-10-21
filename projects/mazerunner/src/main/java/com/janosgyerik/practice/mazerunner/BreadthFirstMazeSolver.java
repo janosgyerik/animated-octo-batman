@@ -4,7 +4,7 @@ import java.util.*;
 
 public class BreadthFirstMazeSolver implements MazeSolver {
     @Override
-    public List<Move> findPath(Grid grid, Cell from, Cell to) {
+    public List<Move> findPath(GridMaze grid, Cell from, Cell to) {
         class CellAndMoves {
             private final Cell cell;
             private final List<Move> moves;
