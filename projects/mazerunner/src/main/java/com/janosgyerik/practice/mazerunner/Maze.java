@@ -14,10 +14,6 @@ public class Maze {
         return new Maze(grid);
     }
 
-    public List<Move> solveUsingDFS() {
-        return grid.findPathDFS(grid.findCell(CellType.START), grid.findCell(CellType.GOAL));
-    }
-
     public List<Move> solveUsingBFS() {
         return grid.findPathBFS(grid.findCell(CellType.START), grid.findCell(CellType.GOAL));
     }

@@ -13,27 +13,7 @@ class Grid {
         height = grid.length;
     }
 
-    public List<Move> findPathDFS(Cell from, Cell to, Stack<Move> moves, Set<Cell> visited) {
-        if (from.equals(to)) {
-            return new ArrayList<>(moves);
-        }
-        for (Move move : getPossibleMoves(from)) {
-            Cell cell = getCellAfterMove(from, move);
-            if (!visited.contains(cell)) {
-                moves.push(move);
-                visited.add(cell);
-                List<Move> path = findPathDFS(cell, to, moves, visited);
-                if (!path.isEmpty()) {
-                    return path;
-                } else {
-                    moves.pop();
-                }
-            }
-        }
-        return Collections.emptyList();
-    }
-
-    private List<Move> getPossibleMoves(Cell cell) {
+    public List<Move> getPossibleMoves(Cell cell) {
         List<Move> moves = new ArrayList<>();
         if (cell.x > 0 && grid[cell.x-1][cell.y] != CellType.WALL.symbol) {
             moves.add(Move.NORTH);
@@ -50,7 +30,7 @@ class Grid {
         return moves;
     }
 
-    private Cell getCellAfterMove(Cell from, Move move) {
+    public Cell getCellAfterMove(Cell from, Move move) {
         switch (move) {
             case NORTH:
                 return new Cell(from.x - 1, from.y);
@@ -62,12 +42,6 @@ class Grid {
                 return new Cell(from.x, from.y + 1);
         }
         throw new IllegalStateException("Unsupported move: " + move);
-    }
-
-    public List<Move> findPathDFS(Cell from, Cell to) {
-        Stack<Move> moves = new Stack<>();
-        Set<Cell> visited = new HashSet<>();
-        return findPathDFS(from, to, moves, visited);
     }
 
     public List<Move> findPathBFS(Cell from, Cell to) {
