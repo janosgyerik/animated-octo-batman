@@ -7,19 +7,21 @@ public class MazeSolver {
 
     public void findTarget(Maze maze) {
         Cell start = new Cell(0, 0);
-        findTarget(maze, start, new HashSet<>());
+        Set<Cell> visited = new HashSet<>();
+        visited.add(start);
+        findTarget(maze, start, visited);
     }
 
-    private boolean findTarget(Maze maze, Cell cell, Set<Cell> visited) {
+    private boolean findTarget(Maze maze, Cell from, Set<Cell> visited) {
         if (maze.isSuccess()) {
             return true;
         }
         for (Direction direction : Direction.values()) {
             if (maze.move(direction)) {
-                cell = getCellAfterMove(cell, direction);
-                if (!visited.contains(cell)) {
-                    visited.add(cell);
-                    if (findTarget(maze, cell, visited)) {
+                Cell next = getCellAfterMove(from, direction);
+                if (!visited.contains(next)) {
+                    visited.add(next);
+                    if (findTarget(maze, next, visited)) {
                         return true;
                     }
                 }
@@ -60,7 +62,7 @@ public class MazeSolver {
                 return false;
             }
 
-            OldCell cell = (OldCell) o;
+            Cell cell = (Cell) o;
 
             if (x != cell.x) {
                 return false;

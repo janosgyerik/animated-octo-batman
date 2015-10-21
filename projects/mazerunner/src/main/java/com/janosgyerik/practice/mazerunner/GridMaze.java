@@ -91,16 +91,16 @@ public class GridMaze implements Maze {
         int y = currentPosition.y;
         switch (direction) {
             case UP:
-                --x;
+                ++y;
                 break;
             case DOWN:
-                ++x;
-                break;
-            case LEFT:
                 --y;
                 break;
+            case LEFT:
+                --x;
+                break;
             case RIGHT:
-                ++y;
+                ++x;
                 break;
             default:
                 throw new IllegalStateException("Unsupported direction: " + direction);
