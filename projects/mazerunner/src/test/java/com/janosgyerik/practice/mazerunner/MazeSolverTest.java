@@ -9,11 +9,11 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class MazeSolverTest {
 
-    MazeSolver solver = createMazeSolver();
+    private final MazeSolver solver = createMazeSolver();
 
     protected abstract MazeSolver createMazeSolver();
 
-    private List<Move> solve(String mazeString) {
+    protected List<Move> solve(String mazeString) {
         Grid grid = Grid.fromString(mazeString);
         return solver.findPath(grid, grid.findCell(CellType.START), grid.findCell(CellType.GOAL));
     }

@@ -13,8 +13,4 @@ public class Maze {
         Grid grid = Grid.fromString(string);
         return new Maze(grid);
     }
-
-    public List<Move> solveUsingBFS() {
-        return grid.findPathBFS(grid.findCell(CellType.START), grid.findCell(CellType.GOAL));
-    }
 }

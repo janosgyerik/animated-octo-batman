@@ -44,44 +44,6 @@ class Grid {
         throw new IllegalStateException("Unsupported move: " + move);
     }
 
-    public List<Move> findPathBFS(Cell from, Cell to) {
-        class CellAndMoves {
-            private final Cell cell;
-            private final List<Move> moves;
-
-            private CellAndMoves(Cell cell, List<Move> moves) {
-                this.cell = cell;
-                this.moves = moves;
-            }
-        }
-
-        Queue<CellAndMoves> queue = new LinkedList<>();
-        queue.add(new CellAndMoves(from, new ArrayList<>()));
-
-        Set<Cell> visited = new HashSet<>();
-        visited.add(from);
-
-        while (!queue.isEmpty()) {
-            List<CellAndMoves> level = new ArrayList<>(queue);
-            queue.clear();
-            for (CellAndMoves cellAndMoves : level)
-                for (Move move : getPossibleMoves(cellAndMoves.cell)) {
-                    Cell cell = getCellAfterMove(cellAndMoves.cell, move);
-                    if (cell.equals(to)) {
-                        cellAndMoves.moves.add(move);
-                        return cellAndMoves.moves;
-                    }
-                    if (!visited.contains(cell)) {
-                        visited.add(cell);
-                        List<Move> moves = new ArrayList<>(cellAndMoves.moves);
-                        moves.add(move);
-                        queue.add(new CellAndMoves(cell, moves));
-                    }
-                }
-        }
-        return Collections.emptyList();
-    }
-
     public static Grid fromString(String string) {
         List<String> lines = new ArrayList<>();
         Scanner scanner = new Scanner(string);
