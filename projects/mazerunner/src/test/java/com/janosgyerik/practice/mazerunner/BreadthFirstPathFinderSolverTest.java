@@ -7,10 +7,10 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class BreadthFirstMazeSolverTest extends MazeSolverTest {
+public class BreadthFirstPathFinderSolverTest extends MazeSolverTest {
     @Override
-    protected MazeSolver createMazeSolver() {
-        return new BreadthFirstMazeSolver();
+    protected PathFinderSolver createMazeSolver() {
+        return new BreadthFirstPathFinderSolver();
     }
 
     @Test

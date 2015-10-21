@@ -9,9 +9,9 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class MazeSolverTest {
 
-    private final MazeSolver solver = createMazeSolver();
+    private final PathFinderSolver solver = createMazeSolver();
 
-    protected abstract MazeSolver createMazeSolver();
+    protected abstract PathFinderSolver createMazeSolver();
 
     protected List<Move> solve(String mazeString) {
         GridMaze grid = GridMaze.fromString(mazeString);

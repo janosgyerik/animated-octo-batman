@@ -2,7 +2,7 @@ package com.janosgyerik.practice.mazerunner;
 
 import java.util.*;
 
-public class DepthFirstMazeSolver implements MazeSolver {
+public class DepthFirstPathFinderSolver implements PathFinderSolver {
 
     @Override
     public List<Move> findPath(GridMaze grid, Cell from, Cell to) {

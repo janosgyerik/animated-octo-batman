@@ -2,7 +2,7 @@ package com.janosgyerik.practice.mazerunner;
 
 import java.util.List;
 
-public interface MazeSolver {
+public interface PathFinderSolver {
     /**
      * Find path from some start to some target in a given grid.
      *
