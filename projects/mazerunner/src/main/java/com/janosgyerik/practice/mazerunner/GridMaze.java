@@ -4,9 +4,9 @@ import java.util.*;
 
 public class GridMaze implements Maze {
 
-    private final Cell startPosition;
-    private final Cell targetPosition;
-    private Cell currentPosition;
+    private final OldCell startPosition;
+    private final OldCell targetPosition;
+    private OldCell currentPosition;
 
     private final char[][] grid;
     private final int width;
@@ -38,7 +38,7 @@ public class GridMaze implements Maze {
         return new GridMaze(grid);
     }
 
-    public List<Move> getPossibleMoves(Cell cell) {
+    public List<Move> getPossibleMoves(OldCell cell) {
         List<Move> moves = new ArrayList<>();
         if (cell.x > 0 && grid[cell.x-1][cell.y] != CellType.WALL.symbol) {
             moves.add(Move.NORTH);
@@ -55,25 +55,25 @@ public class GridMaze implements Maze {
         return moves;
     }
 
-    public Cell getCellAfterMove(Cell from, Move move) {
+    public OldCell getCellAfterMove(OldCell from, Move move) {
         switch (move) {
             case NORTH:
-                return new Cell(from.x - 1, from.y);
+                return new OldCell(from.x - 1, from.y);
             case SOUTH:
-                return new Cell(from.x + 1, from.y);
+                return new OldCell(from.x + 1, from.y);
             case WEST:
-                return new Cell(from.x, from.y - 1);
+                return new OldCell(from.x, from.y - 1);
             case EAST:
-                return new Cell(from.x, from.y + 1);
+                return new OldCell(from.x, from.y + 1);
         }
         throw new IllegalStateException("Unsupported move: " + move);
     }
 
-    public Cell findCell(CellType cellType) {
+    public OldCell findCell(CellType cellType) {
         for (int row = 0; row < grid.length; ++row) {
             for (int col = 0; col < grid[row].length; ++col) {
                 if (grid[row][col] == cellType.symbol) {
-                    return new Cell(row, col);
+                    return new OldCell(row, col);
                 }
             }
         }
@@ -106,7 +106,7 @@ public class GridMaze implements Maze {
                 throw new IllegalStateException("Unsupported direction: " + direction);
         }
         if (0 <= x && x < width && 0 <= y && y < height && grid[x][y] != CellType.WALL.symbol) {
-            currentPosition = new Cell(x, y);
+            currentPosition = new OldCell(x, y);
             return true;
         }
         return false;

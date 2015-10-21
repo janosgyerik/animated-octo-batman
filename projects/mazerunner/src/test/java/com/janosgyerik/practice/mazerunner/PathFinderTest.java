@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class MazeSolverTest {
+public abstract class PathFinderTest {
 
     private final PathFinderSolver solver = createMazeSolver();
 
