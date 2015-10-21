@@ -1,10 +1,10 @@
 package com.janosgyerik.practice.mazerunner;
 
-class OldCell {
+class Cell {
     public final int x;
     public final int y;
 
-    public OldCell(int x, int y) {
+    public Cell(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -18,7 +18,7 @@ class OldCell {
             return false;
         }
 
-        OldCell cell = (OldCell) o;
+        Cell cell = (Cell) o;
 
         if (x != cell.x) {
             return false;
