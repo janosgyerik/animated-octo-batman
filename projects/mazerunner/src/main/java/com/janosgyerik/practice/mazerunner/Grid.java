@@ -13,6 +13,23 @@ class Grid {
         height = grid.length;
     }
 
+    public static Grid fromString(String string) {
+        List<String> lines = new ArrayList<>();
+        Scanner scanner = new Scanner(string);
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine());
+        }
+
+        int height = lines.size();
+
+        char[][] grid = new char[height][];
+        for (int row = 0; row < grid.length; ++row) {
+            grid[row] = lines.get(row).toCharArray();
+        }
+
+        return new Grid(grid);
+    }
+
     public List<Move> getPossibleMoves(Cell cell) {
         List<Move> moves = new ArrayList<>();
         if (cell.x > 0 && grid[cell.x-1][cell.y] != CellType.WALL.symbol) {
@@ -42,23 +59,6 @@ class Grid {
                 return new Cell(from.x, from.y + 1);
         }
         throw new IllegalStateException("Unsupported move: " + move);
-    }
-
-    public static Grid fromString(String string) {
-        List<String> lines = new ArrayList<>();
-        Scanner scanner = new Scanner(string);
-        while (scanner.hasNextLine()) {
-            lines.add(scanner.nextLine());
-        }
-
-        int height = lines.size();
-
-        char[][] grid = new char[height][];
-        for (int row = 0; row < grid.length; ++row) {
-            grid[row] = lines.get(row).toCharArray();
-        }
-
-        return new Grid(grid);
     }
 
     public Cell findCell(CellType cellType) {
