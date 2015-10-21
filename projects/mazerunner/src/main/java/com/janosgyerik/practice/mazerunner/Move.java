@@ -1,6 +1,6 @@
 package com.janosgyerik.practice.mazerunner;
 
-public enum Move {
+enum Move {
     WEST,
     EAST,
     NORTH,
