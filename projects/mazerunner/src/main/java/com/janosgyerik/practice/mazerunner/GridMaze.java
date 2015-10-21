@@ -91,21 +91,21 @@ public class GridMaze implements Maze {
         int y = currentPosition.y;
         switch (direction) {
             case UP:
-                ++y;
-                break;
-            case DOWN:
-                --y;
-                break;
-            case LEFT:
                 --x;
                 break;
-            case RIGHT:
+            case DOWN:
                 ++x;
+                break;
+            case LEFT:
+                --y;
+                break;
+            case RIGHT:
+                ++y;
                 break;
             default:
                 throw new IllegalStateException("Unsupported direction: " + direction);
         }
-        if (0 <= x && x < width && 0 <= y && y < height && grid[x][y] != CellType.WALL.symbol) {
+        if (0 <= x && x < height && 0 <= y && y < width && grid[x][y] != CellType.WALL.symbol) {
             currentPosition = new Cell(x, y);
             return true;
         }
