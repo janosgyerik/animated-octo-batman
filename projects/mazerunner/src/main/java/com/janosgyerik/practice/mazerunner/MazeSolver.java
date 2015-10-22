@@ -17,12 +17,14 @@ public class MazeSolver {
             return true;
         }
         for (Direction direction : Direction.values()) {
-            if (maze.move(direction)) {
-                Cell next = getCellAfterMove(from, direction);
-                if (!visited.contains(next)) {
+            Cell next = getCellAfterMove(from, direction);
+            if (!visited.contains(next)) {
+                if (maze.move(direction)) {
                     visited.add(next);
                     if (findTarget(maze, next, visited)) {
                         return true;
+                    } else {
+                        maze.move(getOpposite(direction));
                     }
                 }
             }
@@ -40,6 +42,20 @@ public class MazeSolver {
                 return new Cell(cell.x - 1, cell.y);
             case RIGHT:
                 return new Cell(cell.x + 1, cell.y);
+        }
+        throw new AssertionError("should be unreachable...");
+    }
+
+    private Direction getOpposite(Direction direction) {
+        switch (direction) {
+            case UP:
+                return Direction.DOWN;
+            case DOWN:
+                return Direction.UP;
+            case LEFT:
+                return Direction.RIGHT;
+            case RIGHT:
+                return Direction.LEFT;
         }
         throw new AssertionError("should be unreachable...");
     }
