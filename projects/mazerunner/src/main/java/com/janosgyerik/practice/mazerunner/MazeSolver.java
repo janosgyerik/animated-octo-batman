@@ -32,7 +32,7 @@ public class MazeSolver {
         return false;
     }
 
-    public Cell getCellAfterMove(Cell cell, Direction direction) {
+    private Cell getCellAfterMove(Cell cell, Direction direction) {
         switch (direction) {
             case UP:
                 return new Cell(cell.x, cell.y + 1);
