@@ -24,7 +24,7 @@ public class MazeSolver {
                     if (findTarget(maze, next, visited)) {
                         return true;
                     } else {
-                        maze.move(getOpposite(direction));
+                        maze.move(getOppositeDirection(direction));
                     }
                 }
             }
@@ -46,7 +46,7 @@ public class MazeSolver {
         throw new AssertionError("should be unreachable...");
     }
 
-    private Direction getOpposite(Direction direction) {
+    private Direction getOppositeDirection(Direction direction) {
         switch (direction) {
             case UP:
                 return Direction.DOWN;
