@@ -38,7 +38,7 @@ public class GridMaze implements Maze {
         return new GridMaze(grid);
     }
 
-    public Cell findCell(CellType cellType) {
+    private Cell findCell(CellType cellType) {
         for (int row = 0; row < grid.length; ++row) {
             for (int col = 0; col < grid[row].length; ++col) {
                 if (grid[row][col] == cellType.symbol) {
