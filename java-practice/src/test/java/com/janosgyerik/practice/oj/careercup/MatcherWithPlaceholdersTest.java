@@ -1,4 +1,4 @@
-package com.janosgyerik.careercup;
+package com.janosgyerik.practice.oj.careercup;
 
 import org.junit.Test;
 
