@@ -1,7 +1,7 @@
 package com.janosgyerik.codereview.randomuser;
 
-import com.janosgyerik.ojleetcode.common.ListNode;
-import com.janosgyerik.ojleetcode.common.ListNodeUtils;
+import com.janosgyerik.practice.oj.leetcode.common.ListNode;
+import com.janosgyerik.practice.oj.leetcode.common.ListNodeUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
