@@ -35,7 +35,7 @@ public class ContainerWithMostWaterTest {
 
     @Test
     public void items_1_2_3_gives_3() {
-        assertEquals(3, solve(1, 2, 3));
+        assertEquals(2, solve(1, 2, 3));
     }
 
     @Test

@@ -12,15 +12,19 @@ public class Solution {
         for (int pos = 0; pos < height.length; ++pos) {
             Integer firstPos = firstPosMap.get(height[pos]);
             if (firstPos == null) {
-                firstPosMap.put(height[pos], pos);
-                List<Integer> list = new ArrayList<>(firstPosMap.keySet());
-                int index = Collections.binarySearch(list, height[pos]);
-                int insertionPoint = -(index + 1);
-                if (insertionPoint <= 0) {
-                    firstPos = pos;
+                if (!firstPosMap.isEmpty()) {
+                    List<Integer> list = new ArrayList<>(firstPosMap.keySet());
+                    int index = Collections.binarySearch(list, height[pos]);
+                    int insertionPoint = -(index + 1);
+                    if (insertionPoint <= 0) {
+                        firstPos = pos;
+                    } else {
+                        firstPos = firstPosMap.get(list.get(insertionPoint - 1));
+                    }
                 } else {
-                    firstPos = firstPosMap.get(insertionPoint - 1);
+                    firstPos = pos;
                 }
+                firstPosMap.put(height[pos], pos);
             }
             int area = (pos - firstPos) * height[firstPos];
             if (area > maxArea) {
