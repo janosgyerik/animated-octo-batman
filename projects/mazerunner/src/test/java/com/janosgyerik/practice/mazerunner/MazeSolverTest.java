@@ -37,45 +37,49 @@ public class MazeSolverTest {
 
     @Test
     public void testSimpleMaze() {
-        String mazeString = "#####\n" +
-                "#G  #\n" +
-                "##  #\n" +
-                "#S  #\n" +
-                "#####\n";
-        solve(mazeString);
+        solve(Arrays.asList(
+                "#####",
+                "#G  #",
+                "##  #",
+                "#S  #",
+                "#####"
+        ));
     }
 
     @Test
     public void testEmptyMaze() {
-        String mazeString = "######\n" +
-                "#G   #\n" +
-                "#    #\n" +
-                "#   S#\n" +
-                "######\n";
-        solve(mazeString);
+        solve(Arrays.asList(
+                "######",
+                "#G   #",
+                "#    #",
+                "#   S#",
+                "######"
+        ));
     }
 
     @Test
     public void testMazeWithDeadEnds() {
-        String mazeString = "#############\n" +
-                "#G    ###   #\n" +
-                "#####   ### #\n" +
-                "#     #    S#\n" +
-                "#############\n";
-        solve(mazeString);
+        solve(Arrays.asList(
+                "#############",
+                "#G    ###   #",
+                "#####   ### #",
+                "#     #    S#",
+                "#############"
+        ));
     }
 
     @Test
     public void testComplexMaze() {
-        String mazeString = "#################\n" +
-                "#G#    S        #\n" +
-                "# #    #####    #\n" +
-                "# ## ###   # # ##\n" +
-                "#   ## # # # #  #\n" +
-                "### ## # # # #  #\n" +
-                "#   #  # # # #  #\n" +
-                "#        #      #\n" +
-                "#################\n";
-        solve(mazeString);
+        solve(Arrays.asList(
+                "#################",
+                "#G#    S        #",
+                "# #    #####    #",
+                "# ## ###   # # ##",
+                "#   ## # # # #  #",
+                "### ## # # # #  #",
+                "#   #  # # # #  #",
+                "#        #      #",
+                "#################"
+        ));
     }
 }
