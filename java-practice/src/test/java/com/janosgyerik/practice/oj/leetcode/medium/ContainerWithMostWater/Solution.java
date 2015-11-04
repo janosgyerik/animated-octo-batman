@@ -10,6 +10,18 @@ public class Solution {
             return 0;
         }
 
+        return Math.max(maxAreaHelper(height), maxAreaHelper(reversed(height)));
+    }
+
+    private int[] reversed(int[] height) {
+        int[] copy = new int[height.length];
+        for (int i = 0; i < height.length; ++i) {
+            copy[i] = height[height.length - i - 1];
+        }
+        return copy;
+    }
+
+    private int maxAreaHelper(int[] height) {
         SortedMap<Integer, Integer> firstPosMap = new TreeMap<>();
         firstPosMap.put(height[0], 0);
 
