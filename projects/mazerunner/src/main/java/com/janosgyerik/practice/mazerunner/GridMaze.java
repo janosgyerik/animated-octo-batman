@@ -85,4 +85,17 @@ public class GridMaze implements Maze {
     public boolean isSuccess() {
         return currentPosition.equals(targetPosition);
     }
+
+    static enum CellType {
+        EMPTY(' '),
+        WALL('#'),
+        START('S'),
+        GOAL('G');
+
+        public final char symbol;
+
+        CellType(char symbol) {
+            this.symbol = symbol;
+        }
+    }
 }
