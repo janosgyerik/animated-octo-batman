@@ -2,6 +2,8 @@ package com.janosgyerik.practice.oj.leetcode.medium.ContainerWithMostWater;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 public class ContainerWithMostWaterTest {
@@ -41,5 +43,14 @@ public class ContainerWithMostWaterTest {
     @Test
     public void items_2_2_2_gives_4() {
         assertEquals(4, solve(2, 2, 2));
+    }
+
+    @Test
+    public void large_array_with_reverse_heights() {
+        int[] arr = new int[10000];
+        for (int i = 0; i < arr.length; ++i) {
+            arr[arr.length - i - 1] = i + 1;
+        }
+        assertEquals(9999, solve(arr));
     }
 }
