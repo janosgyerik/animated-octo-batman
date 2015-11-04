@@ -17,15 +17,13 @@ public class Solution {
         for (int pos = 1; pos < height.length; ++pos) {
             Integer firstPos = firstPosMap.get(height[pos]);
             if (firstPos == null) {
-                List<Integer> list = new ArrayList<>(firstPosMap.keySet());
-                int index = Collections.binarySearch(list, height[pos]);
-                int insertionPoint = -(index + 1);
-                if (insertionPoint <= 0) {
+                firstPosMap.put(height[pos], pos);
+                Integer prevLowerPos = findPrevLowerPos(height, pos);
+                if (prevLowerPos == null) {
                     firstPos = pos;
                 } else {
-                    firstPos = firstPosMap.get(list.get(insertionPoint - 1));
+                    firstPos = firstPosMap.get(height[prevLowerPos]);
                 }
-                firstPosMap.put(height[pos], pos);
             }
             int area = (pos - firstPos) * height[firstPos];
             if (area > maxArea) {
@@ -33,5 +31,14 @@ public class Solution {
             }
         }
         return maxArea;
+    }
+
+    protected Integer findPrevLowerPos(int[] height, int pos) {
+        for (int prevLowerPos = pos - 1; prevLowerPos >= 0; --prevLowerPos) {
+            if (height[prevLowerPos] < height[pos]) {
+                return prevLowerPos;
+            }
+        }
+        return null;
     }
 }
