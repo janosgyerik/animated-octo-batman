@@ -12,26 +12,32 @@ public class MazeSolverTest {
 
     private final MazeSolver solver = new MazeSolver();
 
-    private void solve(String mazeString) {
-        Maze maze = GridMaze.fromString(mazeString);
+    private void solve(Maze maze) {
         assertFalse(maze.isSuccess());
         solver.findTarget(maze);
         assertTrue(maze.isSuccess());
     }
 
+    private void solve(List<String> lines) {
+        solve(GridMaze.fromLines(lines));
+    }
+
+    private void solve(String mazeString) {
+        solve(GridMaze.fromString(mazeString));
+    }
+
     @Test
     public void testTrivialMaze() {
-        String mazeString =
-                "#####\n" +
-                "#G S#\n" +
-                "#####\n";
-        solve(mazeString);
+        solve(Arrays.asList(
+                "#####",
+                "#G S#",
+                "#####"
+        ));
     }
 
     @Test
     public void testSimpleMaze() {
-        String mazeString =
-                "#####\n" +
+        String mazeString = "#####\n" +
                 "#G  #\n" +
                 "##  #\n" +
                 "#S  #\n" +
@@ -41,8 +47,7 @@ public class MazeSolverTest {
 
     @Test
     public void testEmptyMaze() {
-        String mazeString =
-                "######\n" +
+        String mazeString = "######\n" +
                 "#G   #\n" +
                 "#    #\n" +
                 "#   S#\n" +
@@ -52,8 +57,7 @@ public class MazeSolverTest {
 
     @Test
     public void testMazeWithDeadEnds() {
-        String mazeString =
-                "#############\n" +
+        String mazeString = "#############\n" +
                 "#G    ###   #\n" +
                 "#####   ### #\n" +
                 "#     #    S#\n" +
@@ -63,8 +67,7 @@ public class MazeSolverTest {
 
     @Test
     public void testComplexMaze() {
-        String mazeString =
-                "#################\n" +
+        String mazeString = "#################\n" +
                 "#G#    S        #\n" +
                 "# #    #####    #\n" +
                 "# ## ###   # # ##\n" +
