@@ -21,13 +21,7 @@ public class GridMaze implements Maze {
         targetPosition = findCell(CellType.GOAL);
     }
 
-    public static GridMaze fromString(String string) {
-        List<String> lines = new ArrayList<>();
-        Scanner scanner = new Scanner(string);
-        while (scanner.hasNextLine()) {
-            lines.add(scanner.nextLine());
-        }
-
+    public static GridMaze fromLines(List<String> lines) {
         int height = lines.size();
 
         char[][] grid = new char[height][];
@@ -36,6 +30,15 @@ public class GridMaze implements Maze {
         }
 
         return new GridMaze(grid);
+    }
+
+    public static GridMaze fromString(String string) {
+        List<String> lines = new ArrayList<>();
+        Scanner scanner = new Scanner(string);
+        while (scanner.hasNextLine()) {
+            lines.add(scanner.nextLine());
+        }
+        return fromLines(lines);
     }
 
     private Cell findCell(CellType cellType) {
