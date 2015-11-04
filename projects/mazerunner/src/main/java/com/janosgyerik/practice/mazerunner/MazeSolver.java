@@ -19,8 +19,8 @@ public class MazeSolver {
         for (Direction direction : Direction.values()) {
             Cell next = getCellAfterMove(from, direction);
             if (!visited.contains(next)) {
+                visited.add(next);
                 if (maze.move(direction)) {
-                    visited.add(next);
                     if (findTarget(maze, next, visited)) {
                         return true;
                     } else {
