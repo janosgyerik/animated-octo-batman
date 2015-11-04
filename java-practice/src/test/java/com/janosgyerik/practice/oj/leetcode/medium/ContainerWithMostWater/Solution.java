@@ -1,28 +1,29 @@
 package com.janosgyerik.practice.oj.leetcode.medium.ContainerWithMostWater;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Solution {
     public int maxArea(int[] height) {
-        TreeMap<Integer, Integer> firstPosMap = new TreeMap<>();
+        int length = height.length;
+
+        if (length < 2) {
+            return 0;
+        }
+
+        SortedMap<Integer, Integer> firstPosMap = new TreeMap<>();
+        firstPosMap.put(height[0], 0);
+
         int maxArea = 0;
-        for (int pos = 0; pos < height.length; ++pos) {
+        for (int pos = 1; pos < height.length; ++pos) {
             Integer firstPos = firstPosMap.get(height[pos]);
             if (firstPos == null) {
-                if (!firstPosMap.isEmpty()) {
-                    List<Integer> list = new ArrayList<>(firstPosMap.keySet());
-                    int index = Collections.binarySearch(list, height[pos]);
-                    int insertionPoint = -(index + 1);
-                    if (insertionPoint <= 0) {
-                        firstPos = pos;
-                    } else {
-                        firstPos = firstPosMap.get(list.get(insertionPoint - 1));
-                    }
-                } else {
+                List<Integer> list = new ArrayList<>(firstPosMap.keySet());
+                int index = Collections.binarySearch(list, height[pos]);
+                int insertionPoint = -(index + 1);
+                if (insertionPoint <= 0) {
                     firstPos = pos;
+                } else {
+                    firstPos = firstPosMap.get(list.get(insertionPoint - 1));
                 }
                 firstPosMap.put(height[pos], pos);
             }
