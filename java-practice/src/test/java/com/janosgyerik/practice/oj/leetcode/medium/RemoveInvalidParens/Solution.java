@@ -12,15 +12,17 @@ public class Solution {
 
         List<String> result = new ArrayList<>();
         StringBuilder text = new StringBuilder();
+        int openCount = 0;
 
         for (int pos = 0; pos < chars.length; ++pos) {
             char c = chars[pos];
             if (c == OPEN) {
                 stack.push(c);
+                ++openCount;
             } else if (c == CLOSE) {
                 if (!stack.isEmpty()) {
                     stack.pop();
-                } else {
+                } else if (openCount > 0) {
                     for (int seek = pos - 1; seek >= 0; --seek) {
                         if (chars[seek] == CLOSE) {
                             result.add(stringWithPosRemoved(chars, seek));

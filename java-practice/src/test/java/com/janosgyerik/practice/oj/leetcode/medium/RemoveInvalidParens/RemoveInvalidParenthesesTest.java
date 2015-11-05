@@ -36,6 +36,11 @@ public class RemoveInvalidParenthesesTest {
     }
 
     @Test
+    public void testDoubleClose() {
+        assertEquals(Arrays.asList(""), solve("))"));
+    }
+
+    @Test
     public void test_stringWithPosRemoved_hello_0() {
         assertEquals("ello", solution.stringWithPosRemoved("hello", 0));
     }
