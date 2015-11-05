@@ -35,6 +35,9 @@ public class Solution {
         }
 
         if (result.isEmpty()) {
+            if (text.length() == 0 && stack.isEmpty() && openCount > 0) {
+                return Collections.singletonList(s);
+            }
             return Collections.singletonList(text.toString());
         }
 
